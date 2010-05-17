@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<testdefinition version="0.1">
+  <suite name="libquillmetadata-tests" domain="application-domain">
+    <description>Automated test cases for libquill</description>
+
+    <set name="quill-metadata-tests" feature="metadata">
+      <description>quill metadata test</description>
+      <case name="ut_metadata" type="Functional" level="Component">
+	<step>/usr/lib/libquillmetadata-tests/ut_metadata </step>
+      </case>
+    </set>
+  </suite>
+</testdefinition>
+
+
+
