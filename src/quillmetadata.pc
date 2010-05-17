@@ -1,0 +1,13 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${prefix}/lib
+includedir=${prefix}/include/qt4/quillmetadata
+qt_config=include_source_dir lex yacc warn_on uic resources qt warn_on release incremental link_prl nostrip exceptions no_mocdepend release stl qt_no_framework release create_pc create_prl no_install_prl moc thread dll
+
+Name: Quillmetadata
+Description: Quillmetadata Library
+Version: 1.0.0
+Libs: -L${libdir} -lquillmetadata 
+Libs.private: -L/usr/lib  -lexif -lexempi -lQtGui -lQtCore -lpthread   
+Cflags:  -I${includedir}
+
