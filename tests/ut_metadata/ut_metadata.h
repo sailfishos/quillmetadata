@@ -42,7 +42,7 @@
 #ifndef TEST_LIBQUILL_METADATA_H
 #define TEST_LIBQUILL_METADATA_H
 
-class Metadata;
+class QuillMetadata;
 
 class ut_metadata : public QObject {
 Q_OBJECT
@@ -73,9 +73,9 @@ private slots:
     void testCountryIptc();
    
 private:
-    Metadata *metadata;
-    Metadata *xmp;
-    Metadata *iptc;
+    QuillMetadata *metadata;
+    QuillMetadata *xmp;
+    QuillMetadata *iptc;
 };
 
 #endif  // TEST_LIBQUILL_METADATA_H

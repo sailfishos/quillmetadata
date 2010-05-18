@@ -40,7 +40,7 @@
 #include <QVariant>
 #include <QtTest/QtTest>
 
-#include "metadata.h"
+#include "quillmetadata.h"
 #include "ut_metadata.h"
 
 ut_metadata::ut_metadata()
@@ -57,9 +57,9 @@ void ut_metadata::cleanupTestCase()
 
 void ut_metadata::init()
 {
-    metadata = new Metadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
-    xmp = new Metadata("/usr/share/libquillmetadata-tests/images/xmp.jpg");
-    iptc = new Metadata("/usr/share/libquillmetadata-tests/images/iptc.jpg");
+    metadata = new QuillMetadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
+    xmp = new QuillMetadata("/usr/share/libquillmetadata-tests/images/xmp.jpg");
+    iptc = new QuillMetadata("/usr/share/libquillmetadata-tests/images/iptc.jpg");
 }
 
 void ut_metadata::cleanup()
@@ -72,92 +72,92 @@ void ut_metadata::cleanup()
 void ut_metadata::testCameraMake()
 {
     QVERIFY(metadata->isValid());
-    QCOMPARE(metadata->entry(Metadata::Tag_Make).toString(), QString("Quill"));
+    QCOMPARE(metadata->entry(QuillMetadata::Tag_Make).toString(), QString("Quill"));
 }
 
 void ut_metadata::testCameraModel()
 {
     QVERIFY(metadata->isValid());
-    QCOMPARE(metadata->entry(Metadata::Tag_Model).toString(), QString("Q100125"));
+    QCOMPARE(metadata->entry(QuillMetadata::Tag_Model).toString(), QString("Q100125"));
 }
 
 void ut_metadata::testImageWidth()
 {
     QVERIFY(metadata->isValid());
-    QCOMPARE(metadata->entry(Metadata::Tag_ImageWidth).toInt(), 2);
+    QCOMPARE(metadata->entry(QuillMetadata::Tag_ImageWidth).toInt(), 2);
 }
 
 void ut_metadata::testImageHeight()
 {
     QVERIFY(metadata->isValid());
-    QCOMPARE(metadata->entry(Metadata::Tag_ImageHeight).toInt(), 2);
+    QCOMPARE(metadata->entry(QuillMetadata::Tag_ImageHeight).toInt(), 2);
 }
 
 void ut_metadata::testFocalLength()
 {
     QVERIFY(metadata->isValid());
-    //Unittests::compareReal(metadata->entry(Metadata::Tag_FocalLength).toDouble(), 9.9);
+    QCOMPARE(QString::number(metadata->entry(QuillMetadata::Tag_FocalLength).toDouble()), QString("9.9"));
 }
 
 void ut_metadata::testExposureTime()
 {
     QVERIFY(metadata->isValid());
-    //Unittests::compareReal(metadata->entry(Metadata::Tag_ExposureTime).toDouble(), 1/200.0);
+    QCOMPARE(QString::number(metadata->entry(QuillMetadata::Tag_ExposureTime).toDouble()), QString("0.005"));
 }
 
 void ut_metadata::testTimestampOriginal()
 {
     QVERIFY(metadata->isValid());
-    QCOMPARE(metadata->entry(Metadata::Tag_TimestampOriginal).toString(),
+    QCOMPARE(metadata->entry(QuillMetadata::Tag_TimestampOriginal).toString(),
              QString("2010:01:25 15:00:00"));
 }
 
 void ut_metadata::testSubject()
 {
     QVERIFY(xmp->isValid());
-    QCOMPARE(xmp->entry(Metadata::Tag_Subject).toString(),
+    QCOMPARE(xmp->entry(QuillMetadata::Tag_Subject).toString(),
              QString("test,quill"));
 }
 
 void ut_metadata::testCity()
 {
     QVERIFY(xmp->isValid());
-    QCOMPARE(xmp->entry(Metadata::Tag_City).toString(),
+    QCOMPARE(xmp->entry(QuillMetadata::Tag_City).toString(),
              QString("Tapiola"));
 }
 
 void ut_metadata::testCountry()
 {
     QVERIFY(xmp->isValid());
-    QCOMPARE(xmp->entry(Metadata::Tag_Country).toString(),
+    QCOMPARE(xmp->entry(QuillMetadata::Tag_Country).toString(),
              QString("Finland"));
 }
 
 void ut_metadata::testRating()
 {
     QVERIFY(xmp->isValid());
-    QCOMPARE(xmp->entry(Metadata::Tag_Rating).toInt(),
+    QCOMPARE(xmp->entry(QuillMetadata::Tag_Rating).toInt(),
              5);
 }
 
 void ut_metadata::testCreator()
 {
     QVERIFY(xmp->isValid());
-    QCOMPARE(xmp->entry(Metadata::Tag_Creator).toString(),
+    QCOMPARE(xmp->entry(QuillMetadata::Tag_Creator).toString(),
              QString("John Q"));
 }
 
 void ut_metadata::testCityIptc()
 {
     QVERIFY(iptc->isValid());
-    QCOMPARE(iptc->entry(Metadata::Tag_City).toString(),
+    QCOMPARE(iptc->entry(QuillMetadata::Tag_City).toString(),
              QString("Tapiola"));
 }
 
 void ut_metadata::testCountryIptc()
 {
     QVERIFY(iptc->isValid());
-    QCOMPARE(iptc->entry(Metadata::Tag_Country).toString(),
+    QCOMPARE(iptc->entry(QuillMetadata::Tag_Country).toString(),
              QString("Finland"));
 }
 

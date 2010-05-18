@@ -38,12 +38,12 @@ for(OPTION,$$list($$lower($$COV_OPTION))){
 
 # --- input
 
-HEADERS += metadata.h \
+HEADERS += quillmetadata.h \
 
-SOURCES += metadata.cpp \
+SOURCES += quillmetadata.cpp \
 
-INSTALL_HEADERS = Metadata \
-                  metadata.h \
+INSTALL_HEADERS = QuillMetadata \
+                  quillmetadata.h \
 
 # --- install
 headers.files = $$INSTALL_HEADERS
