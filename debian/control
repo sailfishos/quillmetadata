@@ -1,4 +1,4 @@
-Source: quillmetadata
+Source: libquillmetadata
 Section: libs
 Priority: extra
 Maintainer: Pekka Marjola <Pekka.Marjola@nokia.com>
