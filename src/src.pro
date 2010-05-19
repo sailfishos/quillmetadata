@@ -5,15 +5,12 @@
 TEMPLATE = lib
 TARGET = quillmetadata
 # Please do not remove this INCLUDEPATH in any case
-#INCLUDEPATH += . $$[QT_INSTALL_HEADERS]/quillimagefilter
 DEPENDPATH += .
 
 DEFINES     +=
 MOC_DIR = .moc
 
 CONFIG += release
-
-#CONFIG += quillimagefilter
 
 LIBS += -lexif -lexempi
 # Generate pkg-config support by default
@@ -49,9 +46,9 @@ INSTALL_HEADERS = QuillMetadata \
 headers.files = $$INSTALL_HEADERS
 headers.path = $$[QT_INSTALL_HEADERS]/$$TARGET
 target.path = $$[QT_INSTALL_LIBS]
-pkgconfig.files = quill.pc
+pkgconfig.files = quillmetadata.pc
 pkgconfig.path = $$[QT_INSTALL_LIBS]/pkgconfig
-prf.files = quill.prf
+prf.files = quillmetadata.prf
 prf.path = $$[QMAKE_MKSPECS]/features
 INSTALLS += target headers pkgconfig prf
 
