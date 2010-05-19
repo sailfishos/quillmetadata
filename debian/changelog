@@ -1,3 +1,9 @@
+libquillmetadata (1.100519.2) unstable; urgency=low
+
+  * Initial release
+
+ -- Pekka Marjola <Pekka.Marjola@nokia.com>  Wed, 19 May 2010 11:45:00 +0200
+
 libquillmetadata (1.100519.1) unstable; urgency=low
 
   * Initial release
