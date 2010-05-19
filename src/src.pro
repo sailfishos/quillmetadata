@@ -45,12 +45,11 @@ INSTALL_HEADERS = QuillMetadata \
 headers.files = $$INSTALL_HEADERS
 headers.path = $$[QT_INSTALL_HEADERS]/$$TARGET
 target.path = $$[QT_INSTALL_LIBS]
-#pkgconfig.files = quillmetadata.pc
-#pkgconfig.path = $$[QT_INSTALL_LIBS]/pkgconfig
-#prf.files = quillmetadata.prf
-#prf.path = $$[QMAKE_MKSPECS]/features
-INSTALLS += target headers
-#pkgconfig prf
+pkgconfig.files = quillmetadata.pc
+pkgconfig.path = $$[QT_INSTALL_LIBS]/pkgconfig
+prf.files = quillmetadata.prf
+prf.path = $$[QMAKE_MKSPECS]/features
+INSTALLS += target headers pkgconfig prf
 
 
 QMAKE_CLEAN += *.gcov *.gcno *.log *.moc_* *.gcda
