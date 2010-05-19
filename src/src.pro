@@ -18,7 +18,6 @@ LIBS += -lexif -lexempi
 # mixes both of them together.
 CONFIG += create_pc create_prl no_install_prl
 
-#QMAKE_PKGCONFIG_REQUIRES = quillimagefilter QtGui
 QMAKE_PKGCONFIG_INCDIR = $$[QT_INSTALL_HEADERS]/$$TARGET
 QMAKE_PKGCONFIG_LIBDIR = $$[QT_INSTALL_LIBS]
 
