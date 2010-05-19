@@ -4,10 +4,7 @@
 
 TEMPLATE = lib
 TARGET = quillmetadata
-# Please do not remove this INCLUDEPATH in any case
-DEPENDPATH += .
 
-DEFINES     +=
 MOC_DIR = .moc
 
 CONFIG += release
@@ -17,7 +14,7 @@ LIBS += -lexif -lexempi
 # Note that we HAVE TO also create prl config as QMake implementation
 # mixes both of them together.
 CONFIG += create_pc create_prl no_install_prl
-
+QMAKE_PKGCONFIG_REQUIRES = QtGui
 QMAKE_PKGCONFIG_INCDIR = $$[QT_INSTALL_HEADERS]/$$TARGET
 QMAKE_PKGCONFIG_LIBDIR = $$[QT_INSTALL_LIBS]
 
@@ -49,6 +46,7 @@ pkgconfig.files = quillmetadata.pc
 pkgconfig.path = $$[QT_INSTALL_LIBS]/pkgconfig
 prf.files = quillmetadata.prf
 prf.path = $$[QMAKE_MKSPECS]/features
+#prf.path = $$[QT_INSTALL_DATA]/mkspecs/features
 INSTALLS += target headers pkgconfig prf
 
 
