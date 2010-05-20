@@ -15,7 +15,7 @@ Description: libquillmetadata library
 Package: libquillmetadata-dev
 Section: libdevel
 Architecture: all
-Depends: libquillmetadata (= ${binary:Version}),libqt4-dev,libexif-dev,libexempi-dev
+Depends: libquillmetadata1 (= ${binary:Version}),libqt4-dev,libexif-dev,libexempi-dev
 Description: libquilmetadatal development headers
 
 Package: libquillmetadata-doc
