@@ -1,3 +1,9 @@
+libquillmetadata (1.100520.0) unstable; urgency=low
+
+  * Fixed control file
+
+ -- Pekka Marjola <Pekka.Marjola@nokia.com>  Thu, 20 May 2010 08:30:00 +0200
+
 libquillmetadata (1.100519.4) unstable; urgency=low
 
   * Added prf file
