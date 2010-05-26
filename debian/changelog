@@ -1,3 +1,9 @@
+libquillmetadata (1.100526.0) unstable; urgency=low
+
+  * Tagged again to fix build problems.
+
+ -- Pekka Marjola <Pekka.Marjola@nokia.com>  Wed, 26 May 2010 14:45:00 +0200
+
 libquillmetadata (1.100520.0) unstable; urgency=low
 
   * Fixed control file
