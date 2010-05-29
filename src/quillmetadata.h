@@ -1,9 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Alexander Bokovoy <alexander.bokovoy@nokia.com>
 **
-** This file is part of the Quill package.
+** This file is part of the Quill Metadata package.
 **
 ** Commercial Usage
 ** Licensees holding valid Qt Commercial licenses may use this file in
@@ -67,7 +67,8 @@ class QuillMetadata
         Tag_Country,
         Tag_Location,
         Tag_Rating,
-        Tag_Timestamp
+        Tag_Timestamp,
+        Tag_Orientation
     };
 
  public:

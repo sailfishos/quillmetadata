@@ -187,6 +187,64 @@ void ut_metadata::testWriteCity()
              QString("Tapiola"));
 }
 
+void ut_metadata::testWriteCameraMake()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    metadata->writeAll(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Make).toString(),
+             QString("Quill"));
+}
+
+void ut_metadata::testEditCameraMake()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    QuillMetadata empty;
+    empty.setEntry(QuillMetadata::Tag_Make, QString("Quill"));
+    empty.writeAll(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Make).toString(),
+             QString("Quill"));
+}
+
+void ut_metadata::testEditOrientation()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    QuillMetadata empty;
+    empty.setEntry(QuillMetadata::Tag_Orientation, QVariant(7));
+    empty.writeAll(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Orientation).toInt(),
+             7);
+}
+
+void ut_metadata::testEditCity()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    QuillMetadata empty;
+    empty.setEntry(QuillMetadata::Tag_City, QString("Tapiola"));
+    empty.write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_City).toString(),
+             QString("Tapiola"));
+}
+
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );
     ut_metadata test;

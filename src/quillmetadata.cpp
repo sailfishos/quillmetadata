@@ -1,9 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Alexander Bokovoy <alexander.bokovoy@nokia.com>
 **
-** This file is part of the Quill package.
+** This file is part of the Quill Metadata package.
 **
 ** Commercial Usage
 ** Licensees holding valid Qt Commercial licenses may use this file in
@@ -36,8 +36,6 @@
 ** contact the sales department at qt-sales@nokia.com.
 **
 ****************************************************************************/
-
-#include <QDebug>
 
 #include "exif.h"
 #include "xmp.h"
@@ -87,9 +85,8 @@ QVariant QuillMetadata::entry(Tag tag) const
 
 void QuillMetadata::setEntry(Tag tag, const QVariant &entry)
 {
-    Q_UNUSED(tag);
-    Q_UNUSED(entry);
-    //    if (exif->supportsEntry(tag))
+    priv->exif->setEntry(tag, entry);
+    priv->xmp->setEntry(tag, entry);
 }
 
 bool QuillMetadata::write(const QString &fileName) const

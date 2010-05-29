@@ -45,6 +45,15 @@
 
 #include "metadatarepresentation.h"
 
+class ExifTypedTag {
+public:
+    ExifTypedTag();
+    ExifTypedTag(ExifTag tag, ExifFormat format);
+
+    ExifTag tag;
+    ExifFormat format;
+};
+
 class Exif : public MetadataRepresentation
 {
  public:
@@ -65,8 +74,10 @@ class Exif : public MetadataRepresentation
  private:
     void initTags();
 
+    void setExifEntry(ExifContent *content, ExifTypedTag tag, const QVariant &value);
+
  private:
-    static QHash<QuillMetadata::Tag,ExifTag> m_exifTags;
+    static QHash<QuillMetadata::Tag,ExifTypedTag> m_exifTags;
 
     ExifData *m_exifData;
     ExifByteOrder m_exifByteOrder;

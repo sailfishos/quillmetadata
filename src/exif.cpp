@@ -40,11 +40,22 @@
 #include "exifwriteback.h"
 #include "exif.h"
 
-QHash<QuillMetadata::Tag,ExifTag> Exif::m_exifTags;
+ExifTypedTag::ExifTypedTag()
+{
+}
+
+ExifTypedTag::ExifTypedTag(ExifTag tag, ExifFormat format) :
+    tag(tag), format(format)
+{
+}
+
+QHash<QuillMetadata::Tag,ExifTypedTag> Exif::m_exifTags;
 bool Exif::m_initialized = false;
 
 Exif::Exif()
 {
+    m_exifData = exif_data_new();
+    m_exifByteOrder = exif_data_get_byte_order(m_exifData);
 }
 
 Exif::Exif(const QString &fileName)
@@ -73,7 +84,7 @@ bool Exif::supportsEntry(QuillMetadata::Tag tag) const
 bool Exif::hasEntry(QuillMetadata::Tag tag) const
 {
     return (supportsEntry(tag) &&
-            exif_data_get_entry(m_exifData, m_exifTags[tag]));
+            exif_data_get_entry(m_exifData, m_exifTags[tag].tag));
 }
 
 QVariant Exif::entry(QuillMetadata::Tag tag) const
@@ -81,7 +92,7 @@ QVariant Exif::entry(QuillMetadata::Tag tag) const
     if (!supportsEntry(tag))
         return QVariant();
 
-    ExifTag exifTag = m_exifTags[tag];
+    ExifTag exifTag = m_exifTags[tag].tag;
 
     ExifEntry *entry = exif_data_get_entry(m_exifData, exifTag);
     if (!entry)
@@ -138,10 +149,47 @@ QVariant Exif::entry(QuillMetadata::Tag tag) const
     return result;
 }
 
-void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
+void Exif::setExifEntry(ExifContent *content, ExifTypedTag tag, const QVariant &value)
 {
-    Q_UNUSED(tag);
-    Q_UNUSED(entry);
+    ExifEntry *entry = exif_content_get_entry(content, tag.tag);
+    if (!entry) {
+        entry = exif_entry_new();
+        exif_entry_initialize(entry, tag.tag);
+    }
+
+    entry->tag = tag.tag;
+    entry->format = tag.format;
+
+    switch(entry->format) {
+    case EXIF_FORMAT_ASCII:
+        entry->data = new unsigned char[value.toByteArray().size()];
+        strcpy((char*)entry->data, value.toByteArray().constData());
+        entry->size = value.toByteArray().size();
+        entry->components = entry->size;
+        break;
+
+    case EXIF_FORMAT_SHORT:
+        entry->data = new unsigned char[exif_format_get_size(EXIF_FORMAT_SHORT)];
+        exif_set_short(entry->data, m_exifByteOrder, value.toInt());
+        entry->size = exif_format_get_size(EXIF_FORMAT_SHORT);
+        entry->components = 1;
+        break;
+
+    default:
+        break;
+    }
+
+    exif_content_add_entry(content, entry);
+}
+
+void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &value)
+{
+    if (!supportsEntry(tag))
+        return;
+
+    ExifTypedTag exifTag = m_exifTags[tag];
+
+    setExifEntry(m_exifData->ifd[EXIF_IFD_0], exifTag, value);
 }
 
 bool Exif::write(const QString &fileName) const
@@ -173,17 +221,27 @@ void Exif::initTags()
     m_initialized = true;
 
     m_exifTags.insert(QuillMetadata::Tag_Make,
-                      EXIF_TAG_MAKE);
+                      ExifTypedTag(EXIF_TAG_MAKE,
+                                   EXIF_FORMAT_ASCII));
     m_exifTags.insert(QuillMetadata::Tag_Model,
-                      EXIF_TAG_MODEL);
+                      ExifTypedTag(EXIF_TAG_MODEL,
+                                   EXIF_FORMAT_ASCII));
     m_exifTags.insert(QuillMetadata::Tag_ImageWidth,
-                      EXIF_TAG_IMAGE_WIDTH);
+                      ExifTypedTag(EXIF_TAG_IMAGE_WIDTH,
+                                   EXIF_FORMAT_SHORT));
     m_exifTags.insert(QuillMetadata::Tag_ImageHeight,
-                      EXIF_TAG_IMAGE_LENGTH);
+                      ExifTypedTag(EXIF_TAG_IMAGE_LENGTH,
+                                   EXIF_FORMAT_SHORT));
     m_exifTags.insert(QuillMetadata::Tag_FocalLength,
-                      EXIF_TAG_FOCAL_LENGTH);
+                      ExifTypedTag(EXIF_TAG_FOCAL_LENGTH,
+                                   EXIF_FORMAT_RATIONAL));
     m_exifTags.insert(QuillMetadata::Tag_ExposureTime,
-                      EXIF_TAG_EXPOSURE_TIME);
+                      ExifTypedTag(EXIF_TAG_EXPOSURE_TIME,
+                                   EXIF_FORMAT_RATIONAL));
     m_exifTags.insert(QuillMetadata::Tag_TimestampOriginal,
-                      EXIF_TAG_DATE_TIME_ORIGINAL);
+                      ExifTypedTag(EXIF_TAG_DATE_TIME_ORIGINAL,
+                                   EXIF_FORMAT_ASCII));
+    m_exifTags.insert(QuillMetadata::Tag_Orientation,
+                      ExifTypedTag(EXIF_TAG_ORIENTATION,
+                                   EXIF_FORMAT_SHORT));
 }

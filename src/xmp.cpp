@@ -135,8 +135,18 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 
 void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 {
-    Q_UNUSED(tag);
-    Q_UNUSED(entry);
+    if (!supportsEntry(tag))
+        return;
+
+    QList<XmpTag> xmpTags = m_xmpTags.values(tag);
+
+    foreach (XmpTag xmpTag, xmpTags) {
+        xmp_set_property(m_xmpPtr,
+                         xmpTag.schema.toAscii().constData(),
+                         xmpTag.tag.toAscii().constData(),
+                         entry.toByteArray().constData(),
+                         0);
+    }
 }
 
 bool Xmp::write(const QString &fileName) const
