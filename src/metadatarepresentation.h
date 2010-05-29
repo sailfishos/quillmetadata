@@ -37,50 +37,21 @@
 **
 ****************************************************************************/
 
-#include <QObject>
+#include "quillmetadata.h"
 
-#ifndef TEST_LIBQUILL_METADATA_H
-#define TEST_LIBQUILL_METADATA_H
+#ifndef METADATA_REPRESENTATION_H
+#define METADATA_REPRESENTATION_H
 
-class QuillMetadata;
+class MetadataRepresentation
+{
+    virtual bool isValid() const = 0;
 
-class ut_metadata : public QObject {
-Q_OBJECT
-public:
-    ut_metadata();
+    virtual bool supportsEntry(QuillMetadata::Tag tag) const = 0;
+    virtual bool hasEntry(QuillMetadata::Tag tag) const = 0;
+    virtual QVariant entry(QuillMetadata::Tag tag) const = 0;
+    virtual void setEntry(QuillMetadata::Tag tag, const QVariant &entry) = 0;
 
-private slots:
-    void init();
-    void cleanup();
-    void initTestCase();
-    void cleanupTestCase();
-
-    // Unit tests for metadata reading
-
-    void testCameraMake();
-    void testCameraModel();
-    void testImageWidth();
-    void testImageHeight();
-    void testFocalLength();
-    void testExposureTime();
-    void testTimestampOriginal();
-    void testSubject();
-    void testCity();
-    void testCountry();
-    void testRating();
-    void testCreator();
-    void testCityIptc();
-    void testCountryIptc();
-
-    // Unit tests for metadata writing
-
-    void testWriteSubject();
-    void testWriteCity();
-
-private:
-    QuillMetadata *metadata;
-    QuillMetadata *xmp;
-    QuillMetadata *iptc;
+    bool write(const QString &fileName) const;
 };
 
-#endif  // TEST_LIBQUILL_METADATA_H
+#endif

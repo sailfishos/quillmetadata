@@ -37,92 +37,41 @@
 **
 ****************************************************************************/
 
-#ifndef QUILL_METADATA_H
-#define QUILL_METADATA_H
+#ifndef EXIF_H
+#define EXIF_H
 
-#include <exempi-2.0/exempi/xmp.h>
+#include <libexif/exif-data.h>
 #include <QString>
-#include <QVariant>
 
-class QuillMetadataPrivate;
+#include "metadatarepresentation.h"
 
-class QuillMetadata
+class Exif : public MetadataRepresentation
 {
  public:
+    Exif();
+    Exif(const QString &fileName);
+    ~Exif();
 
-    enum Tag {
-        Tag_Make,
-        Tag_Model,
-        Tag_ImageWidth,
-        Tag_ImageHeight,
-        Tag_FocalLength,
-        Tag_ExposureTime,
-        Tag_TimestampOriginal,
-        Tag_Title,
-        Tag_Copyright,
-        Tag_Creator,
-        Tag_Keywords,
-        Tag_Subject,
-        Tag_City,
-        Tag_Country,
-        Tag_Location,
-        Tag_Rating,
-        Tag_Timestamp
-    };
-
- public:
-    /*!
-      Constructs an empty metadata object.
-     */
-    QuillMetadata();
-
-    /*!
-      Reads metadata from a given file.
-     */
-    QuillMetadata(const QString &fileName);
-    ~QuillMetadata();
-
-    /*!
-      Returns true if the metadata in the file was valid.
-     */
     bool isValid() const;
 
-    /*!
-      Returns the value of the metadata entry for a given tag.
-      Currently, only some tags are supported.
-     */
-    QVariant entry(Tag tag) const;
+    bool supportsEntry(QuillMetadata::Tag tag) const;
+    bool hasEntry(QuillMetadata::Tag tag) const;
+    QVariant entry(QuillMetadata::Tag tag) const;
+    void setEntry(QuillMetadata::Tag tag, const QVariant &entry);
 
-    /*!
-      Sets the value of the metadata entry for a given tag. Use
-      invalid QVariant to clear the entry. Currently, only some tags are
-      supported.
-     */
-    void setEntry(Tag tag, const QVariant &entry);
-
-    /*!
-      This function has been deprecated, please do not use.
-
-      Writes the metadata into an existing file. Writes XMP and
-      IPTC-IIM using libexempi, does not write EXIF data which should
-      be written at the start of the save by the save filter.
-    */
     bool write(const QString &fileName) const;
-
-    /*!
-      As libexif does not have a writeback feature, the EXIF block
-      is dumped into a byte array instead to be processed by the save filter.
-     */
-    QByteArray dumpExif() const;
-
-    /*!
-      Writes the metadata into an existing file, writes both XMP, IPTC-IIM
-      (transparently by exempi) and EXIF blocks.
-     */
-    bool writeAll(const QString &fileName) const;
+    QByteArray dump() const;
 
  private:
-    QuillMetadataPrivate *priv;
+    void initTags();
+
+ private:
+    static QHash<QuillMetadata::Tag,ExifTag> m_exifTags;
+
+    ExifData *m_exifData;
+    ExifByteOrder m_exifByteOrder;
+
+    static bool m_initialized;
 };
 
 #endif

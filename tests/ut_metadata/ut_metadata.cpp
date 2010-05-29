@@ -161,6 +161,31 @@ void ut_metadata::testCountryIptc()
              QString("Finland"));
 }
 
+void ut_metadata::testWriteSubject()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    xmp->write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Subject).toString(),
+             QString("test,quill"));
+}
+
+void ut_metadata::testWriteCity()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    xmp->write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_City).toString(),
+             QString("Tapiola"));
+}
 
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );

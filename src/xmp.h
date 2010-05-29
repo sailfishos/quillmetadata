@@ -1,9 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Alexander Bokovoy <alexander.bokovoy@nokia.com>
 **
-** This file is part of the Quill package.
+** This file is part of the Quill Metadata package.
 **
 ** Commercial Usage
 ** Licensees holding valid Qt Commercial licenses may use this file in
@@ -37,50 +37,46 @@
 **
 ****************************************************************************/
 
-#include <QObject>
+#ifndef XMP_H
+#define XMP_H
 
-#ifndef TEST_LIBQUILL_METADATA_H
-#define TEST_LIBQUILL_METADATA_H
+#include "metadatarepresentation.h"
 
-class QuillMetadata;
-
-class ut_metadata : public QObject {
-Q_OBJECT
+class XmpTag {
 public:
-    ut_metadata();
+    XmpTag();
+    XmpTag(const QString &schema, const QString &tag);
 
-private slots:
-    void init();
-    void cleanup();
-    void initTestCase();
-    void cleanupTestCase();
-
-    // Unit tests for metadata reading
-
-    void testCameraMake();
-    void testCameraModel();
-    void testImageWidth();
-    void testImageHeight();
-    void testFocalLength();
-    void testExposureTime();
-    void testTimestampOriginal();
-    void testSubject();
-    void testCity();
-    void testCountry();
-    void testRating();
-    void testCreator();
-    void testCityIptc();
-    void testCountryIptc();
-
-    // Unit tests for metadata writing
-
-    void testWriteSubject();
-    void testWriteCity();
-
-private:
-    QuillMetadata *metadata;
-    QuillMetadata *xmp;
-    QuillMetadata *iptc;
+    QString schema;
+    QString tag;
 };
 
-#endif  // TEST_LIBQUILL_METADATA_H
+class Xmp : public MetadataRepresentation
+{
+ public:
+
+    Xmp();
+    Xmp(const QString &fileName);
+    ~Xmp();
+
+    bool isValid() const;
+
+    bool supportsEntry(QuillMetadata::Tag tag) const;
+    bool hasEntry(QuillMetadata::Tag tag) const;
+    QVariant entry(QuillMetadata::Tag tag) const;
+    void setEntry(QuillMetadata::Tag tag, const QVariant &entry);
+
+    bool write(const QString &fileName) const;
+
+ private:
+    void initTags();
+
+ private:
+    static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
+
+    XmpPtr m_xmpPtr;
+
+    static bool m_initialized;
+};
+
+#endif

@@ -9,7 +9,7 @@ MOC_DIR = .moc
 
 CONFIG += release
 
-LIBS += -lexif -lexempi
+LIBS += -lexif -lexempi -ljpeg
 # Generate pkg-config support by default
 # Note that we HAVE TO also create prl config as QMake implementation
 # mixes both of them together.
@@ -32,8 +32,15 @@ for(OPTION,$$list($$lower($$COV_OPTION))){
 # --- input
 
 HEADERS += quillmetadata.h \
+           metadatarepresentation.h \
+           xmp.h \
+           exif.h \
+           exifwriteback.h
 
 SOURCES += quillmetadata.cpp \
+           xmp.cpp \
+           exif.cpp \
+           exifwriteback.cpp
 
 INSTALL_HEADERS = QuillMetadata \
                   quillmetadata.h \
