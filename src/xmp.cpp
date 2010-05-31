@@ -61,6 +61,7 @@ XmpTag::XmpTag(const QString &schema, const QString &tag) :
 
 Xmp::Xmp()
 {
+    m_xmpPtr = xmp_new_empty();
 }
 
 Xmp::Xmp(const QString &fileName)
@@ -144,8 +145,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
         xmp_set_property(m_xmpPtr,
                          xmpTag.schema.toAscii().constData(),
                          xmpTag.tag.toAscii().constData(),
-                         entry.toByteArray().constData(),
-                         0);
+                         entry.toByteArray().constData(), 0);
     }
 }
 
@@ -174,6 +174,9 @@ bool Xmp::write(const QString &fileName) const
 
 void Xmp::initTags()
 {
+    if (m_initialized)
+        return;
+
     m_initialized = true;
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
