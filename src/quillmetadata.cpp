@@ -89,6 +89,11 @@ void QuillMetadata::setEntry(Tag tag, const QVariant &entry)
     priv->xmp->setEntry(tag, entry);
 }
 
+void QuillMetadata::removeEntry(Tag tag)
+{
+    setEntry(tag, QVariant());
+}
+
 bool QuillMetadata::write(const QString &fileName) const
 {
     return priv->xmp->write(fileName);

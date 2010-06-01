@@ -51,23 +51,41 @@ class QuillMetadata
  public:
 
     enum Tag {
+        //! Camera make, string (EXIF)
         Tag_Make,
+        //! Camera model, string (EXIF)
         Tag_Model,
+        //! Image width, int (EXIF, deprecated)
         Tag_ImageWidth,
+        //! Image height, int (EXIF, deprecated)
         Tag_ImageHeight,
+        //! Camera focal length, float (EXIF)
         Tag_FocalLength,
+        //! Exposure time used, float (EXIF)
         Tag_ExposureTime,
+        //! Time when picture was taken, string (EXIF)
         Tag_TimestampOriginal,
+        //! Image title, string (XMP/DC)
         Tag_Title,
+        //! Not supported
         Tag_Copyright,
+        //! Creator of original image, string (XMP/DC)
         Tag_Creator,
+        //! Not supported, see Subject
         Tag_Keywords,
+        //! Subject, keywords or tags, string (XMP/DC)
         Tag_Subject,
+        //! City represented, string (XMP/IPTC or Photoshop)
         Tag_City,
+        //! Country represented, string (XMP/IPTC or Photoshop)
         Tag_Country,
+        //! Precise location represented, string (XMP/IPTC)
         Tag_Location,
+        //! Rating in stars (0-5), float (XMP/XAP)
         Tag_Rating,
+        //! Time of last modification, string (XMP/XAP)
         Tag_Timestamp,
+        //! Image orientation, short (EXIF)
         Tag_Orientation
     };
 
@@ -78,13 +96,19 @@ class QuillMetadata
     QuillMetadata();
 
     /*!
-      Reads metadata from a given file.
+      Constructs a metadata object containing all metadata from a given file.
+
+      @param filePath Local filesystem path to file to be read.
      */
-    QuillMetadata(const QString &fileName);
+    QuillMetadata(const QString &filePath);
+
+    /*!
+      Removes a metadata object.
+     */
     ~QuillMetadata();
 
     /*!
-      Returns true if the metadata in the file was valid.
+      Returns true if the metadata object is valid.
      */
     bool isValid() const;
 
@@ -102,25 +126,37 @@ class QuillMetadata
     void setEntry(Tag tag, const QVariant &entry);
 
     /*!
+      Removes an entry for a given tag. Currently, instead of removing,
+      overwrites the entry with an empty content.
+     */
+    void removeEntry(Tag tag);
+
+    /*!
       This function has been deprecated, please do not use.
 
       Writes the metadata into an existing file. Writes XMP and
       IPTC-IIM using libexempi, does not write EXIF data which should
-      be written at the start of the save by the save filter.
+      be written at the start of the save by the save filter. Any
+      existing metadata in the file will be lost by this overwrite.
+
+      @param filePath Local filesystem path to file to be written into.
     */
-    bool write(const QString &fileName) const;
+    bool write(const QString &filePath) const;
 
     /*!
-      As libexif does not have a writeback feature, the EXIF block
-      is dumped into a byte array instead to be processed by the save filter.
+      Dumps the EXIF block into a byte array so that it can be
+      inserted to a file by a file compression library.
      */
     QByteArray dumpExif() const;
 
     /*!
-      Writes the metadata into an existing file, writes both XMP, IPTC-IIM
-      (transparently by exempi) and EXIF blocks.
+      Writes the metadata object into an existing file, writes both
+      XMP, IPTC-IIM (transparently by exempi) and EXIF blocks. Any
+      existing metadata in the file will be lost by this overwrite.
+
+      @param filePath Local filesystem path to file to be written into.
      */
-    bool writeAll(const QString &fileName) const;
+    bool writeAll(const QString &filePath) const;
 
  private:
     QuillMetadataPrivate *priv;
