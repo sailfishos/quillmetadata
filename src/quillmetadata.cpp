@@ -94,17 +94,24 @@ void QuillMetadata::removeEntry(Tag tag)
     setEntry(tag, QVariant());
 }
 
-bool QuillMetadata::write(const QString &fileName) const
+bool QuillMetadata::write(const QString &fileName,
+                          MetadataFormatFlags formats) const
 {
-    return priv->xmp->write(fileName);
-}
-
-bool QuillMetadata::writeAll(const QString &fileName) const
-{
-    return priv->xmp->write(fileName) && priv->exif->write(fileName);
+    if (formats == XmpFormat)
+        return priv->xmp->write(fileName);
+    else
+        return priv->xmp->write(fileName) && priv->exif->write(fileName);
 }
 
 QByteArray QuillMetadata::dumpExif() const
 {
-    return priv->exif->dump();
+    return dump(ExifFormat);
+}
+
+QByteArray QuillMetadata::dump(MetadataFormatFlags formats) const
+{
+    if (formats == ExifFormat)
+        return priv->exif->dump();
+    else
+        return QByteArray();
 }

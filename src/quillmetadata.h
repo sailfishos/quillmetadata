@@ -89,6 +89,19 @@ class QuillMetadata
         Tag_Orientation
     };
 
+    /*!
+      These flags can be used to limit working to a given metadata format.
+     */
+
+    enum MetadataFormatFlags {
+        //! Operate on EXIF only
+        ExifFormat = 0x1,
+        //! Operate on XMP only
+        XmpFormat = 0x2,
+        //! Operate on all formats
+        AllFormats = ~1
+    };
+
  public:
     /*!
       Constructs an empty metadata object.
@@ -132,31 +145,36 @@ class QuillMetadata
     void removeEntry(Tag tag);
 
     /*!
-      This function has been deprecated, please do not use.
-
-      Writes the metadata into an existing file. Writes XMP and
-      IPTC-IIM using libexempi, does not write EXIF data which should
-      be written at the start of the save by the save filter. Any
-      existing metadata in the file will be lost by this overwrite.
-
-      @param filePath Local filesystem path to file to be written into.
-    */
-    bool write(const QString &filePath) const;
-
-    /*!
-      Dumps the EXIF block into a byte array so that it can be
-      inserted to a file by a file compression library.
-     */
-    QByteArray dumpExif() const;
-
-    /*!
       Writes the metadata object into an existing file, writes both
       XMP, IPTC-IIM (transparently by exempi) and EXIF blocks. Any
       existing metadata in the file will be lost by this overwrite.
 
       @param filePath Local filesystem path to file to be written into.
+
+      @param formats Which metadata formats to write. Currently,
+      only supports XmpFormat and AllFormats, ExifFormat will default to
+      AllFormats. XmpFormat and AllFormats include IPTC-IIM reconciliation.
      */
-    bool writeAll(const QString &filePath) const;
+    bool write(const QString &filePath,
+               MetadataFormatFlags formats = AllFormats) const;
+
+    /*!
+      Dumps the EXIF block into a byte array so that it can be
+      inserted to a file by a file compression library.
+
+      Warning: this is deprecated and will be removed, please use dump()
+      instead.
+     */
+    QByteArray dumpExif() const;
+
+    /*!
+      Dumps an EXIF or XMP block into a byte array.
+
+      @param formats Which metadata block to dump. Currently only
+      supports ExifFormat, other format flags will return an empty
+      byte array.
+     */
+    QByteArray dump(MetadataFormatFlags formats) const;
 
  private:
     QuillMetadataPrivate *priv;

@@ -192,7 +192,7 @@ void ut_metadata::testWriteCameraMake()
     QTemporaryFile file;
     file.open();
     QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
-    metadata->writeAll(file.fileName());
+    metadata->write(file.fileName());
 
     QuillMetadata writtenMetadata(file.fileName());
     QVERIFY(writtenMetadata.isValid());
@@ -207,7 +207,7 @@ void ut_metadata::testEditCameraMake()
     QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
     QuillMetadata empty;
     empty.setEntry(QuillMetadata::Tag_Make, QString("Quill"));
-    empty.writeAll(file.fileName());
+    empty.write(file.fileName());
 
     QuillMetadata writtenMetadata(file.fileName());
     QVERIFY(writtenMetadata.isValid());
@@ -222,7 +222,7 @@ void ut_metadata::testEditOrientation()
     QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
     QuillMetadata empty;
     empty.setEntry(QuillMetadata::Tag_Orientation, QVariant(7));
-    empty.writeAll(file.fileName());
+    empty.write(file.fileName());
 
     QuillMetadata writtenMetadata(file.fileName());
     QVERIFY(writtenMetadata.isValid());
