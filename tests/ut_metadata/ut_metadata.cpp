@@ -49,6 +49,8 @@ ut_metadata::ut_metadata()
 
 void ut_metadata::initTestCase()
 {
+    sourceImage = QImage(QSize(8, 2), QImage::Format_RGB32);
+    sourceImage.fill(qRgb(255, 255, 255));
 }
 
 void ut_metadata::cleanupTestCase()
@@ -174,7 +176,7 @@ void ut_metadata::testWriteSubject()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     xmp->write(file.fileName());
 
     QuillMetadata writtenMetadata(file.fileName());
@@ -189,7 +191,7 @@ void ut_metadata::testWriteCity()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     xmp->write(file.fileName());
 
     QuillMetadata writtenMetadata(file.fileName());
@@ -202,7 +204,7 @@ void ut_metadata::testWriteCameraMake()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     metadata->write(file.fileName());
 
     QuillMetadata writtenMetadata(file.fileName());
@@ -215,7 +217,7 @@ void ut_metadata::testWriteDescription()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     xmp->write(file.fileName());
 
     QuillMetadata writtenMetadata(file.fileName());
@@ -228,7 +230,7 @@ void ut_metadata::testEditCameraMake()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     QuillMetadata empty;
     empty.setEntry(QuillMetadata::Tag_Make, QString("Quill"));
     empty.write(file.fileName());
@@ -258,7 +260,7 @@ void ut_metadata::testEditCity()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     QuillMetadata empty;
     empty.setEntry(QuillMetadata::Tag_City, QString("Tapiola"));
     empty.write(file.fileName());
@@ -273,7 +275,7 @@ void ut_metadata::testEditKeywords()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     QuillMetadata empty;
     QStringList list;
     list << "aquarium" << "Neon Tetra" << "Paracheirodon innesi";
@@ -293,7 +295,7 @@ void ut_metadata::testDoubleEditKeywords()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     QuillMetadata empty;
     QStringList list, list2;
     list << "aquarium" << "Neon Tetra" << "Paracheirodon innesi";
@@ -315,7 +317,7 @@ void ut_metadata::testEditDescription()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     QuillMetadata empty;
     empty.setEntry(QuillMetadata::Tag_Description,
                    QString("Fish"));
@@ -323,8 +325,6 @@ void ut_metadata::testEditDescription()
 
     QuillMetadata writtenMetadata(file.fileName());
     QVERIFY(writtenMetadata.isValid());
-
-    //    qDebug() << 1 / (file.size()-file.size());
 
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Description).toString(),
              QString("Fish"));
