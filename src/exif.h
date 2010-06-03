@@ -37,62 +37,52 @@
 **
 ****************************************************************************/
 
-#include <QObject>
+#ifndef EXIF_H
+#define EXIF_H
 
-#ifndef TEST_LIBQUILL_METADATA_H
-#define TEST_LIBQUILL_METADATA_H
+#include <libexif/exif-data.h>
+#include <QString>
 
-class QuillMetadata;
+#include "metadatarepresentation.h"
 
-class ut_metadata : public QObject {
-Q_OBJECT
+class ExifTypedTag {
 public:
-    ut_metadata();
+    ExifTypedTag();
+    ExifTypedTag(ExifTag tag, ExifFormat format);
 
-private slots:
-    void init();
-    void cleanup();
-    void initTestCase();
-    void cleanupTestCase();
-
-    // Unit tests for metadata reading
-
-    void testCameraMake();
-    void testCameraModel();
-    void testImageWidth();
-    void testImageHeight();
-    void testFocalLength();
-    void testExposureTime();
-    void testTimestampOriginal();
-    void testSubject();
-    void testCity();
-    void testCountry();
-    void testRating();
-    void testCreator();
-    void testCityIptc();
-    void testCountryIptc();
-    void testDescription();
-
-    // Unit tests for metadata writing
-
-    void testWriteSubject();
-    void testWriteCity();
-    void testWriteCameraMake();
-    void testWriteDescription();
-
-    // Unit tests for metadata editing
-
-    void testEditCameraMake();
-    void testEditOrientation();
-    void testEditCity();
-    void testEditKeywords();
-    void testDoubleEditKeywords();
-    void testEditDescription();
-
-private:
-    QuillMetadata *metadata;
-    QuillMetadata *xmp;
-    QuillMetadata *iptc;
+    ExifTag tag;
+    ExifFormat format;
 };
 
-#endif  // TEST_LIBQUILL_METADATA_H
+class Exif : public MetadataRepresentation
+{
+ public:
+    Exif();
+    Exif(const QString &fileName);
+    ~Exif();
+
+    bool isValid() const;
+
+    bool supportsEntry(QuillMetadata::Tag tag) const;
+    bool hasEntry(QuillMetadata::Tag tag) const;
+    QVariant entry(QuillMetadata::Tag tag) const;
+    void setEntry(QuillMetadata::Tag tag, const QVariant &entry);
+
+    bool write(const QString &fileName) const;
+    QByteArray dump() const;
+
+ private:
+    void initTags();
+
+    void setExifEntry(ExifContent *content, ExifTypedTag tag, const QVariant &value);
+
+ private:
+    static QHash<QuillMetadata::Tag,ExifTypedTag> m_exifTags;
+
+    ExifData *m_exifData;
+    ExifByteOrder m_exifByteOrder;
+
+    static bool m_initialized;
+};
+
+#endif

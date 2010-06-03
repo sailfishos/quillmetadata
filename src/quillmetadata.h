@@ -1,9 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Alexander Bokovoy <alexander.bokovoy@nokia.com>
 **
-** This file is part of the Quill package.
+** This file is part of the Quill Metadata package.
 **
 ** Commercial Usage
 ** Licensees holding valid Qt Commercial licenses may use this file in
@@ -40,93 +40,146 @@
 #ifndef QUILL_METADATA_H
 #define QUILL_METADATA_H
 
-#include <libexif/exif-data.h>
 #include <exempi-2.0/exempi/xmp.h>
 #include <QString>
+#include <QVariant>
 
-class XmpTag {
-public:
-    XmpTag();
-    XmpTag(const QString &schema, const QString &tag);
-
-    QString schema;
-    QString tag;
-};
+class QuillMetadataPrivate;
 
 class QuillMetadata
 {
  public:
 
     enum Tag {
+        //! Camera make, string (EXIF)
         Tag_Make,
+        //! Camera model, string (EXIF)
         Tag_Model,
+        //! Image width, int (EXIF, deprecated)
         Tag_ImageWidth,
+        //! Image height, int (EXIF, deprecated)
         Tag_ImageHeight,
+        //! Camera focal length, float (EXIF)
         Tag_FocalLength,
+        //! Exposure time used, float (EXIF)
         Tag_ExposureTime,
+        //! Time when picture was taken, string (EXIF)
         Tag_TimestampOriginal,
+        //! Image title, string (XMP/DC)
         Tag_Title,
+        //! Not supported
         Tag_Copyright,
+        //! Creator of original image, string (XMP/DC)
         Tag_Creator,
+        //! Not supported, see Subject
         Tag_Keywords,
+        //! Subject, keywords or tags, string list (XMP/DC)
         Tag_Subject,
+        //! City represented, string (XMP/IPTC or Photoshop)
         Tag_City,
+        //! Country represented, string (XMP/IPTC or Photoshop)
         Tag_Country,
+        //! Precise location represented, string (XMP/IPTC)
         Tag_Location,
+        //! Rating in stars (0-5), float (XMP/XAP)
         Tag_Rating,
-        Tag_Timestamp
+        //! Time of last modification, string (XMP/XAP)
+        Tag_Timestamp,
+        //! Image orientation, short (EXIF)
+        Tag_Orientation,
+        //! Description, string (XMP/DC)
+        Tag_Description
+    };
+
+    /*!
+      These flags can be used to limit working to a given metadata format.
+     */
+
+    enum MetadataFormatFlags {
+        //! Operate on EXIF only
+        ExifFormat = 0x1,
+        //! Operate on XMP only
+        XmpFormat = 0x2,
+        //! Operate on all formats
+        AllFormats = ~1
     };
 
  public:
-    QuillMetadata(const QString &fileName);
+    /*!
+      Constructs an empty metadata object.
+     */
+    QuillMetadata();
+
+    /*!
+      Constructs a metadata object containing all metadata from a given file.
+
+      @param filePath Local filesystem path to file to be read.
+     */
+    QuillMetadata(const QString &filePath);
+
+    /*!
+      Removes a metadata object.
+     */
     ~QuillMetadata();
 
     /*!
-      Returns true if the metadata in the file was valid.
+      Returns true if the metadata object is valid.
      */
-    bool isValid();
+    bool isValid() const;
 
     /*!
       Returns the value of the metadata entry for a given tag.
-      Currently, only some tags are supported for testing purposes.
+      Currently, only some tags are supported.
      */
-    QVariant entry(Tag tag);
+    QVariant entry(Tag tag) const;
 
     /*!
-      Writes the metadata into an existing file. Writes XMP and
-      IPTC-IIM using libexempi, does not write EXIF data which should
-      be written at the start of the save by the save filter.
-    */
-    bool write(const QString &fileName);
+      Sets the value of the metadata entry for a given tag. Use
+      invalid QVariant to clear the entry. Currently, only some tags are
+      supported.
+     */
+    void setEntry(Tag tag, const QVariant &entry);
 
     /*!
-      As libexif does not have a writeback feature, the EXIF block
-      is dumped into a byte array instead to be processed by the save filter.
+      Removes an entry for a given tag. Currently, instead of removing,
+      overwrites the entry with an empty content.
      */
-    QByteArray dumpExif();
+    void removeEntry(Tag tag);
+
+    /*!
+      Writes the metadata object into an existing file, writes both
+      XMP, IPTC-IIM (transparently by exempi) and EXIF blocks. Any
+      existing metadata in the file will be lost by this overwrite.
+
+      @param filePath Local filesystem path to file to be written into.
+
+      @param formats Which metadata formats to write. Currently,
+      only supports XmpFormat and AllFormats, ExifFormat will default to
+      AllFormats. XmpFormat and AllFormats include IPTC-IIM reconciliation.
+     */
+    bool write(const QString &filePath,
+               MetadataFormatFlags formats = AllFormats) const;
+
+    /*!
+      Dumps the EXIF block into a byte array so that it can be
+      inserted to a file by a file compression library.
+
+      Warning: this is deprecated and will be removed, please use dump()
+      instead.
+     */
+    QByteArray dumpExif() const;
+
+    /*!
+      Dumps an EXIF or XMP block into a byte array.
+
+      @param formats Which metadata block to dump. Currently only
+      supports ExifFormat, other format flags will return an empty
+      byte array.
+     */
+    QByteArray dump(MetadataFormatFlags formats) const;
 
  private:
-
-    /*!
-      Initializes the internal tag list.
-     */
-
-    void initTags();
-
-    QVariant entryExif(Tag tag);
-    QVariant entryXmp(Tag tag);
-
-    bool writeXmp(const QString &fileName);
-
- private:
-    static QHash<Tag,ExifTag> m_exifTags;
-    static QHash<Tag,XmpTag> m_xmpTags;
-    static bool initialized;
-
-    ExifData *m_exifData;
-    ExifByteOrder m_exifByteOrder;
-
-    XmpPtr m_xmpPtr;
+    QuillMetadataPrivate *priv;
 };
 
 #endif

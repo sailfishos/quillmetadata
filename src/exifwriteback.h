@@ -1,9 +1,9 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Alexander Bokovoy <alexander.bokovoy@nokia.com>
 **
-** This file is part of the Quill package.
+** This file is part of the Quill Metadata package.
 **
 ** Commercial Usage
 ** Licensees holding valid Qt Commercial licenses may use this file in
@@ -37,62 +37,21 @@
 **
 ****************************************************************************/
 
-#include <QObject>
+#ifndef EXIF_WRITEBACK_H
+#define EXIF_WRITEBACK_H
 
-#ifndef TEST_LIBQUILL_METADATA_H
-#define TEST_LIBQUILL_METADATA_H
+#include <QString>
+#include <QByteArray>
 
-class QuillMetadata;
+class ExifWriteback
+{
+ public:
+    /*!
+      Replaces the exif segment of the file with a new one.
+     */
 
-class ut_metadata : public QObject {
-Q_OBJECT
-public:
-    ut_metadata();
-
-private slots:
-    void init();
-    void cleanup();
-    void initTestCase();
-    void cleanupTestCase();
-
-    // Unit tests for metadata reading
-
-    void testCameraMake();
-    void testCameraModel();
-    void testImageWidth();
-    void testImageHeight();
-    void testFocalLength();
-    void testExposureTime();
-    void testTimestampOriginal();
-    void testSubject();
-    void testCity();
-    void testCountry();
-    void testRating();
-    void testCreator();
-    void testCityIptc();
-    void testCountryIptc();
-    void testDescription();
-
-    // Unit tests for metadata writing
-
-    void testWriteSubject();
-    void testWriteCity();
-    void testWriteCameraMake();
-    void testWriteDescription();
-
-    // Unit tests for metadata editing
-
-    void testEditCameraMake();
-    void testEditOrientation();
-    void testEditCity();
-    void testEditKeywords();
-    void testDoubleEditKeywords();
-    void testEditDescription();
-
-private:
-    QuillMetadata *metadata;
-    QuillMetadata *xmp;
-    QuillMetadata *iptc;
+    static bool writeback(const QString &fileName,
+                          const QByteArray &exifSegment);
 };
 
-#endif  // TEST_LIBQUILL_METADATA_H
+#endif
