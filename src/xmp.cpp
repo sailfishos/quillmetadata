@@ -37,6 +37,7 @@
 **
 ****************************************************************************/
 
+#include <QStringList>
 #include <exempi-2.0/exempi/xmpconsts.h>
 
 #include "xmp.h"
@@ -54,8 +55,8 @@ XmpTag::XmpTag() : schema(""), tag("")
 {
 }
 
-XmpTag::XmpTag(const QString &schema, const QString &tag) :
-    schema(schema), tag(tag)
+XmpTag::XmpTag(const QString &schema, const QString &tag, TagType tagType) :
+    schema(schema), tag(tag), tagType(tagType)
 {
 }
 
@@ -123,9 +124,14 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                                    &propBits);
             }
             QString string = QString(xmp_string_cstr(xmpStringPtr)).trimmed();
+
             if (!string.isEmpty()) {
                 xmp_string_free(xmpStringPtr);
-                return QVariant(string);
+                // Unique nonstandard behavior for the Subject tag
+                if (tag == QuillMetadata::Tag_Subject)
+                    return QVariant(commaSeparatedToStringList(string));
+                else
+                    return QVariant(string);
             }
         }
     }
@@ -142,10 +148,29 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
     QList<XmpTag> xmpTags = m_xmpTags.values(tag);
 
     foreach (XmpTag xmpTag, xmpTags) {
-        xmp_set_property(m_xmpPtr,
-                         xmpTag.schema.toAscii().constData(),
-                         xmpTag.tag.toAscii().constData(),
-                         entry.toByteArray().constData(), 0);
+        xmp_delete_property(m_xmpPtr,
+                            xmpTag.schema.toAscii().constData(),
+                            xmpTag.tag.toAscii().constData());
+
+        if (xmpTag.tagType == XmpTag::TagTypeString)
+            xmp_set_property(m_xmpPtr,
+                             xmpTag.schema.toAscii().constData(),
+                             xmpTag.tag.toAscii().constData(),
+                             variantToXmpString(entry).constData(), 0);
+        else if (xmpTag.tagType == XmpTag::TagTypeStringList) {
+            xmp_append_array_item(m_xmpPtr,
+                                  xmpTag.schema.toAscii().constData(),
+                                  xmpTag.tag.toAscii().constData(),
+                                  XMP_PROP_ARRAY_IS_UNORDERED,
+                                  variantToXmpString(entry).constData(), 0);
+        }
+        else if (xmpTag.tagType == XmpTag::TagTypeAltLang) {
+            xmp_set_localized_text(m_xmpPtr,
+                                   xmpTag.schema.toAscii().constData(),
+                                   xmpTag.tag.toAscii().constData(),
+                                   "", "x-default",
+                                   variantToXmpString(entry).constData(), 0);
+        }
     }
 }
 
@@ -172,6 +197,31 @@ bool Xmp::write(const QString &fileName) const
     return result;
 }
 
+QStringList Xmp::commaSeparatedToStringList(const QString &inString)
+{
+    QStringList list = inString.split(",", QString::SkipEmptyParts);
+    QStringList result;
+
+    foreach (QString string, list)
+        result.append(string.trimmed());
+
+    return result;
+}
+
+QByteArray Xmp::variantToXmpString(const QVariant &variant)
+{
+    if (variant.type() != QVariant::StringList)
+        return variant.toByteArray();
+
+    QStringList list = variant.toStringList();
+    QString result;
+    foreach (QString string, list)
+        result.append(string + QLatin1String(", "));
+    result.truncate(result.length()-2);
+
+    return result.toAscii();
+}
+
 void Xmp::initTags()
 {
     if (m_initialized)
@@ -180,21 +230,23 @@ void Xmp::initTags()
     m_initialized = true;
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
-                          XmpTag(Schema_DC, "creator"));
+                          XmpTag(Schema_DC, "creator", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Subject,
-                          XmpTag(Schema_DC, "subject"));
+                          XmpTag(Schema_DC, "subject", XmpTag::TagTypeStringList));
     m_xmpTags.insertMulti(QuillMetadata::Tag_City,
-                          XmpTag(Schema_Photoshop, "City"));
+                          XmpTag(Schema_Photoshop, "City", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Country,
-                          XmpTag(Schema_Photoshop, "Country"));
+                          XmpTag(Schema_Photoshop, "Country", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_City,
-                          XmpTag(Schema_IPTC, "LocationShownCity"));
+                          XmpTag(Schema_IPTC, "LocationShownCity", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Country,
-                          XmpTag(Schema_IPTC, "LocationShownCountry"));
+                          XmpTag(Schema_IPTC, "LocationShownCountry", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Location,
-                          XmpTag(Schema_IPTC, "LocationShownSublocation"));
+                          XmpTag(Schema_IPTC, "LocationShownSublocation", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Rating,
-                          XmpTag(Schema_XAP, "Rating"));
+                          XmpTag(Schema_XAP, "Rating", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Timestamp,
-                          XmpTag(Schema_XAP, "MetadataDate"));
+                          XmpTag(Schema_XAP, "MetadataDate", XmpTag::TagTypeString));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_Description,
+                          XmpTag(Schema_DC, "description", XmpTag::TagTypeAltLang));
 }

@@ -44,11 +44,18 @@
 
 class XmpTag {
 public:
+    enum TagType {
+        TagTypeString,
+        TagTypeStringList,
+        TagTypeAltLang
+    };
+
     XmpTag();
-    XmpTag(const QString &schema, const QString &tag);
+    XmpTag(const QString &schema, const QString &tag, TagType tagType);
 
     QString schema;
     QString tag;
+    TagType tagType;
 };
 
 class Xmp : public MetadataRepresentation
@@ -70,6 +77,9 @@ class Xmp : public MetadataRepresentation
 
  private:
     void initTags();
+
+    static QStringList commaSeparatedToStringList(const QString &inString);
+    static QByteArray variantToXmpString(const QVariant &variant);
 
  private:
     static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;

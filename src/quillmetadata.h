@@ -73,7 +73,7 @@ class QuillMetadata
         Tag_Creator,
         //! Not supported, see Subject
         Tag_Keywords,
-        //! Subject, keywords or tags, string (XMP/DC)
+        //! Subject, keywords or tags, string list (XMP/DC)
         Tag_Subject,
         //! City represented, string (XMP/IPTC or Photoshop)
         Tag_City,
@@ -86,7 +86,9 @@ class QuillMetadata
         //! Time of last modification, string (XMP/XAP)
         Tag_Timestamp,
         //! Image orientation, short (EXIF)
-        Tag_Orientation
+        Tag_Orientation,
+        //! Description, string (XMP/DC)
+        Tag_Description
     };
 
     /*!

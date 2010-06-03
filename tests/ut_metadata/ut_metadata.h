@@ -71,18 +71,23 @@ private slots:
     void testCreator();
     void testCityIptc();
     void testCountryIptc();
+    void testDescription();
 
     // Unit tests for metadata writing
 
     void testWriteSubject();
     void testWriteCity();
     void testWriteCameraMake();
+    void testWriteDescription();
 
     // Unit tests for metadata editing
 
     void testEditCameraMake();
     void testEditOrientation();
     void testEditCity();
+    void testEditKeywords();
+    void testDoubleEditKeywords();
+    void testEditDescription();
 
 private:
     QuillMetadata *metadata;

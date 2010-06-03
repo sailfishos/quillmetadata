@@ -115,8 +115,10 @@ void ut_metadata::testTimestampOriginal()
 void ut_metadata::testSubject()
 {
     QVERIFY(xmp->isValid());
-    QCOMPARE(xmp->entry(QuillMetadata::Tag_Subject).toString(),
-             QString("test,quill"));
+    QStringList reference;
+    reference << "test" << "quill";
+    QCOMPARE(xmp->entry(QuillMetadata::Tag_Subject).toStringList(),
+             reference);
 }
 
 void ut_metadata::testCity()
@@ -147,6 +149,13 @@ void ut_metadata::testCreator()
              QString("John Q"));
 }
 
+void ut_metadata::testDescription()
+{
+    QVERIFY(xmp->isValid());
+    QCOMPARE(xmp->entry(QuillMetadata::Tag_Description).toString(),
+             QString("Snowman warming up"));
+}
+
 void ut_metadata::testCityIptc()
 {
     QVERIFY(iptc->isValid());
@@ -170,8 +179,10 @@ void ut_metadata::testWriteSubject()
 
     QuillMetadata writtenMetadata(file.fileName());
     QVERIFY(writtenMetadata.isValid());
-    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Subject).toString(),
-             QString("test,quill"));
+    QStringList reference;
+    reference << "test" << "quill";
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Subject).toStringList(),
+             reference);
 }
 
 void ut_metadata::testWriteCity()
@@ -198,6 +209,19 @@ void ut_metadata::testWriteCameraMake()
     QVERIFY(writtenMetadata.isValid());
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Make).toString(),
              QString("Quill"));
+}
+
+void ut_metadata::testWriteDescription()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    xmp->write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Description).toString(),
+             QString("Snowman warming up"));
 }
 
 void ut_metadata::testEditCameraMake()
@@ -243,6 +267,67 @@ void ut_metadata::testEditCity()
     QVERIFY(writtenMetadata.isValid());
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_City).toString(),
              QString("Tapiola"));
+}
+
+void ut_metadata::testEditKeywords()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    QuillMetadata empty;
+    QStringList list;
+    list << "aquarium" << "Neon Tetra" << "Paracheirodon innesi";
+
+    empty.setEntry(QuillMetadata::Tag_Subject, list);
+    empty.write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+
+    QStringList resultList =
+        writtenMetadata.entry(QuillMetadata::Tag_Subject).toStringList();
+    QCOMPARE(resultList, list);
+}
+
+void ut_metadata::testDoubleEditKeywords()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    QuillMetadata empty;
+    QStringList list, list2;
+    list << "aquarium" << "Neon Tetra" << "Paracheirodon innesi";
+    list2 << "aquarium" << "Colombian Tetra" << "Hyphessobrycon columbianus";
+
+    empty.setEntry(QuillMetadata::Tag_Subject, list);
+    empty.setEntry(QuillMetadata::Tag_Subject, list2);
+    empty.write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+
+    QStringList resultList =
+        writtenMetadata.entry(QuillMetadata::Tag_Subject).toStringList();
+    QCOMPARE(resultList, list2);
+}
+
+void ut_metadata::testEditDescription()
+{
+    QTemporaryFile file;
+    file.open();
+    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    QuillMetadata empty;
+    empty.setEntry(QuillMetadata::Tag_Description,
+                   QString("Fish"));
+    QVERIFY(empty.write(file.fileName()));
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+
+    //    qDebug() << 1 / (file.size()-file.size());
+
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Description).toString(),
+             QString("Fish"));
 }
 
 int main ( int argc, char *argv[] ){
