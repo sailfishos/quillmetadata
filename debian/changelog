@@ -1,3 +1,12 @@
+libquillmetadata (1.100603.0) unstable; urgency=low
+  * API improvements
+  * EXIF writeback
+  * XMP stringlist and alternative language tag handling
+  * Implemented: SWP#HImag-2104
+  * Implemented: SWP#HImag-2105
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Thu, 03 Jun 2010 12:55:00 +0200
+
 libquillmetadata (1.100526.0) unstable; urgency=low
 
   * Tagged again to fix build problems.
