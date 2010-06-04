@@ -103,11 +103,11 @@ bool ExifWriteback::writeback(const QString &fileName,
                                   (const JOCTET*)exifSegment.constData(),
                                   exifSegment.size());
 
-            for (jpeg_marker_struct *s=dinfo.marker_list; s!=NULL; s=s->next) {
+            /*            for (jpeg_marker_struct *s=dinfo.marker_list; s!=NULL; s=s->next) {
                 if ((s->marker != JPEG_APP0) && (s->marker != JPEG_APP0+1))
                     jpeg_write_marker(&cinfo, s->marker,
-                                      s->data, s->data_length);
-            }
+                    s->data, s->data_length);
+                    }*/
 
             jpeg_finish_compress(&cinfo);
         }

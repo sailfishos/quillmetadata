@@ -145,6 +145,10 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
     if (!supportsEntry(tag))
         return;
 
+    if (!m_xmpPtr) {
+        m_xmpPtr = xmp_new_empty();
+    }
+
     QList<XmpTag> xmpTags = m_xmpTags.values(tag);
 
     foreach (XmpTag xmpTag, xmpTags) {
@@ -174,17 +178,21 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
     }
 }
 
+#include <QDebug>
+
 bool Xmp::write(const QString &fileName) const
 {
-    if (!m_xmpPtr)
-        return true;
+    XmpPtr ptr = m_xmpPtr;
+
+    if (!ptr)
+        ptr = xmp_new_empty();
 
     XmpFilePtr xmpFilePtr = xmp_files_open_new(fileName.toAscii().constData(),
                                                XMP_OPEN_FORUPDATE);
     bool result;
 
-    if (xmp_files_can_put_xmp(xmpFilePtr, m_xmpPtr))
-        result = xmp_files_put_xmp(xmpFilePtr, m_xmpPtr);
+    if (xmp_files_can_put_xmp(xmpFilePtr, ptr))
+        result = xmp_files_put_xmp(xmpFilePtr, ptr);
     else
         result = false;
 
@@ -249,4 +257,6 @@ void Xmp::initTags()
                           XmpTag(Schema_XAP, "MetadataDate", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Description,
                           XmpTag(Schema_DC, "description", XmpTag::TagTypeAltLang));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_Orientation,
+                          XmpTag(Schema_Exif, "Orientation", XmpTag::TagTypeString));
 }

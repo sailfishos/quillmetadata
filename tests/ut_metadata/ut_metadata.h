@@ -38,6 +38,7 @@
 ****************************************************************************/
 
 #include <QObject>
+#include <QImage>
 
 #ifndef TEST_LIBQUILL_METADATA_H
 #define TEST_LIBQUILL_METADATA_H
@@ -89,7 +90,12 @@ private slots:
     void testDoubleEditKeywords();
     void testEditDescription();
 
+    void testCrossEdit();
+    void testCrossEdit2();
+
 private:
+    QImage sourceImage;
+
     QuillMetadata *metadata;
     QuillMetadata *xmp;
     QuillMetadata *iptc;
