@@ -92,6 +92,9 @@ QVariant Exif::entry(QuillMetadata::Tag tag) const
     if (!supportsEntry(tag))
         return QVariant();
 
+    if (!m_exifData)
+        return QVariant();
+
     ExifTag exifTag = m_exifTags[tag].tag;
 
     ExifEntry *entry = exif_data_get_entry(m_exifData, exifTag);
@@ -186,6 +189,11 @@ void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &value)
 {
     if (!supportsEntry(tag))
         return;
+
+    if (!m_exifData) {
+        m_exifData = exif_data_new();
+        m_exifByteOrder = exif_data_get_byte_order(m_exifData);
+    }
 
     ExifTypedTag exifTag = m_exifTags[tag];
 

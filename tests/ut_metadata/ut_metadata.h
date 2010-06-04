@@ -90,6 +90,9 @@ private slots:
     void testDoubleEditKeywords();
     void testEditDescription();
 
+    void testCrossEdit();
+    void testCrossEdit2();
+
 private:
     QImage sourceImage;
 

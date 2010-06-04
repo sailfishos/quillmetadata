@@ -100,7 +100,7 @@ bool QuillMetadata::write(const QString &fileName,
     if (formats == XmpFormat)
         return priv->xmp->write(fileName);
     else
-        return priv->xmp->write(fileName) && priv->exif->write(fileName);
+        return priv->exif->write(fileName) && priv->xmp->write(fileName);
 }
 
 QByteArray QuillMetadata::dumpExif() const

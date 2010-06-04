@@ -245,15 +245,15 @@ void ut_metadata::testEditOrientation()
 {
     QTemporaryFile file;
     file.open();
-    QImage(QSize(1, 1), QImage::Format_RGB32).save(file.fileName(), "jpg");
+    sourceImage.save(file.fileName(), "jpg");
     QuillMetadata empty;
     empty.setEntry(QuillMetadata::Tag_Orientation, QVariant(7));
-    empty.write(file.fileName());
+    QVERIFY(empty.write(file.fileName()));
 
     QuillMetadata writtenMetadata(file.fileName());
     QVERIFY(writtenMetadata.isValid());
-    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Orientation).toInt(),
-             7);
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Orientation).toString(),
+             QString("7"));
 }
 
 void ut_metadata::testEditCity()
@@ -328,6 +328,46 @@ void ut_metadata::testEditDescription()
 
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Description).toString(),
              QString("Fish"));
+}
+
+void ut_metadata::testCrossEdit()
+{
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+    metadata->write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+
+    writtenMetadata.setEntry(QuillMetadata::Tag_Creator, QString("John Quill"));
+    QVERIFY(writtenMetadata.write(file.fileName()));
+
+    QuillMetadata writtenMetadata2(file.fileName());
+    QVERIFY(writtenMetadata2.isValid());
+
+    QCOMPARE(writtenMetadata2.entry(QuillMetadata::Tag_Creator).toString(),
+             QString("John Quill"));
+}
+
+void ut_metadata::testCrossEdit2()
+{
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+    xmp->write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+
+    writtenMetadata.setEntry(QuillMetadata::Tag_Make, QString("Quill"));
+    QVERIFY(writtenMetadata.write(file.fileName()));
+
+    QuillMetadata writtenMetadata2(file.fileName());
+    QVERIFY(writtenMetadata2.isValid());
+
+    QCOMPARE(writtenMetadata2.entry(QuillMetadata::Tag_Make).toString(),
+             QString("Quill"));
 }
 
 int main ( int argc, char *argv[] ){
