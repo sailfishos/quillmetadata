@@ -1,3 +1,8 @@
+libquillmetadata (1.100614.0) unstable; urgency=low
+  * Fixes: NB#174314 Add an API file to the source package of the ImageEditingOperations interface
+
+ -- Wenpeng Zhou <ext-wenpeng.2.zhou@nokia.com>  Mon, 14 Jun 2010 12:35:00 +0200
+
 libquillmetadata (1.100604.0) unstable; urgency=low
   * Adapting changes to MeeGo environment
 
