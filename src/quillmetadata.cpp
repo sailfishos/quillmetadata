@@ -46,10 +46,19 @@ class QuillMetadataPrivate
 public:
     Xmp *xmp;
     Exif *exif;
+
+    static bool m_initialized;
+    static QMap<QuillMetadata::TagGroup, QList<QuillMetadata::Tag> >
+      m_tagGroups;
 };
+
+bool QuillMetadataPrivate::m_initialized = false;
+QMap<QuillMetadata::TagGroup, QList<QuillMetadata::Tag> >
+  QuillMetadataPrivate::m_tagGroups;
 
 QuillMetadata::QuillMetadata()
 {
+    init();
     priv = new QuillMetadataPrivate;
     priv->xmp = new Xmp();
     priv->exif = new Exif();
@@ -94,6 +103,17 @@ void QuillMetadata::removeEntry(Tag tag)
     setEntry(tag, QVariant());
 }
 
+void QuillMetadata::removeEntries(const QList<Tag> &tags)
+{
+    foreach(Tag tag, tags)
+        removeEntry(tag);
+}
+
+void QuillMetadata::removeEntries(TagGroup tagGroup)
+{
+    removeEntries(QuillMetadataPrivate::m_tagGroups.value(tagGroup));
+}
+
 bool QuillMetadata::write(const QString &fileName,
                           MetadataFormatFlags formats) const
 {
@@ -114,4 +134,18 @@ QByteArray QuillMetadata::dump(MetadataFormatFlags formats) const
         return priv->exif->dump();
     else
         return QByteArray();
+}
+
+void QuillMetadata::init()
+{
+    if (QuillMetadataPrivate::m_initialized)
+        return;
+
+    QuillMetadataPrivate::m_initialized = true;
+
+    QuillMetadataPrivate::m_tagGroups.insert(TagGroup_GPS,
+                                             QList<QuillMetadata::Tag>() <<
+                                             QuillMetadata::Tag_GPSLatitude <<
+                                             QuillMetadata::Tag_GPSLongitude <<
+                                             QuillMetadata::Tag_GPSAltitude);
 }

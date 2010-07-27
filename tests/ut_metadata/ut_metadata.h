@@ -93,12 +93,19 @@ private slots:
     void testCrossEdit();
     void testCrossEdit2();
 
+    // GPS metadata unittests
+
+    void testGps();
+    void testWriteGps();
+    void testClearGps();
+
 private:
     QImage sourceImage;
 
     QuillMetadata *metadata;
     QuillMetadata *xmp;
     QuillMetadata *iptc;
+    QuillMetadata *gps;
 };
 
 #endif  // TEST_LIBQUILL_METADATA_H

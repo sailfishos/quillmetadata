@@ -44,8 +44,14 @@ ExifTypedTag::ExifTypedTag()
 {
 }
 
-ExifTypedTag::ExifTypedTag(ExifTag tag, ExifFormat format) :
-    tag(tag), format(format)
+ExifTypedTag::ExifTypedTag(ExifTag tag, ExifIfd ifd, ExifFormat format) :
+    tag(tag), ifd(ifd), format(format), count(1)
+{
+}
+
+ExifTypedTag::ExifTypedTag(ExifTag tag, ExifIfd ifd, ExifFormat format,
+                           int count) :
+    tag(tag), ifd(ifd), format(format), count(count)
 {
 }
 
@@ -152,8 +158,10 @@ QVariant Exif::entry(QuillMetadata::Tag tag) const
     return result;
 }
 
-void Exif::setExifEntry(ExifContent *content, ExifTypedTag tag, const QVariant &value)
+void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 {
+    ExifContent *content = data->ifd[tag.ifd];
+
     ExifEntry *entry = exif_content_get_entry(content, tag.tag);
     if (!entry) {
         entry = exif_entry_new();
@@ -195,9 +203,7 @@ void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &value)
         m_exifByteOrder = exif_data_get_byte_order(m_exifData);
     }
 
-    ExifTypedTag exifTag = m_exifTags[tag];
-
-    setExifEntry(m_exifData->ifd[EXIF_IFD_0], exifTag, value);
+    setExifEntry(m_exifData, m_exifTags[tag], value);
 }
 
 bool Exif::write(const QString &fileName) const
@@ -230,26 +236,34 @@ void Exif::initTags()
 
     m_exifTags.insert(QuillMetadata::Tag_Make,
                       ExifTypedTag(EXIF_TAG_MAKE,
+                                   EXIF_IFD_0,
                                    EXIF_FORMAT_ASCII));
     m_exifTags.insert(QuillMetadata::Tag_Model,
                       ExifTypedTag(EXIF_TAG_MODEL,
+                                   EXIF_IFD_0,
                                    EXIF_FORMAT_ASCII));
     m_exifTags.insert(QuillMetadata::Tag_ImageWidth,
                       ExifTypedTag(EXIF_TAG_IMAGE_WIDTH,
+                                   EXIF_IFD_0,
                                    EXIF_FORMAT_SHORT));
     m_exifTags.insert(QuillMetadata::Tag_ImageHeight,
                       ExifTypedTag(EXIF_TAG_IMAGE_LENGTH,
+                                   EXIF_IFD_0,
                                    EXIF_FORMAT_SHORT));
     m_exifTags.insert(QuillMetadata::Tag_FocalLength,
                       ExifTypedTag(EXIF_TAG_FOCAL_LENGTH,
+                                   EXIF_IFD_0,
                                    EXIF_FORMAT_RATIONAL));
     m_exifTags.insert(QuillMetadata::Tag_ExposureTime,
                       ExifTypedTag(EXIF_TAG_EXPOSURE_TIME,
+                                   EXIF_IFD_0,
                                    EXIF_FORMAT_RATIONAL));
     m_exifTags.insert(QuillMetadata::Tag_TimestampOriginal,
                       ExifTypedTag(EXIF_TAG_DATE_TIME_ORIGINAL,
+                                   EXIF_IFD_0,
                                    EXIF_FORMAT_ASCII));
     m_exifTags.insert(QuillMetadata::Tag_Orientation,
                       ExifTypedTag(EXIF_TAG_ORIENTATION,
+                                   EXIF_IFD_0,
                                    EXIF_FORMAT_SHORT));
 }

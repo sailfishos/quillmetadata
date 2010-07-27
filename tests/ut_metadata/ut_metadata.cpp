@@ -62,6 +62,7 @@ void ut_metadata::init()
     metadata = new QuillMetadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
     xmp = new QuillMetadata("/usr/share/libquillmetadata-tests/images/xmp.jpg");
     iptc = new QuillMetadata("/usr/share/libquillmetadata-tests/images/iptc.jpg");
+    gps = new QuillMetadata("/usr/share/libquillmetadata-tests/images/gps.jpg");
 }
 
 void ut_metadata::cleanup()
@@ -69,6 +70,7 @@ void ut_metadata::cleanup()
     delete metadata;
     delete xmp;
     delete iptc;
+    delete gps;
 }
 
 void ut_metadata::testCameraMake()
@@ -368,6 +370,51 @@ void ut_metadata::testCrossEdit2()
 
     QCOMPARE(writtenMetadata2.entry(QuillMetadata::Tag_Make).toString(),
              QString("Quill"));
+}
+
+void ut_metadata::testGps()
+{
+    QVERIFY(gps->isValid());
+    QCOMPARE(gps->entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("65,0,0N"));
+    QCOMPARE(gps->entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("30,0,0E"));
+    QCOMPARE(gps->entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("85/1"));
+}
+
+void ut_metadata::testWriteGps()
+{
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+    gps->write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("65,0,0N"));
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("30,0,0E"));
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("85/1"));
+}
+
+void ut_metadata::testClearGps()
+{
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+
+    QuillMetadata gps("/usr/share/libquillmetadata-tests/images/gps.jpg");
+    gps.removeEntries(QuillMetadata::TagGroup_GPS);
+    QVERIFY(gps.write(file.fileName()));
+
+    QCOMPARE(gps.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString());
+    QCOMPARE(gps.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString());
+    QCOMPARE(gps.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString(""));
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString(""));
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString(""));
 }
 
 int main ( int argc, char *argv[] ){

@@ -79,7 +79,7 @@ class QuillMetadata
         Tag_City,
         //! Country represented, string (XMP/IPTC or Photoshop)
         Tag_Country,
-        //! Precise location represented, string (XMP/IPTC)
+        //! Precise location (landmark or address), string (XMP/IPTC)
         Tag_Location,
         //! Rating in stars (0-5), float (XMP/XAP)
         Tag_Rating,
@@ -88,7 +88,20 @@ class QuillMetadata
         //! Image orientation, short (EXIF)
         Tag_Orientation,
         //! Description, string (XMP/DC)
-        Tag_Description
+        Tag_Description,
+        //! GPS latitude, string (XMP/EXIF)
+        Tag_GPSLatitude,
+        //! GPS longitude, string (XMP/EXIF)
+        Tag_GPSLongitude,
+        //! GPS altitude, string (XMP/EXIF)
+        Tag_GPSAltitude,
+    };
+
+    enum TagGroup {
+        //! All defined tags
+        TagGroup_All = 0,
+        //! GPS tags
+        TagGroup_GPS
     };
 
     /*!
@@ -147,6 +160,20 @@ class QuillMetadata
     void removeEntry(Tag tag);
 
     /*!
+      Removes a list of entries.
+      Currently, instead of removing, overwrites the entry with an empty
+      content.
+     */
+    void removeEntries(const QList<Tag> &tags);
+
+    /*!
+      Removes a preset group of entries.
+      Currently, instead of removing, overwrites the entry with an empty
+      content.
+     */
+    void removeEntries(TagGroup tagGroup);
+
+    /*!
       Writes the metadata object into an existing file, writes both
       XMP, IPTC-IIM (transparently by exempi) and EXIF blocks. Any
       existing metadata in the file will be lost by this overwrite.
@@ -177,6 +204,9 @@ class QuillMetadata
       byte array.
      */
     QByteArray dump(MetadataFormatFlags formats) const;
+
+ private:
+    void init();
 
  private:
     QuillMetadataPrivate *priv;

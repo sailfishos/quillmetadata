@@ -48,10 +48,13 @@
 class ExifTypedTag {
 public:
     ExifTypedTag();
-    ExifTypedTag(ExifTag tag, ExifFormat format);
+    ExifTypedTag(ExifTag tag, ExifIfd ifd, ExifFormat format);
+    ExifTypedTag(ExifTag tag, ExifIfd ifd, ExifFormat format, int count);
 
     ExifTag tag;
+    ExifIfd ifd;
     ExifFormat format;
+    int count;
 };
 
 class Exif : public MetadataRepresentation
@@ -74,7 +77,7 @@ class Exif : public MetadataRepresentation
  private:
     void initTags();
 
-    void setExifEntry(ExifContent *content, ExifTypedTag tag, const QVariant &value);
+    void setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value);
 
  private:
     static QHash<QuillMetadata::Tag,ExifTypedTag> m_exifTags;
