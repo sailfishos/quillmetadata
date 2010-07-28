@@ -98,6 +98,11 @@ bool Xmp::hasEntry(QuillMetadata::Tag tag) const
             !m_xmpTags.values(tag).isEmpty());
 }
 
+QString Xmp::processXmpString(XmpStringPtr xmpString)
+{
+    return QString(xmp_string_cstr(xmpString)).trimmed();
+}
+
 QVariant Xmp::entry(QuillMetadata::Tag tag) const
 {
     if (!supportsEntry(tag))
@@ -116,27 +121,35 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                              xmpStringPtr,
                              &propBits)) {
             if (XMP_IS_PROP_ARRAY(propBits)) {
-                xmp_get_array_item(m_xmpPtr,
-                                   xmpTag.schema.toAscii().constData(),
-                                   xmpTag.tag.toAscii().constData(),
-                                   1,
-                                   xmpStringPtr,
-                                   &propBits);
-            }
-            QString string = QString(xmp_string_cstr(xmpStringPtr)).trimmed();
+                QStringList list;
+                int i = 1;
+                while (xmp_get_array_item(m_xmpPtr,
+                                          xmpTag.schema.toAscii().constData(),
+                                          xmpTag.tag.toAscii().constData(),
+                                          i,
+                                          xmpStringPtr,
+                                          &propBits)) {
+                    QString string = processXmpString(xmpStringPtr);
+                    if (!string.isEmpty())
+                        list << string;
+                    i++;
+                }
 
-            if (!string.isEmpty()) {
-                xmp_string_free(xmpStringPtr);
-                // Unique nonstandard behavior for the Subject tag
-                if (tag == QuillMetadata::Tag_Subject)
-                    return QVariant(commaSeparatedToStringList(string));
-                else
+                if (!list.isEmpty()) {
+                    xmp_string_free(xmpStringPtr);
+                    return QVariant(list);
+                }
+            }
+            else {
+                QString string = processXmpString(xmpStringPtr);
+
+                if (!string.isEmpty()) {
+                    xmp_string_free(xmpStringPtr);
                     return QVariant(string);
+                }
             }
         }
     }
-
-    xmp_string_free(xmpStringPtr);
     return QVariant();
 }
 
@@ -160,25 +173,25 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
             xmp_set_property(m_xmpPtr,
                              xmpTag.schema.toAscii().constData(),
                              xmpTag.tag.toAscii().constData(),
-                             variantToXmpString(entry).constData(), 0);
+                             entry.toByteArray().constData(), 0);
         else if (xmpTag.tagType == XmpTag::TagTypeStringList) {
-            xmp_append_array_item(m_xmpPtr,
-                                  xmpTag.schema.toAscii().constData(),
-                                  xmpTag.tag.toAscii().constData(),
-                                  XMP_PROP_ARRAY_IS_UNORDERED,
-                                  variantToXmpString(entry).constData(), 0);
+            QStringList list = entry.toStringList();
+            foreach (QString string, list)
+                xmp_append_array_item(m_xmpPtr,
+                                      xmpTag.schema.toAscii().constData(),
+                                      xmpTag.tag.toAscii().constData(),
+                                      XMP_PROP_ARRAY_IS_UNORDERED,
+                                      string.toAscii().constData(), 0);
         }
         else if (xmpTag.tagType == XmpTag::TagTypeAltLang) {
             xmp_set_localized_text(m_xmpPtr,
                                    xmpTag.schema.toAscii().constData(),
                                    xmpTag.tag.toAscii().constData(),
                                    "", "x-default",
-                                   variantToXmpString(entry).constData(), 0);
+                                   entry.toByteArray().constData(), 0);
         }
     }
 }
-
-#include <QDebug>
 
 bool Xmp::write(const QString &fileName) const
 {
@@ -203,31 +216,6 @@ bool Xmp::write(const QString &fileName) const
     xmp_files_free(xmpFilePtr);
 
     return result;
-}
-
-QStringList Xmp::commaSeparatedToStringList(const QString &inString)
-{
-    QStringList list = inString.split(",", QString::SkipEmptyParts);
-    QStringList result;
-
-    foreach (QString string, list)
-        result.append(string.trimmed());
-
-    return result;
-}
-
-QByteArray Xmp::variantToXmpString(const QVariant &variant)
-{
-    if (variant.type() != QVariant::StringList)
-        return variant.toByteArray();
-
-    QStringList list = variant.toStringList();
-    QString result;
-    foreach (QString string, list)
-        result.append(string + QLatin1String(", "));
-    result.truncate(result.length()-2);
-
-    return result.toAscii();
 }
 
 void Xmp::initTags()

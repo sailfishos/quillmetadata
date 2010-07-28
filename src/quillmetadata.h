@@ -40,7 +40,6 @@
 #ifndef QUILL_METADATA_H
 #define QUILL_METADATA_H
 
-#include <exempi-2.0/exempi/xmp.h>
 #include <QString>
 #include <QVariant>
 

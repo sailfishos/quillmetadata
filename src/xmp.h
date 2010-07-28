@@ -41,6 +41,7 @@
 #define XMP_H
 
 #include "metadatarepresentation.h"
+#include <exempi-2.0/exempi/xmp.h>
 
 class XmpTag {
 public:
@@ -78,8 +79,7 @@ class Xmp : public MetadataRepresentation
  private:
     void initTags();
 
-    static QStringList commaSeparatedToStringList(const QString &inString);
-    static QByteArray variantToXmpString(const QVariant &variant);
+    static QString processXmpString(XmpStringPtr xmpString);
 
  private:
     static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
