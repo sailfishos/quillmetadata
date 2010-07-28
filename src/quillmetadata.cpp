@@ -66,6 +66,7 @@ QuillMetadata::QuillMetadata()
 
 QuillMetadata::QuillMetadata(const QString &fileName)
 {
+    init();
     priv = new QuillMetadataPrivate;
     priv->xmp = new Xmp(fileName);
     priv->exif = new Exif(fileName);
