@@ -1,9 +1,12 @@
+libquillmetadata (1.100729.1) unstable; urgency=low
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Thu, 29 Jul 2010 09:35:00 +0200
+
 libquillmetadata (1.100729.0) unstable; urgency=low
 
   * Fixes: NB#174921 GPS coordinates cannot be removed with QuillMetadata
   * Fixes: NB#180719 Keywords wrong in XMP (QuillMetadata)
 
- -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Thu, 29 Jun 2010 08:45:00 +0200
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Thu, 29 Jul 2010 08:45:00 +0200
 
 libquillmetadata (1.100614.0) unstable; urgency=low
 
