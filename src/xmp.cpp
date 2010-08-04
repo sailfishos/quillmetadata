@@ -193,6 +193,23 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
     }
 }
 
+void Xmp::removeEntry(QuillMetadata::Tag tag)
+{
+    if (!supportsEntry(tag))
+        return;
+
+    if (!m_xmpPtr)
+        return;
+
+    QList<XmpTag> xmpTags = m_xmpTags.values(tag);
+
+    foreach (XmpTag xmpTag, xmpTags) {
+        xmp_delete_property(m_xmpPtr,
+                            xmpTag.schema.toAscii().constData(),
+                            xmpTag.tag.toAscii().constData());
+    }
+}
+
 bool Xmp::write(const QString &fileName) const
 {
     XmpPtr ptr = m_xmpPtr;
@@ -247,6 +264,8 @@ void Xmp::initTags()
                           XmpTag(Schema_DC, "description", XmpTag::TagTypeAltLang));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Orientation,
                           XmpTag(Schema_Exif, "Orientation", XmpTag::TagTypeString));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_Title,
+                          XmpTag(Schema_DC, "title", XmpTag::TagTypeAltLang));
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLatitude,
                           XmpTag(Schema_Exif, "GPSLatitude", XmpTag::TagTypeString));

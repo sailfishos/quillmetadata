@@ -206,6 +206,35 @@ void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &value)
     setExifEntry(m_exifData, m_exifTags[tag], value);
 }
 
+void Exif::removeEntry(QuillMetadata::Tag tag)
+{
+    if (!supportsEntry(tag))
+        return;
+
+    ExifTypedTag typedTag = m_exifTags[tag];
+
+    ExifContent *content = m_exifData->ifd[typedTag.ifd];
+
+    ExifEntry *entry = exif_content_get_entry(content, typedTag.tag);
+    if (entry)
+        exif_content_remove_entry(content, entry);
+}
+
+void Exif::removeEntries(QuillMetadata::TagGroup tagGroup)
+{
+    /* Remove all tags in the tag group */
+    if (tagGroup == QuillMetadata::TagGroup_GPS) {
+        ExifContent *content = m_exifData->ifd[EXIF_IFD_GPS];
+        for (int t=(int)EXIF_TAG_GPS_VERSION_ID; // first GPS tag
+             t<=(int)EXIF_TAG_GPS_DIFFERENTIAL; t++) // last GPS tag
+            {
+                ExifEntry *entry = exif_content_get_entry(content, (ExifTag)t);
+                if (entry)
+                    exif_content_remove_entry(content, entry);
+            }
+    }
+}
+
 bool Exif::write(const QString &fileName) const
 {
     return ExifWriteback::writeback(fileName, dump());
@@ -266,4 +295,16 @@ void Exif::initTags()
                       ExifTypedTag(EXIF_TAG_ORIENTATION,
                                    EXIF_IFD_0,
                                    EXIF_FORMAT_SHORT));
+    m_exifTags.insert(QuillMetadata::Tag_GPSLatitude,
+                      ExifTypedTag((ExifTag)EXIF_TAG_GPS_LATITUDE,
+                                   EXIF_IFD_GPS,
+                                   EXIF_FORMAT_RATIONAL));
+    m_exifTags.insert(QuillMetadata::Tag_GPSLongitude,
+                      ExifTypedTag((ExifTag)EXIF_TAG_GPS_LONGITUDE,
+                                   EXIF_IFD_GPS,
+                                   EXIF_FORMAT_RATIONAL));
+    m_exifTags.insert(QuillMetadata::Tag_GPSAltitude,
+                      ExifTypedTag((ExifTag)EXIF_TAG_GPS_ALTITUDE,
+                                   EXIF_IFD_GPS,
+                                   EXIF_FORMAT_RATIONAL));
 }

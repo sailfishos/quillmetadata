@@ -101,7 +101,8 @@ void QuillMetadata::setEntry(Tag tag, const QVariant &entry)
 
 void QuillMetadata::removeEntry(Tag tag)
 {
-    setEntry(tag, QVariant());
+    priv->exif->removeEntry(tag);
+    priv->xmp->removeEntry(tag);
 }
 
 void QuillMetadata::removeEntries(const QList<Tag> &tags)
@@ -113,6 +114,7 @@ void QuillMetadata::removeEntries(const QList<Tag> &tags)
 void QuillMetadata::removeEntries(TagGroup tagGroup)
 {
     removeEntries(QuillMetadataPrivate::m_tagGroups.value(tagGroup));
+    priv->exif->removeEntries(tagGroup);
 }
 
 bool QuillMetadata::write(const QString &fileName,

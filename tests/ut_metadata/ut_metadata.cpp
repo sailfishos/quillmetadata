@@ -116,6 +116,13 @@ void ut_metadata::testTimestampOriginal()
              QString("2010:01:25 15:00:00"));
 }
 
+void ut_metadata::testOrientation()
+{
+    QVERIFY(metadata->isValid());
+    QCOMPARE(metadata->entry(QuillMetadata::Tag_Orientation).toString(),
+             QString("3"));
+}
+
 void ut_metadata::testSubject()
 {
     QVERIFY(xmp->isValid());
@@ -158,6 +165,13 @@ void ut_metadata::testDescription()
     QVERIFY(xmp->isValid());
     QCOMPARE(xmp->entry(QuillMetadata::Tag_Description).toString(),
              QString("Snowman warming up"));
+}
+
+void ut_metadata::testTitle()
+{
+    QVERIFY(xmp->isValid());
+    QCOMPARE(xmp->entry(QuillMetadata::Tag_Title).toString(),
+             QString("Funny snowman"));
 }
 
 void ut_metadata::testCityIptc()
@@ -332,6 +346,23 @@ void ut_metadata::testEditDescription()
              QString("Fish"));
 }
 
+void ut_metadata::testEditTitle()
+{
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+    QuillMetadata empty;
+    empty.setEntry(QuillMetadata::Tag_Title,
+                   QString("The Big Fish"));
+    QVERIFY(empty.write(file.fileName()));
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Title).toString(),
+             QString("The Big Fish"));
+}
+
 void ut_metadata::testCrossEdit()
 {
     QTemporaryFile file;
@@ -375,9 +406,9 @@ void ut_metadata::testCrossEdit2()
 void ut_metadata::testGps()
 {
     QVERIFY(gps->isValid());
-    QCOMPARE(gps->entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("65,0,0N"));
-    QCOMPARE(gps->entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("30,0,0E"));
-    QCOMPARE(gps->entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("85/1"));
+    QCOMPARE(gps->entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("65"));
+    QCOMPARE(gps->entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("30"));
+    QCOMPARE(gps->entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("85"));
 }
 
 void ut_metadata::testWriteGps()
@@ -390,9 +421,9 @@ void ut_metadata::testWriteGps()
     QuillMetadata writtenMetadata(file.fileName());
     QVERIFY(writtenMetadata.isValid());
 
-    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("65,0,0N"));
-    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("30,0,0E"));
-    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("85/1"));
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("65"));
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("30"));
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("85"));
 }
 
 void ut_metadata::testClearGps()
@@ -415,6 +446,23 @@ void ut_metadata::testClearGps()
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString(""));
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString(""));
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString(""));
+}
+
+void ut_metadata::testCopyOrientation()
+{
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+
+    QuillMetadata empty;
+    empty.setEntry(QuillMetadata::Tag_Orientation,
+                   metadata->entry(QuillMetadata::Tag_Orientation));
+    QVERIFY(empty.write(file.fileName()));
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Orientation).toString(),
+             QString("3"));
 }
 
 int main ( int argc, char *argv[] ){

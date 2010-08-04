@@ -70,6 +70,8 @@ class Exif : public MetadataRepresentation
     bool hasEntry(QuillMetadata::Tag tag) const;
     QVariant entry(QuillMetadata::Tag tag) const;
     void setEntry(QuillMetadata::Tag tag, const QVariant &entry);
+    void removeEntry(QuillMetadata::Tag tag);
+    void removeEntries(QuillMetadata::TagGroup tagGroup);
 
     bool write(const QString &fileName) const;
     QByteArray dump() const;

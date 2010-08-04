@@ -73,6 +73,7 @@ class Xmp : public MetadataRepresentation
     bool hasEntry(QuillMetadata::Tag tag) const;
     QVariant entry(QuillMetadata::Tag tag) const;
     void setEntry(QuillMetadata::Tag tag, const QVariant &entry);
+    void removeEntry(QuillMetadata::Tag tag);
 
     bool write(const QString &fileName) const;
 
