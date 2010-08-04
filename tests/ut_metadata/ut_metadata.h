@@ -73,6 +73,7 @@ private slots:
     void testCityIptc();
     void testCountryIptc();
     void testDescription();
+    void testOrientation();
 
     // Unit tests for metadata writing
 
@@ -98,6 +99,10 @@ private slots:
     void testGps();
     void testWriteGps();
     void testClearGps();
+
+    // Unit tests for orientation preservation
+
+    void testCopyOrientation();
 
 private:
     QImage sourceImage;

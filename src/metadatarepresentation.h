@@ -50,6 +50,7 @@ class MetadataRepresentation
     virtual bool hasEntry(QuillMetadata::Tag tag) const = 0;
     virtual QVariant entry(QuillMetadata::Tag tag) const = 0;
     virtual void setEntry(QuillMetadata::Tag tag, const QVariant &entry) = 0;
+    virtual void removeEntry(QuillMetadata::Tag tag) = 0;
 
     bool write(const QString &fileName) const;
 };
