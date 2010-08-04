@@ -167,6 +167,13 @@ void ut_metadata::testDescription()
              QString("Snowman warming up"));
 }
 
+void ut_metadata::testTitle()
+{
+    QVERIFY(xmp->isValid());
+    QCOMPARE(xmp->entry(QuillMetadata::Tag_Title).toString(),
+             QString("Funny snowman"));
+}
+
 void ut_metadata::testCityIptc()
 {
     QVERIFY(iptc->isValid());
@@ -337,6 +344,23 @@ void ut_metadata::testEditDescription()
 
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Description).toString(),
              QString("Fish"));
+}
+
+void ut_metadata::testEditTitle()
+{
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+    QuillMetadata empty;
+    empty.setEntry(QuillMetadata::Tag_Title,
+                   QString("The Big Fish"));
+    QVERIFY(empty.write(file.fileName()));
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_Title).toString(),
+             QString("The Big Fish"));
 }
 
 void ut_metadata::testCrossEdit()

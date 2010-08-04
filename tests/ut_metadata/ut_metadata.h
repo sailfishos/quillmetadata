@@ -73,6 +73,7 @@ private slots:
     void testCityIptc();
     void testCountryIptc();
     void testDescription();
+    void testTitle();
     void testOrientation();
 
     // Unit tests for metadata writing
@@ -90,6 +91,7 @@ private slots:
     void testEditKeywords();
     void testDoubleEditKeywords();
     void testEditDescription();
+    void testEditTitle();
 
     void testCrossEdit();
     void testCrossEdit2();

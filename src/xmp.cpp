@@ -264,6 +264,8 @@ void Xmp::initTags()
                           XmpTag(Schema_DC, "description", XmpTag::TagTypeAltLang));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Orientation,
                           XmpTag(Schema_Exif, "Orientation", XmpTag::TagTypeString));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_Title,
+                          XmpTag(Schema_DC, "title", XmpTag::TagTypeAltLang));
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLatitude,
                           XmpTag(Schema_Exif, "GPSLatitude", XmpTag::TagTypeString));
