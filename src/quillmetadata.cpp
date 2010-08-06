@@ -46,6 +46,7 @@ class QuillMetadataPrivate
 public:
     Xmp *xmp;
     Exif *exif;
+    bool isXmpNeeded; // If in the writeback we need also write XMP metadata
 
     static bool m_initialized;
     static QMap<QuillMetadata::TagGroup, QList<QuillMetadata::Tag> >
@@ -62,6 +63,7 @@ QuillMetadata::QuillMetadata()
     priv = new QuillMetadataPrivate;
     priv->xmp = new Xmp();
     priv->exif = new Exif();
+    priv->isXmpNeeded = false;
 }
 
 QuillMetadata::QuillMetadata(const QString &fileName)
@@ -70,6 +72,7 @@ QuillMetadata::QuillMetadata(const QString &fileName)
     priv = new QuillMetadataPrivate;
     priv->xmp = new Xmp(fileName);
     priv->exif = new Exif(fileName);
+    priv->isXmpNeeded = true;
 }
 
 QuillMetadata::~QuillMetadata()
@@ -97,6 +100,8 @@ void QuillMetadata::setEntry(Tag tag, const QVariant &entry)
 {
     priv->exif->setEntry(tag, entry);
     priv->xmp->setEntry(tag, entry);
+    if (priv->xmp->supportsEntry(tag) && (tag != Tag_Orientation))
+        priv->isXmpNeeded = true;
 }
 
 void QuillMetadata::removeEntry(Tag tag)
@@ -120,10 +125,13 @@ void QuillMetadata::removeEntries(TagGroup tagGroup)
 bool QuillMetadata::write(const QString &fileName,
                           MetadataFormatFlags formats) const
 {
-    if (formats == XmpFormat)
-        return priv->xmp->write(fileName);
-    else
-        return priv->exif->write(fileName) && priv->xmp->write(fileName);
+    bool result = true;
+    if ((formats == ExifFormat) || (formats == AllFormats))
+        result = result && priv->exif->write(fileName);
+    if (((formats == XmpFormat) || (formats == AllFormats)) &&
+        priv->isXmpNeeded)
+        result = result && priv->xmp->write(fileName);
+    return result;
 }
 
 QByteArray QuillMetadata::dumpExif() const

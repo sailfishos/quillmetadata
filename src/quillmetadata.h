@@ -179,9 +179,13 @@ class QuillMetadata
 
       @param filePath Local filesystem path to file to be written into.
 
-      @param formats Which metadata formats to write. Currently,
-      only supports XmpFormat and AllFormats, ExifFormat will default to
-      AllFormats. XmpFormat and AllFormats include IPTC-IIM reconciliation.
+      @param formats Which metadata formats to write. If AllFormats is
+      selected, both Exif and XMP metadata will be written. If
+      ExifFormat is selected, it will destroy any existing XMP block
+      in the file. If XmpFormat is selected, it should not affect
+      existing Exif blocks in the file except those affected by
+      automated reconciliation. XmpFormat and AllFormats also include
+      IPTC-IIM reconciliation.
      */
     bool write(const QString &filePath,
                MetadataFormatFlags formats = AllFormats) const;
