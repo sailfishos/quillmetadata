@@ -1,3 +1,9 @@
+libquillmetadata (1.100806.0) unstable; urgency=low
+
+  * Fixes: NB#175644 Orientation data changed when moved between QuillMetadata objects
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Fri, 06 Aug 2010 09:20:00 +0200
+
 libquillmetadata (1.100804.0) unstable; urgency=low
 
   * Fixes: NB#174921 GPS coordinates cannot be removed with QuillMetadata
