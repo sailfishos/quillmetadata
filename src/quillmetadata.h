@@ -94,6 +94,10 @@ class QuillMetadata
         Tag_GPSLongitude,
         //! GPS altitude, string (XMP/EXIF)
         Tag_GPSAltitude,
+        //! GPS altitude above or below sea level, string (XMP/EXIF)
+        Tag_GPSAltitudeRef,
+        //! GPS version ID, string (XMP/EXIF)
+        Tag_GPSVersionID,
     };
 
     enum TagGroup {

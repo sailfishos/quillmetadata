@@ -154,9 +154,12 @@ void QuillMetadata::init()
 
     QuillMetadataPrivate::m_initialized = true;
 
-    QuillMetadataPrivate::m_tagGroups.insert(TagGroup_GPS,
-                                             QList<QuillMetadata::Tag>() <<
-                                             QuillMetadata::Tag_GPSLatitude <<
-                                             QuillMetadata::Tag_GPSLongitude <<
-                                             QuillMetadata::Tag_GPSAltitude);
+    QuillMetadataPrivate::m_tagGroups.insert(
+      TagGroup_GPS,
+      QList<QuillMetadata::Tag>() <<
+      QuillMetadata::Tag_GPSLatitude <<
+      QuillMetadata::Tag_GPSLongitude <<
+      QuillMetadata::Tag_GPSAltitude <<
+      QuillMetadata::Tag_GPSAltitudeRef <<
+      QuillMetadata::Tag_GPSVersionID);
 }

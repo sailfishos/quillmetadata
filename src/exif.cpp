@@ -208,7 +208,7 @@ void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &value)
 
 void Exif::removeEntry(QuillMetadata::Tag tag)
 {
-    if (!supportsEntry(tag))
+    if (!supportsEntry(tag) || !m_exifData)
         return;
 
     ExifTypedTag typedTag = m_exifTags[tag];
@@ -222,6 +222,9 @@ void Exif::removeEntry(QuillMetadata::Tag tag)
 
 void Exif::removeEntries(QuillMetadata::TagGroup tagGroup)
 {
+    if (!m_exifData)
+        return;
+
     /* Remove all tags in the tag group */
     if (tagGroup == QuillMetadata::TagGroup_GPS) {
         ExifContent *content = m_exifData->ifd[EXIF_IFD_GPS];
