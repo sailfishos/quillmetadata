@@ -273,4 +273,8 @@ void Xmp::initTags()
                           XmpTag(Schema_Exif, "GPSLongitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSAltitude,
                           XmpTag(Schema_Exif, "GPSAltitude", XmpTag::TagTypeString));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_GPSAltitudeRef,
+                          XmpTag(Schema_Exif, "GPSAltitudeRef", XmpTag::TagTypeString));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_GPSVersionID,
+                          XmpTag(Schema_Exif, "GPSVersionID", XmpTag::TagTypeString));
 }
