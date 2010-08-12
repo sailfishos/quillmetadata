@@ -50,7 +50,7 @@ public:
 
     static bool m_initialized;
     static QMap<QuillMetadata::TagGroup, QList<QuillMetadata::Tag> >
-      m_tagGroups;
+    m_tagGroups;
 };
 
 bool QuillMetadataPrivate::m_initialized = false;
@@ -79,6 +79,7 @@ QuillMetadata::~QuillMetadata()
 {
     delete priv->xmp;
     delete priv->exif;
+    delete priv;
 }
 
 bool QuillMetadata::isValid() const

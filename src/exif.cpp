@@ -40,7 +40,7 @@
 #include "exifwriteback.h"
 #include "exif.h"
 
-ExifTypedTag::ExifTypedTag()
+ExifTypedTag::ExifTypedTag():tag(),ifd(),format(),count()
 {
 }
 
