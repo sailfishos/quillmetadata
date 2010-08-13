@@ -1,3 +1,9 @@
+libquillmetadata (1.100813.0) unstable; urgency=low
+
+  * Fixes: NB#183085 <coverity> defects from ImageEditor
+
+ -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Fri, 13 Aug 2010 12:45:00 +0200
+
 libquillmetadata (1.100810.0) unstable; urgency=low
 
   * Fixes: NB#174921 GPS coordinates cannot be removed with QuillMetadata
