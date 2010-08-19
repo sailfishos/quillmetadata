@@ -1,3 +1,9 @@
+libquillmetadata (1.100819.0) unstable; urgency=low
+
+  * Updated Debian package descriptions and copyright information.
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Thu, 19 Aug 2010 08:45:00 +0200
+
 libquillmetadata (1.100810.0) unstable; urgency=low
 
   * Fixes: NB#174921 GPS coordinates cannot be removed with QuillMetadata

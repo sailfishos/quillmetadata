@@ -9,8 +9,8 @@ Package: libquillmetadata1
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends},libexif12,libexempi3,libjpeg62
-Description: libquillmetadata library
- This library is created for matadata manipulation.
+Description: Qt based library for still image metadata manipulation
+ A Qt based library which can access and edit Exif, XMP and IPTC metadata for still images (currently only JPEG format), offering transparent reconciliation between different metadata representations.
 
 Package: libquillmetadata-dev
 Section: libdevel
