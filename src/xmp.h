@@ -51,7 +51,6 @@ public:
         TagTypeAltLang
     };
 
-    XmpTag();
     XmpTag(const QString &schema, const QString &tag, TagType tagType);
 
     QString schema;

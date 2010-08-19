@@ -51,10 +51,6 @@ const QString Schema_XAP = NS_XAP;
 QHash<QuillMetadata::Tag,XmpTag> Xmp::m_xmpTags;
 bool Xmp::m_initialized = false;
 
-XmpTag::XmpTag() : schema(""), tag("")
-{
-}
-
 XmpTag::XmpTag(const QString &schema, const QString &tag, TagType tagType) :
     schema(schema), tag(tag), tagType(tagType)
 {

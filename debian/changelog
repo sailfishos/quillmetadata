@@ -4,6 +4,18 @@ libquillmetadata (1.100819.0) unstable; urgency=low
 
  -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Thu, 19 Aug 2010 08:45:00 +0200
 
+libquillmetadata (1.100816.0) unstable; urgency=low
+
+  * Fixes: NB#180306 <coverity>
+
+ -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Mon, 16 Aug 2010 09:00:00 +0200
+
+libquillmetadata (1.100813.0) unstable; urgency=low
+
+  * Fixes: NB#183085 <coverity> defects from ImageEditor
+
+ -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Fri, 13 Aug 2010 12:45:00 +0200
+
 libquillmetadata (1.100810.0) unstable; urgency=low
 
   * Fixes: NB#174921 GPS coordinates cannot be removed with QuillMetadata
