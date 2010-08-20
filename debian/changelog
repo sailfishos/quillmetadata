@@ -1,3 +1,9 @@
+libquillmetadata (1.100820.0) unstable; urgency=low
+
+  * Removed from changelog earlier bug which failed pre-verification.
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Fri, 20 Aug 2010 10:55:00 +0200
+
 libquillmetadata (1.100819.0) unstable; urgency=low
 
   * Updated Debian package descriptions and copyright information.
@@ -5,8 +11,6 @@ libquillmetadata (1.100819.0) unstable; urgency=low
  -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Thu, 19 Aug 2010 08:45:00 +0200
 
 libquillmetadata (1.100816.0) unstable; urgency=low
-
-  * Fixes: NB#180306 <coverity>
 
  -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Mon, 16 Aug 2010 09:00:00 +0200
 
