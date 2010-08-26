@@ -465,6 +465,18 @@ void ut_metadata::testCopyOrientation()
              QString("3"));
 }
 
+void ut_metadata::testCanRead()
+{
+    QVERIFY(QuillMetadata::canRead("/usr/share/libquillmetadata-tests/images/exif.jpg"));
+    QVERIFY(QuillMetadata::canRead("/usr/share/libquillmetadata-tests/images/iptc.jpg"));
+    QVERIFY(QuillMetadata::canRead("/usr/share/libquillmetadata-tests/images/xmp.jpg"));
+    QVERIFY(QuillMetadata::canRead("/usr/share/libquillmetadata-tests/images/gps.jpg"));
+
+    QTemporaryFile file;
+    file.open();
+    QVERIFY(!QuillMetadata::canRead(file.fileName()));
+}
+
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );
     ut_metadata test;

@@ -139,6 +139,15 @@ class QuillMetadata
     ~QuillMetadata();
 
     /*!
+      Returns true if the image format of a given file is supported by
+      the metadata reader. It will only make a lightweight check of
+      the file headers, and it will not guarantee that any metadata can
+      be actually be read from the file.
+     */
+
+    static bool canRead(const QString &filePath);
+
+    /*!
       Returns true if the metadata object is valid.
      */
     bool isValid() const;
@@ -193,15 +202,6 @@ class QuillMetadata
      */
     bool write(const QString &filePath,
                MetadataFormatFlags formats = AllFormats) const;
-
-    /*!
-      Dumps the EXIF block into a byte array so that it can be
-      inserted to a file by a file compression library.
-
-      Warning: this is deprecated and will be removed, please use dump()
-      instead.
-     */
-    QByteArray dumpExif() const;
 
     /*!
       Dumps an EXIF or XMP block into a byte array.

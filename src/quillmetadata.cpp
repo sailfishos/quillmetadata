@@ -37,6 +37,8 @@
 **
 ****************************************************************************/
 
+#include <QImageReader>
+
 #include "exif.h"
 #include "xmp.h"
 #include "quillmetadata.h"
@@ -79,6 +81,12 @@ QuillMetadata::~QuillMetadata()
 {
     delete priv->xmp;
     delete priv->exif;
+}
+
+bool QuillMetadata::canRead(const QString &filePath)
+{
+    QImageReader reader(filePath, "jpeg");
+    return reader.canRead();
 }
 
 bool QuillMetadata::isValid() const
@@ -132,11 +140,6 @@ bool QuillMetadata::write(const QString &fileName,
         priv->isXmpNeeded)
         result = result && priv->xmp->write(fileName);
     return result;
-}
-
-QByteArray QuillMetadata::dumpExif() const
-{
-    return dump(ExifFormat);
 }
 
 QByteArray QuillMetadata::dump(MetadataFormatFlags formats) const
