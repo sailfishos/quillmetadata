@@ -1,3 +1,9 @@
+libquillmetadata (1.100827.0) unstable; urgency=low
+
+  * Fixes: NB#187853 <Coverity> defects for /libquillmetadata/1.100804.0_0m6
+
+ -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Fri, 27 Aug 2010 11:10:00 +0200
+
 libquillmetadata (1.100826.0) unstable; urgency=low
 
   * Fixes: NB#184124 API to check if given image file type is supported by QuillMetadata
