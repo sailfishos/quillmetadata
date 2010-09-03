@@ -173,7 +173,7 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 
     switch(entry->format) {
     case EXIF_FORMAT_ASCII:
-        entry->data = new unsigned char[value.toByteArray().size()];
+        entry->data = new unsigned char[value.toByteArray().size()+1];
         strcpy((char*)entry->data, value.toByteArray().constData());
         entry->size = value.toByteArray().size();
         entry->components = entry->size;
