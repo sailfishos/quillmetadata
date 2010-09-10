@@ -40,7 +40,6 @@
 #include "exifwriteback.h"
 #include "exif.h"
 
-#include <QDebug>
 ExifTypedTag::ExifTypedTag():tag(),ifd(),format(),count()
 {
 }
