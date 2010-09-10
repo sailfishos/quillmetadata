@@ -40,6 +40,7 @@
 #include "exifwriteback.h"
 #include "exif.h"
 
+#include <QDebug>
 ExifTypedTag::ExifTypedTag():tag(),ifd(),format(),count()
 {
 }
@@ -191,6 +192,8 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
     }
 
     exif_content_add_entry(content, entry);
+    //We need to decrease the reference count here to free entry memory
+    exif_entry_unref(entry);
 }
 
 void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &value)
