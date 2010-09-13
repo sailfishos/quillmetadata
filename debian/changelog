@@ -3,6 +3,25 @@ libquillmetadata (1.100913.0) unstable; urgency=low
 
  -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Mon, 13 Aug 2010 09:35:00 +0200
 
+libquillmetadata (1.100910.0) unstable; urgency=low
+
+  * Fixes: NB#189921 -<MemLeak> Valgrind reports memory leaks in ut_metadata case of libquillmetadata-tests
+
+ -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Fri, 10 Sep 2010 13:55:00 +0200
+
+libquillmetadata (1.100903.0) unstable; urgency=low
+
+  * Fixes: NB#189879 -  <Safety> Invalid write of 1 byte observed in libquillmetadata-tests
+
+ -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Fri, 03 Sep 2010 14:55:00 +0200
+
+libquillmetadata (1.100827.0) unstable; urgency=low
+
+  * Fixes: NB#187853 <Coverity> defects for /libquillmetadata/1.100804.0_0m6
+
+ -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Fri, 27 Aug 2010 11:10:00 +0200
+>>>>>>> 08561997b3a3e0d5e862aa2623eb24907d159116:debian/changelog
+
 libquillmetadata (1.100826.0) unstable; urgency=low
 
   * Fixes: NB#184124 API to check if given image file type is supported by QuillMetadata

@@ -146,6 +146,7 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
             }
         }
     }
+    xmp_string_free(xmpStringPtr);
     return QVariant();
 }
 
