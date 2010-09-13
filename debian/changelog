@@ -1,3 +1,8 @@
+libquillmetadata (1.100913.0) unstable; urgency=low
+  * Set API to stable.
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Mon, 13 Aug 2010 09:35:00 +0200
+
 libquillmetadata (1.100826.0) unstable; urgency=low
 
   * Fixes: NB#184124 API to check if given image file type is supported by QuillMetadata

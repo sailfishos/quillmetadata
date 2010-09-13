@@ -4,5 +4,5 @@ interface: Image Metadata
 type: library
 libs-pkg: libquillmetadata1
 dev-pkg: libquillmetadata-dev
-state: unstable
+state: stable
 scope: Platform
