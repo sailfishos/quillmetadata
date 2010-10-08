@@ -34,7 +34,7 @@ Description: libquillmetadata debug symbols
 Package: libquillmetadata-tests
 Section: tests
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libqtcore4, libqtgui4, libquillmetadata1 (= ${binary:Version}), libexif12, libexempi3, testrunner, ci-package, ci-testing [armel]
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqtcore4, libqtgui4, libquillmetadata1 (= ${binary:Version}), libexif12, libexempi3, testrunner-lite, ci-package, ci-testing [armel]
 XB-Maemo-CI-Packages: libquillmetadata1
 XB-Maemo-CI-Stage: fast, staging, acceptance
 Description: libquillmetadata unit tests
