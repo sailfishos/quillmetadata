@@ -44,6 +44,7 @@
 
 const QString Schema_DC = NS_DC;
 const QString Schema_Exif = NS_EXIF;
+const QString Schema_Tiff = NS_TIFF;
 const QString Schema_Photoshop = NS_PHOTOSHOP;
 const QString Schema_IPTC = NS_IPTC4XMP;
 const QString Schema_XAP = NS_XAP;
@@ -261,6 +262,8 @@ void Xmp::initTags()
                           XmpTag(Schema_DC, "description", XmpTag::TagTypeAltLang));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Orientation,
                           XmpTag(Schema_Exif, "Orientation", XmpTag::TagTypeString));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_Orientation,
+                          XmpTag(Schema_Tiff, "Orientation", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Title,
                           XmpTag(Schema_DC, "title", XmpTag::TagTypeAltLang));
 
