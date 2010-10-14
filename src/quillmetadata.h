@@ -130,8 +130,12 @@ class QuillMetadata
       Constructs a metadata object containing all metadata from a given file.
 
       @param filePath Local filesystem path to file to be read.
+
+      @param formats Which formats to read (currently only supports ExifFormat
+      and AllFormats)
      */
-    QuillMetadata(const QString &filePath);
+    QuillMetadata(const QString &filePath,
+                  MetadataFormatFlags formats = AllFormats);
 
     /*!
       Removes a metadata object.
