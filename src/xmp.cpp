@@ -179,7 +179,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
                                       xmpTag.schema.toAscii().constData(),
                                       xmpTag.tag.toAscii().constData(),
                                       XMP_PROP_ARRAY_IS_UNORDERED,
-                                      string.toAscii().constData(), 0);
+                                      string.toUtf8().constData(), 0);
         }
         else if (xmpTag.tagType == XmpTag::TagTypeAltLang) {
             xmp_set_localized_text(m_xmpPtr,
