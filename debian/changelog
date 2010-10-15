@@ -1,8 +1,13 @@
+libquillmetadata (1.101015.1) unstable; urgency=low
+  * Preparing for API break (reason: Exif orientation metadata optimization)
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Fri, 15 Oct 2010 16:41:01 +0200
+
 libquillmetadata (1.101008.0) unstable; urgency=low
   * Removed obsolete dependency to testrunner
   * Fixes: NB#196863 libquillmetadata-tests depend on testrunner instead of testrunner-lite
 
- -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Fri, 08 Aug 2010 16:41:01 +0200
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Fri, 08 Oct 2010 16:41:01 +0200
 
 libquillmetadata (1.100915.0) unstable; urgency=low
 
