@@ -42,13 +42,6 @@
 
 #include "xmp.h"
 
-const QString Schema_DC = NS_DC;
-const QString Schema_Exif = NS_EXIF;
-const QString Schema_Tiff = NS_TIFF;
-const QString Schema_Photoshop = NS_PHOTOSHOP;
-const QString Schema_IPTC = NS_IPTC4XMP;
-const QString Schema_XAP = NS_XAP;
-
 QHash<QuillMetadata::Tag,XmpTag> Xmp::m_xmpTags;
 bool Xmp::m_initialized = false;
 
@@ -241,40 +234,40 @@ void Xmp::initTags()
     m_initialized = true;
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
-                          XmpTag(Schema_DC, "creator", XmpTag::TagTypeString));
+                          XmpTag(NS_DC, "creator", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Subject,
-                          XmpTag(Schema_DC, "subject", XmpTag::TagTypeStringList));
+                          XmpTag(NS_DC, "subject", XmpTag::TagTypeStringList));
     m_xmpTags.insertMulti(QuillMetadata::Tag_City,
-                          XmpTag(Schema_Photoshop, "City", XmpTag::TagTypeString));
+                          XmpTag(NS_PHOTOSHOP, "City", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Country,
-                          XmpTag(Schema_Photoshop, "Country", XmpTag::TagTypeString));
+                          XmpTag(NS_PHOTOSHOP, "Country", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_City,
-                          XmpTag(Schema_IPTC, "LocationShownCity", XmpTag::TagTypeString));
+                          XmpTag(NS_IPTC4XMP, "LocationShownCity", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Country,
-                          XmpTag(Schema_IPTC, "LocationShownCountry", XmpTag::TagTypeString));
+                          XmpTag(NS_IPTC4XMP, "LocationShownCountry", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Location,
-                          XmpTag(Schema_IPTC, "LocationShownSublocation", XmpTag::TagTypeString));
+                          XmpTag(NS_IPTC4XMP, "LocationShownSublocation", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Rating,
-                          XmpTag(Schema_XAP, "Rating", XmpTag::TagTypeString));
+                          XmpTag(NS_XAP, "Rating", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Timestamp,
-                          XmpTag(Schema_XAP, "MetadataDate", XmpTag::TagTypeString));
+                          XmpTag(NS_XAP, "MetadataDate", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Description,
-                          XmpTag(Schema_DC, "description", XmpTag::TagTypeAltLang));
+                          XmpTag(NS_DC, "description", XmpTag::TagTypeAltLang));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Orientation,
-                          XmpTag(Schema_Exif, "Orientation", XmpTag::TagTypeString));
+                          XmpTag(NS_EXIF, "Orientation", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Orientation,
-                          XmpTag(Schema_Tiff, "Orientation", XmpTag::TagTypeString));
+                          XmpTag(NS_TIFF, "Orientation", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Title,
-                          XmpTag(Schema_DC, "title", XmpTag::TagTypeAltLang));
+                          XmpTag(NS_DC, "title", XmpTag::TagTypeAltLang));
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLatitude,
-                          XmpTag(Schema_Exif, "GPSLatitude", XmpTag::TagTypeString));
+                          XmpTag(NS_EXIF, "GPSLatitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLongitude,
-                          XmpTag(Schema_Exif, "GPSLongitude", XmpTag::TagTypeString));
+                          XmpTag(NS_EXIF, "GPSLongitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSAltitude,
-                          XmpTag(Schema_Exif, "GPSAltitude", XmpTag::TagTypeString));
+                          XmpTag(NS_EXIF, "GPSAltitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSAltitudeRef,
-                          XmpTag(Schema_Exif, "GPSAltitudeRef", XmpTag::TagTypeString));
+                          XmpTag(NS_EXIF, "GPSAltitudeRef", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSVersionID,
-                          XmpTag(Schema_Exif, "GPSVersionID", XmpTag::TagTypeString));
+                          XmpTag(NS_EXIF, "GPSVersionID", XmpTag::TagTypeString));
 }
