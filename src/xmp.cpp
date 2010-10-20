@@ -223,6 +223,9 @@ bool Xmp::write(const QString &fileName) const
         result = xmp_files_close(xmpFilePtr, XMP_CLOSE_NOOPTION);
     xmp_files_free(xmpFilePtr);
 
+    if (!m_xmpPtr)
+        xmp_free(ptr);
+
     return result;
 }
 

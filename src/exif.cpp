@@ -37,6 +37,7 @@
 **
 ****************************************************************************/
 
+#include <stdlib.h>
 #include "exifwriteback.h"
 #include "exif.h"
 
@@ -256,7 +257,7 @@ QByteArray Exif::dump() const
     exif_data_save_data(m_exifData, &d, &ds);
 
     QByteArray result = QByteArray((char*)d, ds);
-    delete d;
+    free(d);
 
     return result;
 }
