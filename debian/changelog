@@ -1,3 +1,8 @@
+libquillmetadata (1.101020.0) unstable; urgency=low
+  * Valgrind errors fixed.
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Wed, 20 Oct 2010 09:35:01 +0200
+
 libquillmetadata (1.101018.0) unstable; urgency=low
   * Exif orientation metadata optimization
   * Fixes: NB#193111 Junk tags in Subject field
