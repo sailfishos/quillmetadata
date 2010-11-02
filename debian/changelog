@@ -1,3 +1,8 @@
+libquillmetadata (1.101102.0) unstable; urgency=low
+  * Performance optimizations for libexif.
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Tue, 02 Nov 2010 15:24:01 +0200
+
 libquillmetadata (1.101020.0) unstable; urgency=low
   * Valgrind errors fixed.
 
