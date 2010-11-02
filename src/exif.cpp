@@ -38,6 +38,7 @@
 ****************************************************************************/
 
 #include <stdlib.h>
+#include <libexif/exif-loader.h>
 #include "exifwriteback.h"
 #include "exif.h"
 
@@ -67,7 +68,20 @@ Exif::Exif()
 
 Exif::Exif(const QString &fileName)
 {
-    m_exifData = exif_data_new_from_file(fileName.toAscii().constData());
+    // not using exif_data_new_from_file() since exif_data_fix() is too slow
+
+    ExifLoader *loader = exif_loader_new();
+    exif_loader_write_file(loader, fileName.toAscii().constData());
+
+    const unsigned char *buf = 0;
+    unsigned int bufSize = 0;
+    exif_loader_get_buf(loader, &buf, &bufSize);
+
+    m_exifData = exif_data_new();
+    exif_data_unset_option(m_exifData, EXIF_DATA_OPTION_FOLLOW_SPECIFICATION);
+    exif_data_load_data(m_exifData, buf, bufSize);
+    exif_loader_unref(loader);
+
     m_exifByteOrder = exif_data_get_byte_order(m_exifData);
 
     initTags();
@@ -254,6 +268,8 @@ QByteArray Exif::dump() const
     unsigned char *d;
     unsigned int ds;
 
+    // Since the data is not fixed on load, fix it on save instead.
+    exif_data_fix(m_exifData);
     exif_data_save_data(m_exifData, &d, &ds);
 
     QByteArray result = QByteArray((char*)d, ds);
