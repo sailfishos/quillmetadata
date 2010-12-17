@@ -476,6 +476,14 @@ void ut_metadata::testCanRead()
     file.open();
     QVERIFY(!QuillMetadata::canRead(file.fileName()));
 }
+//we add the case to test dump function by creating medatedata object with file name from other team.
+void ut_metadata::testSetOrientationTag()
+{
+    QVERIFY(QuillMetadata::canRead("/usr/share/libquillmetadata-tests/images/exif.jpg"));
+    metadata->setEntry(QuillMetadata::Tag_Orientation, QVariant(short(7)));
+    QByteArray result = metadata->dump(QuillMetadata::ExifFormat);
+    QVERIFY(!result.isNull());
+}
 
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );

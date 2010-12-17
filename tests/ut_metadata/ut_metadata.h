@@ -105,10 +105,10 @@ private slots:
     // Unit tests for orientation preservation
 
     void testCopyOrientation();
-
     // Unit tests for format detection
 
     void testCanRead();
+    void testSetOrientationTag();
 
 private:
     QImage sourceImage;

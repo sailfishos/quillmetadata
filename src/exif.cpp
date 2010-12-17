@@ -64,6 +64,7 @@ Exif::Exif()
 {
     m_exifData = exif_data_new();
     m_exifByteOrder = exif_data_get_byte_order(m_exifData);
+    initTags();
 }
 
 Exif::Exif(const QString &fileName)
@@ -268,10 +269,8 @@ QByteArray Exif::dump() const
     unsigned char *d;
     unsigned int ds;
 
-    // Since the data is not fixed on load, fix it on save instead.
-    exif_data_fix(m_exifData);
+    //fixing the data caused crashing, we will not use the function exif_data_fix(m_exifData) here.
     exif_data_save_data(m_exifData, &d, &ds);
-
     QByteArray result = QByteArray((char*)d, ds);
     free(d);
 
