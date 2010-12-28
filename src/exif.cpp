@@ -90,6 +90,8 @@ Exif::Exif(const QString &fileName)
 
 Exif::~Exif()
 {
+    //the entry, content will be freed recursively, we do not unref content and entry explicitly.
+    //otherwise, there is a crashing
     exif_data_unref(m_exifData);
 }
 
@@ -207,8 +209,6 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
     }
 
     exif_content_add_entry(content, entry);
-    //We need to decrease the reference count here to free entry memory
-    exif_entry_unref(entry);
 }
 
 void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &value)
@@ -269,7 +269,8 @@ QByteArray Exif::dump() const
     unsigned char *d;
     unsigned int ds;
 
-    //fixing the data caused crashing, we will not use the function exif_data_fix(m_exifData) here.
+    // Since the data is not fixed on load, fix it on save instead.
+    exif_data_fix(m_exifData);
     exif_data_save_data(m_exifData, &d, &ds);
     QByteArray result = QByteArray((char*)d, ds);
     free(d);
