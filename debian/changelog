@@ -1,3 +1,9 @@
+libquillmetadata (1.101229.0) unstable; urgency=low
+
+  * Fixes: NB#212437 - Crash in QuillMetadata::dump() after QuillMetadata::setEntry(Tag_Orientation) is called
+
+ -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Wed, 29 Dec 2010 08:10:00 +0200
+
 libquillmetadata (1.101102.0) unstable; urgency=low
   * Performance optimizations for libexif.
 
