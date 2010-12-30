@@ -137,6 +137,11 @@ class QuillMetadata
     QuillMetadata(const QString &filePath,
                   MetadataFormatFlags formats = AllFormats);
 
+
+    QuillMetadata(const QString &fileName,
+                  MetadataFormatFlags formats,
+                  QuillMetadata::Tag tagToRead);
+
     /*!
       Removes a metadata object.
      */

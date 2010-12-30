@@ -62,9 +62,14 @@ class Exif : public MetadataRepresentation
  public:
     Exif();
     Exif(const QString &fileName);
+    Exif(const QString &fileName, QuillMetadata::Tag tagToRead);
     ~Exif();
 
     bool isValid() const;
+
+    void ReadShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
+                                  const unsigned char *buf, const unsigned int bufSize,
+                                  short &_tagValue, ExifByteOrder &_byteOrder);
 
     bool supportsEntry(QuillMetadata::Tag tag) const;
     bool hasEntry(QuillMetadata::Tag tag) const;
