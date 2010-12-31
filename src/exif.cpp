@@ -66,7 +66,7 @@ Exif::Exif()
     m_exifByteOrder = exif_data_get_byte_order(m_exifData);
 }
 
-void Exif::ReadShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
+void Exif::readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
                         const unsigned char *buf, const unsigned int bufSize,
                         short &_tagValue, ExifByteOrder &_byteOrder)
 {
