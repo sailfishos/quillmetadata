@@ -70,6 +70,12 @@ void Exif::readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
                         const unsigned char *buf, const unsigned int bufSize,
                         short &_tagValue, ExifByteOrder &_byteOrder)
 {
+    const unsigned char tag1[6] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00}; // "Exif.."
+    const int tag1Length = 6;
+    const int bytesBeforeFirstTag = 16;
+    const int tagDataLength = 12;
+    const int tag42 = 42;
+
     ExifTag tagByte = m_exifTags[tagToRead].tag;
     ExifFormat tagFormat;
     if ((tagFormat = m_exifTags[tagToRead].format) != EXIF_FORMAT_SHORT)
@@ -79,27 +85,26 @@ void Exif::readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
         return;
 
     const unsigned char *p = buf;
-    if (p + 16 >= buf + bufSize) // Bytes before tags
+    if (p + bytesBeforeFirstTag >= buf + bufSize) // Bytes before tags
         return;
 
-    const unsigned char tag1[6] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00}; // "Exif.."
-    if (memcmp(p, tag1, 6) != 0) // Exif tag
+    if (memcmp(p, tag1, tag1Length) != 0) // Exif tag
         return;
 
-    p += 6; // Data begins here
+    p += tag1Length; // Data begins here
     _byteOrder = (*p == 0x49 ? EXIF_BYTE_ORDER_INTEL : EXIF_BYTE_ORDER_MOTOROLA);
 
-    if (exif_get_short(p+2, _byteOrder) != 42)  // 42-header-tag
+    if (exif_get_short(p+2, _byteOrder) != tag42)  // 42-header-tag
         return;
 
     int tagAmount = exif_get_short(p+8, _byteOrder);
     p += 10; // first tag found here
 
-    const unsigned char *endPoint = p + tagAmount*12;
-    if (endPoint+12 > buf+bufSize)
-        endPoint = buf+bufSize - 12;
+    const unsigned char *endPoint = p + tagAmount * tagDataLength;
+    if (endPoint+tagDataLength > buf+bufSize)
+        endPoint = buf+bufSize - tagDataLength;
 
-    for (const unsigned char *tag = p; tag < endPoint; tag += 12) {
+    for (const unsigned char *tag = p; tag < endPoint; tag += tagDataLength) {
         if ( (exif_get_short(tag, _byteOrder) == tagByte) ) { // Correct tag
             if ( (exif_get_long(tag+4, _byteOrder) == tagItemCount) && // Correct amount of values
                  (exif_get_short(tag+2, _byteOrder) == tagFormat) ) { // Correct format
@@ -121,38 +126,27 @@ Exif::Exif(const QString &fileName, QuillMetadata::Tag tagToRead)
     unsigned int bufSize = 0;
     exif_loader_get_buf(loader, &buf, &bufSize);
 
-    short tagValue;
-    ExifByteOrder byteOrder = EXIF_BYTE_ORDER_INTEL;
-
-    ReadShortTagAndByteOrder(tagToRead, buf, bufSize, tagValue, byteOrder);
-
     m_exifData = exif_data_new();
     exif_data_unset_option(m_exifData, EXIF_DATA_OPTION_FOLLOW_SPECIFICATION);
+
+    if (tagToRead == QuillMetadata::Tag_Undefined) // Load all tags
+    {
+        exif_data_load_data(m_exifData, buf, bufSize);
+        exif_loader_unref(loader);
+
+        m_exifByteOrder = exif_data_get_byte_order(m_exifData);
+        return;
+    }
+
+    short tagValue;
+    ExifByteOrder byteOrder = EXIF_BYTE_ORDER_INTEL; // initialized to default
+
+    readShortTagAndByteOrder(tagToRead, buf, bufSize, tagValue, byteOrder);
+
     exif_loader_unref(loader);
 
     m_exifByteOrder = byteOrder;
     this->setEntry(QuillMetadata::Tag_Orientation, tagValue);
-}
-
-Exif::Exif(const QString &fileName)
-{
-    // not using exif_data_new_from_file() since exif_data_fix() is too slow
-
-    ExifLoader *loader = exif_loader_new();
-    exif_loader_write_file(loader, fileName.toAscii().constData());
-
-    const unsigned char *buf = 0;
-    unsigned int bufSize = 0;
-    exif_loader_get_buf(loader, &buf, &bufSize);
-
-    m_exifData = exif_data_new();
-    exif_data_unset_option(m_exifData, EXIF_DATA_OPTION_FOLLOW_SPECIFICATION);
-    exif_data_load_data(m_exifData, buf, bufSize);
-    exif_loader_unref(loader);
-
-    m_exifByteOrder = exif_data_get_byte_order(m_exifData);
-
-    initTags();
 }
 
 Exif::~Exif()

@@ -98,6 +98,8 @@ class QuillMetadata
         Tag_GPSAltitudeRef,
         //! GPS version ID, string (XMP/EXIF)
         Tag_GPSVersionID,
+        //! Undefined tag
+        Tag_Undefined,
     };
 
     enum TagGroup {
@@ -133,14 +135,12 @@ class QuillMetadata
 
       @param formats Which formats to read (currently only supports ExifFormat
       and AllFormats)
+
+      @param tagToRead Which tags to read; if undefined, reads all tags
      */
-    QuillMetadata(const QString &filePath,
-                  MetadataFormatFlags formats = AllFormats);
-
-
     QuillMetadata(const QString &fileName,
-                  MetadataFormatFlags formats,
-                  QuillMetadata::Tag tagToRead);
+                  MetadataFormatFlags formats = AllFormats,
+                  Tag tagToRead = Tag_Undefined);
 
     /*!
       Removes a metadata object.

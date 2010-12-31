@@ -69,25 +69,8 @@ QuillMetadata::QuillMetadata()
 }
 
 QuillMetadata::QuillMetadata(const QString &fileName,
-                             MetadataFormatFlags formats)
-{
-    init();
-    priv = new QuillMetadataPrivate;
-    if (formats == ExifFormat) {
-        priv->xmp = new Xmp();
-        priv->isXmpNeeded = false;
-    }
-    else {
-        priv->xmp = new Xmp(fileName);
-        priv->isXmpNeeded = true;
-    }
-    priv->exif = new Exif(fileName);
-
-}
-
-QuillMetadata::QuillMetadata(const QString &fileName,
                              MetadataFormatFlags formats,
-                             QuillMetadata::Tag tagToRead)
+                             Tag tagToRead)
 {
     init();
     priv = new QuillMetadataPrivate;

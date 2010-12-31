@@ -61,8 +61,8 @@ class Exif : public MetadataRepresentation
 {
  public:
     Exif();
-    Exif(const QString &fileName);
-    Exif(const QString &fileName, QuillMetadata::Tag tagToRead);
+    Exif(const QString &fileName,
+         QuillMetadata::Tag tagToRead = QuillMetadata::Tag_Undefined);
     ~Exif();
 
     bool isValid() const;
