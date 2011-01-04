@@ -61,7 +61,8 @@ class Exif : public MetadataRepresentation
 {
  public:
     Exif();
-    Exif(const QString &fileName);
+    Exif(const QString &fileName,
+         QuillMetadata::Tag tagToRead = QuillMetadata::Tag_Undefined);
     ~Exif();
 
     bool isValid() const;
@@ -80,6 +81,10 @@ class Exif : public MetadataRepresentation
     void initTags();
 
     void setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value);
+
+    void readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
+                                  const unsigned char *buf, const unsigned int bufSize,
+                                  short &_tagValue, ExifByteOrder &_byteOrder);
 
  private:
     static QHash<QuillMetadata::Tag,ExifTypedTag> m_exifTags;

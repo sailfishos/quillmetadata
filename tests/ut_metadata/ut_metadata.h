@@ -87,6 +87,7 @@ private slots:
 
     void testEditCameraMake();
     void testEditOrientation();
+    void testOrientationTagSpeedup();
     void testEditCity();
     void testEditKeywords();
     void testDoubleEditKeywords();

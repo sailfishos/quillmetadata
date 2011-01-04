@@ -485,6 +485,44 @@ void ut_metadata::testSetOrientationTag()
     QVERIFY(!result.isNull());
 }
 
+void ut_metadata::testOrientationTagSpeedup()
+{
+    QString str("/usr/share/quillimagefilter-tests/images/16_color_palette.png");
+
+    for (int i = 0; i<=8; i++){
+        QTemporaryFile file;
+        file.open();
+        sourceImage.save(file.fileName(), "jpg");
+
+        QuillMetadata empty;
+        empty.setEntry(QuillMetadata::Tag_Orientation, QVariant(i));
+        QVERIFY(empty.write(file.fileName()));
+
+        int orientation1, orientation2;
+        {
+            QuillMetadata *metadata = new QuillMetadata(file.fileName(),
+                                                        QuillMetadata::ExifFormat);
+            QVERIFY(metadata->isValid());
+            QCOMPARE(metadata->entry(QuillMetadata::Tag_Orientation).toInt(), i);
+
+            orientation1 = metadata->entry(QuillMetadata::Tag_Orientation).toInt();
+
+            delete metadata;
+        }
+        {
+            QuillMetadata *metadata = new QuillMetadata(file.fileName(),
+                                                        QuillMetadata::ExifFormat,
+                                                        QuillMetadata::Tag_Orientation);
+            QVERIFY(metadata->isValid());
+            QCOMPARE(metadata->entry(QuillMetadata::Tag_Orientation).toInt(), i);
+            orientation2 = metadata->entry(QuillMetadata::Tag_Orientation).toInt();
+
+            delete metadata;
+        }
+        QCOMPARE(orientation1, orientation2);
+    }
+}
+
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );
     ut_metadata test;
