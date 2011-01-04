@@ -1,3 +1,9 @@
+libquillmetadata (1.110104.0) unstable; urgency=low
+
+  * Fixes: NB#216022  - Image loading slowed down by reading of unnecessary Exif tags
+
+ -- Martti Kesaniemi <martti.kesaniemi@nokia.com>  Tue, 04 Jan 2011 12:05:00 +0200
+
 libquillmetadata (1.101229.0) unstable; urgency=low
 
   * Fixes: NB#212437 - Crash in QuillMetadata::dump() after QuillMetadata::setEntry(Tag_Orientation) is called
