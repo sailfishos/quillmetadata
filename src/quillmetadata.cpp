@@ -68,6 +68,7 @@ QuillMetadata::QuillMetadata()
     priv->isXmpNeeded = false;
 }
 
+
 QuillMetadata::QuillMetadata(const QString &fileName,
                              MetadataFormatFlags formats)
 {
