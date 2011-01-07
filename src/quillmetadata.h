@@ -135,9 +135,22 @@ class QuillMetadata
 
       @param formats Which formats to read (currently only supports ExifFormat
       and AllFormats)
+     */
+
+    QuillMetadata(const QString &fileName,
+                  MetadataFormatFlags formats = AllFormats);
+
+    /*!
+      Constructs a metadata object containing all metadata from a given file.
+
+      @param filePath Local filesystem path to file to be read.
+
+      @param formats Which formats to read (currently only supports ExifFormat
+      and AllFormats)
 
       @param tagToRead Which tags to read; if undefined, reads all tags
      */
+
     QuillMetadata(const QString &fileName,
                   MetadataFormatFlags formats = AllFormats,
                   Tag tagToRead = Tag_Undefined);
