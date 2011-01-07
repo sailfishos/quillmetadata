@@ -152,8 +152,8 @@ class QuillMetadata
      */
 
     QuillMetadata(const QString &fileName,
-                  MetadataFormatFlags formats = AllFormats,
-                  Tag tagToRead = Tag_Undefined);
+                  MetadataFormatFlags formats,
+                  Tag tagToRead);
 
     /*!
       Removes a metadata object.
