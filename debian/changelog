@@ -1,3 +1,9 @@
+libquillmetadata (1.110107.1) unstable; urgency=low
+
+  * Fixed build problems in previous.
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Fri, 07 Jan 2011 10:04:01 +0200
+
 libquillmetadata (1.110107.0) unstable; urgency=low
 
   * Fixed previous tag to not cause a binary break.
