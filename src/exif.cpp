@@ -67,7 +67,7 @@ Exif::Exif()
     initTags();
 }
 
-void Exif::readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
+bool Exif::readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
                         const unsigned char *buf, const unsigned int bufSize,
                         short &_tagValue, ExifByteOrder &_byteOrder)
 {
@@ -80,23 +80,23 @@ void Exif::readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
     ExifTag tagByte = m_exifTags[tagToRead].tag;
     ExifFormat tagFormat;
     if ((tagFormat = m_exifTags[tagToRead].format) != EXIF_FORMAT_SHORT)
-        return;
+        return false;
     ExifLong tagItemCount;
     if ((tagItemCount = m_exifTags[tagToRead].count) != 1)
-        return;
+        return false;
 
     const unsigned char *p = buf;
     if (p + bytesBeforeFirstTag >= buf + bufSize) // Bytes before tags
-        return;
+        return false;
 
     if (memcmp(p, tag1, tag1Length) != 0) // Exif tag
-        return;
+        return false;
 
     p += tag1Length; // Data begins here
     _byteOrder = (*p == 0x49 ? EXIF_BYTE_ORDER_INTEL : EXIF_BYTE_ORDER_MOTOROLA);
 
     if (exif_get_short(p+2, _byteOrder) != tag42)  // 42-header-tag
-        return;
+        return false;
 
     int tagAmount = exif_get_short(p+8, _byteOrder);
     p += 10; // first tag found here
@@ -111,9 +111,10 @@ void Exif::readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
                  (exif_get_short(tag+2, _byteOrder) == tagFormat) ) { // Correct format
                     _tagValue = exif_get_short(tag+8, _byteOrder);
             }
-            return; // Correct tag found: return
+            return true; // Correct tag found: return
         }
     }
+    return false; // No tag found
 }
 
 Exif::Exif(const QString &fileName, QuillMetadata::Tag tagToRead)
@@ -139,15 +140,18 @@ Exif::Exif(const QString &fileName, QuillMetadata::Tag tagToRead)
         return;
     }
 
-    short tagValue;
+    short tagValue = 0; // reasonable default value
     ExifByteOrder byteOrder = EXIF_BYTE_ORDER_INTEL; // initialized to default
 
-    readShortTagAndByteOrder(tagToRead, buf, bufSize, tagValue, byteOrder);
+    bool success =
+        readShortTagAndByteOrder(tagToRead, buf, bufSize, tagValue, byteOrder);
 
     exif_loader_unref(loader);
 
-    m_exifByteOrder = byteOrder;
-    this->setEntry(QuillMetadata::Tag_Orientation, tagValue);
+    if (success) {
+        m_exifByteOrder = byteOrder;
+        this->setEntry(QuillMetadata::Tag_Orientation, tagValue);
+    }
 }
 
 Exif::~Exif()

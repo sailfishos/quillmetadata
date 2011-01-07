@@ -82,7 +82,7 @@ class Exif : public MetadataRepresentation
 
     void setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value);
 
-    void readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
+    bool readShortTagAndByteOrder(const QuillMetadata::Tag tagToRead,
                                   const unsigned char *buf, const unsigned int bufSize,
                                   short &_tagValue, ExifByteOrder &_byteOrder);
 
