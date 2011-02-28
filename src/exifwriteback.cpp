@@ -69,6 +69,9 @@ bool ExifWriteback::writeback(const QString &fileName,
     jpeg_create_decompress(&dinfo);
 
     FILE *fileIn = fopen(fileName.toAscii().constData(), "r");
+    if (!fileIn)
+        return false;
+
     jpeg_stdio_src(&dinfo, fileIn);
 
     dinfo.err = jpeg_std_error(&derror);
@@ -85,6 +88,8 @@ bool ExifWriteback::writeback(const QString &fileName,
         jvirt_barray_ptr *jpegData = jpeg_read_coefficients(&dinfo);
 
         FILE *fileOut = fopen(fileName.toAscii().constData(), "w");
+        if (!fileOut)
+            return false;
 
         cinfo_inited = true;
         jpeg_create_compress(&cinfo);
