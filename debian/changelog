@@ -1,3 +1,9 @@
+libquillmetadata (1.110301.1) unstable; urgency=low
+
+  * Fixes: NB#230462 - Missing FILE pointer NULL checks.
+
+ -- Martti Kesaniemi <martti.kesaniemi@nokia.com>  Mon, 1 Mar 2011 13:40:00 +0200
+
 libquillmetadata (1.110117.1) unstable; urgency=low
 
   * Fix for ambiguous constructor overload problem.
