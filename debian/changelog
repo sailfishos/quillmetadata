@@ -1,3 +1,10 @@
+libquillmetadata (1.110304.0) unstable; urgency=low
+
+  * Add options in build system to pass --as-needed to the linker and avoid
+    having unused libraries listed as dependencies in binaries.
+
+ -- Adrian Perez <aperez@igalia.com>  Fri, 04 Mar 2011 14:08:36 +0200
+
 libquillmetadata (1.110301.1) unstable; urgency=low
 
   * Fixes: NB#230462 - Missing FILE pointer NULL checks.

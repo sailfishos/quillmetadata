@@ -4,7 +4,7 @@ TEMPLATE = app
 DEPENDPATH += .
 INCLUDEPATH += . ../../src
 QMAKE_LIBDIR += ../../src ../bin
-
+QMAKE_LFLAGS += -Wl,--as-needed
 QMAKEFEATURES += ../../src
 
 CONFIG += debug
