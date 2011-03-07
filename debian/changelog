@@ -1,3 +1,9 @@
+libquillmetadata (1.110307.0) unstable; urgency=low
+
+  * Fixes: NB#226146 Memory leak with adding new exif entries
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Mon, 07 Mar 2011 14:08:36 +0200
+
 libquillmetadata (1.110304.0) unstable; urgency=low
 
   * Add options in build system to pass --as-needed to the linker and avoid
