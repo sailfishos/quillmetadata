@@ -42,6 +42,7 @@
 
 #include <libexif/exif-data.h>
 #include <QString>
+#include <QHash>
 
 #include "metadatarepresentation.h"
 

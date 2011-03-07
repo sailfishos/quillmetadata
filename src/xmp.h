@@ -40,8 +40,11 @@
 #ifndef XMP_H
 #define XMP_H
 
-#include "metadatarepresentation.h"
 #include <exempi-2.0/exempi/xmp.h>
+#include <QHash>
+
+#include "metadatarepresentation.h"
+
 
 class XmpTag {
 public:
