@@ -246,10 +246,12 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 {
     ExifContent *content = data->ifd[tag.ifd];
 
+    bool entryIsNew = false;
     ExifEntry *entry = exif_content_get_entry(content, tag.tag);
     if (!entry) {
         entry = exif_entry_new();
         exif_entry_initialize(entry, tag.tag);
+        entryIsNew = true;
     }
 
     entry->tag = tag.tag;
@@ -257,14 +259,16 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 
     switch(entry->format) {
     case EXIF_FORMAT_ASCII:
-        entry->data = new unsigned char[value.toByteArray().size()];
+        entry->data = (unsigned char*)
+            malloc(value.toByteArray().size() * sizeof(unsigned char));
         memcpy((char*)entry->data, value.toByteArray().constData(),value.toByteArray().size());
         entry->size = value.toByteArray().size();
         entry->components = entry->size;
         break;
 
     case EXIF_FORMAT_SHORT:
-        entry->data = new unsigned char[exif_format_get_size(EXIF_FORMAT_SHORT)];
+        entry->data = (unsigned char*)
+            malloc(exif_format_get_size(EXIF_FORMAT_SHORT));
         exif_set_short(entry->data, m_exifByteOrder, value.toInt());
         entry->size = exif_format_get_size(EXIF_FORMAT_SHORT);
         entry->components = 1;
@@ -275,6 +279,8 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
     }
 
     exif_content_add_entry(content, entry);
+    if (entryIsNew)
+        exif_entry_unref(entry);
 }
 
 void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &value)
