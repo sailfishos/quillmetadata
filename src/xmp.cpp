@@ -152,6 +152,12 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 
                         return QVariant(value);
                     }
+                    case QuillMetadata::Tag_GPSLatitudeRef:
+                    case QuillMetadata::Tag_GPSLongitudeRef: {
+                        // The 'W', 'E', 'N' or 'S' character is the rightmost character
+                        // in the field
+                        return QVariant(string.right(1));
+                    }
                     default:
                         if (!string.isEmpty()) {
                             xmp_string_free(xmpStringPtr);
@@ -295,4 +301,11 @@ void Xmp::initTags()
                           XmpTag(NS_EXIF, "GPSAltitudeRef", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSVersionID,
                           XmpTag(NS_EXIF, "GPSVersionID", XmpTag::TagTypeString));
+
+    // Workaround for missing reference tags: we'll extract them from the
+    // Latitude and Longitude tags
+    m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLatitudeRef,
+                              XmpTag(NS_EXIF, "GPSLatitude", XmpTag::TagTypeString));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLongitudeRef,
+                              XmpTag(NS_EXIF, "GPSLongitude", XmpTag::TagTypeString));
 }
