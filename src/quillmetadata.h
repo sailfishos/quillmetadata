@@ -90,8 +90,12 @@ class QuillMetadata
         Tag_Description,
         //! GPS latitude, string (XMP/EXIF)
         Tag_GPSLatitude,
+        //! GPS latitude is north or south (EXIF)
+        Tag_GPSLatitudeRef,
         //! GPS longitude, string (XMP/EXIF)
         Tag_GPSLongitude,
+        //! GPS longitude is east or west (EXIF)
+        Tag_GPSLongitudeRef,
         //! GPS altitude, string (XMP/EXIF)
         Tag_GPSAltitude,
         //! GPS altitude above or below sea level, string (XMP/EXIF)

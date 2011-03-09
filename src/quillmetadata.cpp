@@ -188,7 +188,9 @@ void QuillMetadata::init()
       TagGroup_GPS,
       QList<QuillMetadata::Tag>() <<
       QuillMetadata::Tag_GPSLatitude <<
+      QuillMetadata::Tag_GPSLatitudeRef <<
       QuillMetadata::Tag_GPSLongitude <<
+      QuillMetadata::Tag_GPSLongitudeRef <<
       QuillMetadata::Tag_GPSAltitude <<
       QuillMetadata::Tag_GPSAltitudeRef <<
       QuillMetadata::Tag_GPSVersionID);

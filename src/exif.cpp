@@ -393,12 +393,24 @@ void Exif::initTags()
                       ExifTypedTag((ExifTag)EXIF_TAG_GPS_LATITUDE,
                                    EXIF_IFD_GPS,
                                    EXIF_FORMAT_RATIONAL));
+    m_exifTags.insert(QuillMetadata::Tag_GPSLatitudeRef,
+                      ExifTypedTag((ExifTag)EXIF_TAG_GPS_LATITUDE_REF,
+                                   EXIF_IFD_GPS,
+                                   EXIF_FORMAT_ASCII));
     m_exifTags.insert(QuillMetadata::Tag_GPSLongitude,
                       ExifTypedTag((ExifTag)EXIF_TAG_GPS_LONGITUDE,
                                    EXIF_IFD_GPS,
                                    EXIF_FORMAT_RATIONAL));
+    m_exifTags.insert(QuillMetadata::Tag_GPSLongitudeRef,
+                      ExifTypedTag((ExifTag)EXIF_TAG_GPS_LONGITUDE_REF,
+                                   EXIF_IFD_GPS,
+                                   EXIF_FORMAT_ASCII));
     m_exifTags.insert(QuillMetadata::Tag_GPSAltitude,
                       ExifTypedTag((ExifTag)EXIF_TAG_GPS_ALTITUDE,
                                    EXIF_IFD_GPS,
                                    EXIF_FORMAT_RATIONAL));
+    m_exifTags.insert(QuillMetadata::Tag_GPSAltitudeRef,
+                      ExifTypedTag((ExifTag)EXIF_TAG_GPS_ALTITUDE_REF,
+                                   EXIF_IFD_GPS,
+                                   EXIF_FORMAT_BYTE));
 }
