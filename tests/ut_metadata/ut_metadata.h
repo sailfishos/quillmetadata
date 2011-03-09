@@ -100,6 +100,10 @@ private slots:
     // GPS metadata unittests
 
     void testGps();
+    void testEditGps_latitude();
+    void testEditGps_longitude();
+    void testEditGps_altitude();
+    void testEditGps_direction();
     void testWriteGps();
     void testClearGps();
 

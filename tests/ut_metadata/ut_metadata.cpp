@@ -426,6 +426,107 @@ void ut_metadata::testWriteGps()
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("85"));
 }
 
+void ut_metadata::testEditGps_latitude()
+{
+    QuillMetadata editMetadata;
+
+    QVERIFY(editMetadata.isValid());
+
+    // Setting a latitude
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLatitude, QVariant(double(60.1639)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("60.1639"));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitudeRef).toString(), QString("N"));
+
+    // Setting a negative latitude (that is: the latitude reference should be now "S"outh)
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLatitude, QVariant(double(-60.1639)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("60.1639"));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitudeRef).toString(), QString("S"));
+
+    // 0 degrees latitude is "N"orth
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLatitude, QVariant(double(0)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("0"));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitudeRef).toString(), QString("N"));
+
+    // Manually setting the latitude reference
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLatitudeRef, QVariant(QString("S")));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitudeRef).toString(), QString("S"));
+}
+
+void ut_metadata::testEditGps_longitude()
+{
+    QuillMetadata editMetadata;
+
+    QVERIFY(editMetadata.isValid());
+
+    // Setting a setEntry
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLongitude, QVariant(double(60.1639)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("60.1639"));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitudeRef).toString(), QString("E"));
+
+    // Setting a negative longitude (that is: the longitude reference should be now "W"est)
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLongitude, QVariant(double(-60.1639)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("60.1639"));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitudeRef).toString(), QString("W"));
+
+    // 0 degrees longitude is "E"ast
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLongitude, QVariant(double(0)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("0"));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitudeRef).toString(), QString("E"));
+
+    // Manually setting the longitude reference
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLongitudeRef, QVariant(QString("W")));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitudeRef).toString(), QString("W"));
+}
+
+void ut_metadata::testEditGps_altitude()
+{
+    QuillMetadata editMetadata;
+
+    QVERIFY(editMetadata.isValid());
+
+    // Setting a latitude
+    editMetadata.setEntry(QuillMetadata::Tag_GPSAltitude, QVariant(double(60.1639)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("60.1639"));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitudeRef).toString(), QString("0"));
+
+    // Setting a negative altitude (that is: the altitude reference should be now "1" (below sea level)
+    editMetadata.setEntry(QuillMetadata::Tag_GPSAltitude, QVariant(double(-60.1639)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("60.1639"));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitudeRef).toString(), QString("1"));
+
+    // 0 meters altitude is over sea level
+    editMetadata.setEntry(QuillMetadata::Tag_GPSAltitude, QVariant(double(0)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("0"));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitudeRef).toString(), QString("0"));
+
+    // Manually setting the altitude reference
+    editMetadata.setEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(int(1)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitudeRef).toString(), QString("1"));
+}
+
+void ut_metadata::testEditGps_direction()
+{
+    QuillMetadata editMetadata;
+
+    QVERIFY(editMetadata.isValid());
+
+    // Setting image direction between 0.00 and 359.99
+    editMetadata.setEntry(QuillMetadata::Tag_GPSImgDirection, QVariant(double(25.25)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSImgDirection).toString(), QString("25.25"));
+
+    // Setting image under 0.00
+    editMetadata.setEntry(QuillMetadata::Tag_GPSImgDirection, QVariant(double(-15)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSImgDirection).toString(), QString("345"));
+
+    // Setting image over 359.99
+    editMetadata.setEntry(QuillMetadata::Tag_GPSImgDirection, QVariant(double(400)));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSImgDirection).toString(), QString("40"));
+
+    // Manually setting the direction reference
+    editMetadata.setEntry(QuillMetadata::Tag_GPSImgDirectionRef, QVariant(QString("T")));
+    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSImgDirectionRef).toString(), QString("T"));
+}
+
 void ut_metadata::testClearGps()
 {
     QTemporaryFile file;
