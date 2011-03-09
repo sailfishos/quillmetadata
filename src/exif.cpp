@@ -230,6 +230,7 @@ QVariant Exif::entry(QuillMetadata::Tag tag) const
         case QuillMetadata::Tag_GPSAltitude:
         case QuillMetadata::Tag_FocalLength:
         case QuillMetadata::Tag_ExposureTime:
+        case QuillMetadata::Tag_GPSImgDirection:
         default:
             ExifRational rational = exif_get_rational(entry->data, m_exifByteOrder);
             if (rational.denominator == 0)
@@ -328,6 +329,22 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
             rat.numerator = round((remains - rat.numerator*60) * DECIMAL_PRECISION);
             rat.denominator = DECIMAL_PRECISION;
             exif_set_rational(entry->data + 2 * exif_format_get_size(EXIF_FORMAT_RATIONAL), m_exifByteOrder, rat);
+            break;
+        }
+        case EXIF_TAG_GPS_ALTITUDE: {
+            ExifRational rat;
+            double val = value.toDouble();
+            updateReferenceTag(entry->tag, val >= 0);
+            val = fabs(val);
+
+            entry->components = 1;
+            entry->size = exif_format_get_size(EXIF_FORMAT_RATIONAL) * entry->components;
+            entry->data = (unsigned char *) malloc(entry->size);
+
+            rat.numerator = round(val * DECIMAL_PRECISION);
+            rat.denominator = DECIMAL_PRECISION;
+
+            exif_set_rational(entry->data, m_exifByteOrder, rat);
             break;
         }
         default:
@@ -492,4 +509,12 @@ void Exif::initTags()
                       ExifTypedTag((ExifTag)EXIF_TAG_GPS_ALTITUDE_REF,
                                    EXIF_IFD_GPS,
                                    EXIF_FORMAT_BYTE));
+    m_exifTags.insert(QuillMetadata::Tag_GPSImgDirection,
+                      ExifTypedTag((ExifTag)EXIF_TAG_GPS_IMG_DIRECTION,
+                                   EXIF_IFD_GPS,
+                                   EXIF_FORMAT_RATIONAL));
+    m_exifTags.insert(QuillMetadata::Tag_GPSImgDirectionRef,
+                      ExifTypedTag((ExifTag)EXIF_TAG_GPS_IMG_DIRECTION_REF,
+                                   EXIF_IFD_GPS,
+                                   EXIF_FORMAT_ASCII));
 }

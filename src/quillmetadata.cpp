@@ -193,5 +193,7 @@ void QuillMetadata::init()
       QuillMetadata::Tag_GPSLongitudeRef <<
       QuillMetadata::Tag_GPSAltitude <<
       QuillMetadata::Tag_GPSAltitudeRef <<
+      QuillMetadata::Tag_GPSImgDirection <<
+      QuillMetadata::Tag_GPSImgDirectionRef <<
       QuillMetadata::Tag_GPSVersionID);
 }

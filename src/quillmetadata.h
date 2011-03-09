@@ -102,6 +102,10 @@ class QuillMetadata
         Tag_GPSAltitudeRef,
         //! GPS version ID, string (XMP/EXIF)
         Tag_GPSVersionID,
+        //! GPS image direction of the image when captured (EXIF)
+        Tag_GPSImgDirection,
+        //! GPS image direction reference (EXIF)
+        Tag_GPSImgDirectionRef,
         //! Undefined tag
         Tag_Undefined,
     };
