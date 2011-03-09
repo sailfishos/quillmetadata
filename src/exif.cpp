@@ -331,11 +331,21 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
             exif_set_rational(entry->data + 2 * exif_format_get_size(EXIF_FORMAT_RATIONAL), m_exifByteOrder, rat);
             break;
         }
-        case EXIF_TAG_GPS_ALTITUDE: {
+        case EXIF_TAG_GPS_ALTITUDE:
+        case EXIF_TAG_GPS_IMG_DIRECTION: {
             ExifRational rat;
             double val = value.toDouble();
-            updateReferenceTag(entry->tag, val >= 0);
-            val = fabs(val);
+
+            if (entry->tag == EXIF_TAG_GPS_ALTITUDE) {
+                updateReferenceTag(entry->tag, val >= 0);
+                val = fabs(val);
+            }
+            else if (entry->tag == EXIF_TAG_GPS_IMG_DIRECTION) {
+                val = fmod(val, 360);
+                if (val < 0) {
+                    val = 360 + val;
+                }
+            }
 
             entry->components = 1;
             entry->size = exif_format_get_size(EXIF_FORMAT_RATIONAL) * entry->components;
