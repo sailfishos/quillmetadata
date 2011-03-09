@@ -197,6 +197,7 @@ QVariant Exif::entry(QuillMetadata::Tag tag) const
     QVariant result;
 
     switch(entry->format) {
+    case EXIF_FORMAT_BYTE:
     case EXIF_FORMAT_ASCII:
         result = QVariant(QByteArray((const char*)entry->data,entry->size));
         break;
@@ -292,6 +293,13 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
         memcpy((char*)entry->data, value.toByteArray().constData(),value.toByteArray().size());
         entry->size = value.toByteArray().size();
         entry->components = entry->size;
+        break;
+
+    case EXIF_FORMAT_BYTE:
+        entry->components = 1;
+        entry->size = exif_format_get_size(EXIF_FORMAT_BYTE) * entry->components;
+        entry->data = (unsigned char*) malloc(entry->size);
+        memcpy((char*)entry->data, value.toByteArray().constData(), value.toByteArray().size());
         break;
 
     case EXIF_FORMAT_SHORT:
