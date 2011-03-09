@@ -207,12 +207,36 @@ QVariant Exif::entry(QuillMetadata::Tag tag) const
         break;
 
     case EXIF_FORMAT_RATIONAL: {
-        ExifRational rational = exif_get_rational(entry->data, m_exifByteOrder);
-        if (rational.denominator == 0)
-            result = QVariant();
-        else
-            result = QVariant((float)rational.numerator /
-                              (float)rational.denominator);
+        unsigned char formatSize = exif_format_get_size(EXIF_FORMAT_RATIONAL);
+        double val = 0.0;
+        int power = 1;
+
+        switch(tag) {
+        case QuillMetadata::Tag_GPSLatitude:
+        case QuillMetadata::Tag_GPSLongitude:
+            for (int i = 0; i < 3; i ++) {
+                ExifRational cRat = exif_get_rational(entry->data + i * formatSize, m_exifByteOrder);
+                if (cRat.denominator != 0) {
+                    val += ((float)cRat.numerator / (float)cRat.denominator) / power;
+                    power *= 60;
+                }
+            }
+            result = QVariant(val);
+            break;
+
+        case QuillMetadata::Tag_GPSAltitude:
+        case QuillMetadata::Tag_FocalLength:
+        case QuillMetadata::Tag_ExposureTime:
+        default:
+            ExifRational rational = exif_get_rational(entry->data, m_exifByteOrder);
+            if (rational.denominator == 0)
+                result = QVariant();
+            else
+                result = QVariant((float)rational.numerator /
+                                  (float)rational.denominator);
+            break;
+        }
+
         break;
     }
 
