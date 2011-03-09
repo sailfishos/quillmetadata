@@ -160,6 +160,7 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                         return QVariant(string.right(1));
                     }
 
+                    case QuillMetadata::Tag_GPSImgDirection:
                     case QuillMetadata::Tag_GPSAltitude: {
                         const int separator = string.indexOf("/");
                         const int len = string.length();
@@ -317,6 +318,10 @@ void Xmp::initTags()
                           XmpTag(NS_EXIF, "GPSAltitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSAltitudeRef,
                           XmpTag(NS_EXIF, "GPSAltitudeRef", XmpTag::TagTypeString));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_GPSImgDirection,
+                          XmpTag(NS_EXIF, "GPSImgDirection", XmpTag::TagTypeString));
+    m_xmpTags.insertMulti(QuillMetadata::Tag_GPSImgDirectionRef,
+                          XmpTag(NS_EXIF, "GPSImgDirectionRef", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSVersionID,
                           XmpTag(NS_EXIF, "GPSVersionID", XmpTag::TagTypeString));
 
