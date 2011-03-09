@@ -39,8 +39,11 @@
 
 #include <stdlib.h>
 #include <libexif/exif-loader.h>
+#include <math.h>
 #include "exifwriteback.h"
 #include "exif.h"
+
+#define DECIMAL_PRECISION 10000
 
 ExifTypedTag::ExifTypedTag():tag(),ifd(),format(),count()
 {
@@ -298,6 +301,40 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
         entry->components = 1;
         break;
 
+    case EXIF_FORMAT_RATIONAL:
+
+        switch (entry->tag) {
+        case EXIF_TAG_GPS_LATITUDE:
+        case EXIF_TAG_GPS_LONGITUDE: {
+            ExifRational rat;
+
+            entry->components = 3;
+            entry->size = exif_format_get_size(EXIF_FORMAT_RATIONAL) * entry->components;
+            entry->data = (unsigned char *) malloc(entry->size);
+
+            double val = value.toDouble();
+            updateReferenceTag(entry->tag, val >= 0);
+            val = fabs(val);
+            double remains = (val - trunc(val)) * 3600;
+
+            rat.numerator = trunc(val);
+            rat.denominator = 1;
+            exif_set_rational(entry->data, m_exifByteOrder, rat);
+
+            rat.numerator = trunc(remains/60);
+            rat.denominator = 1;
+            exif_set_rational(entry->data + exif_format_get_size(EXIF_FORMAT_RATIONAL), m_exifByteOrder, rat);
+
+            rat.numerator = round((remains - rat.numerator*60) * DECIMAL_PRECISION);
+            rat.denominator = DECIMAL_PRECISION;
+            exif_set_rational(entry->data + 2 * exif_format_get_size(EXIF_FORMAT_RATIONAL), m_exifByteOrder, rat);
+            break;
+        }
+        default:
+            break;
+        }
+        break;
+
     default:
         break;
     }
@@ -305,6 +342,24 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
     exif_content_add_entry(content, entry);
     if (entryIsNew)
         exif_entry_unref(entry);
+}
+
+void Exif::updateReferenceTag(ExifTag tag, bool positive)
+{
+    switch (tag) {
+        case EXIF_TAG_GPS_LATITUDE:
+            setEntry(QuillMetadata::Tag_GPSLatitudeRef, QVariant(positive ? "N" : "S"));
+            break;
+        case EXIF_TAG_GPS_LONGITUDE:
+            setEntry(QuillMetadata::Tag_GPSLongitudeRef, QVariant(positive ? "E" : "W"));
+            break;
+        case EXIF_TAG_GPS_ALTITUDE:
+            setEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(positive ? 0 : 1));
+            break;
+        default:
+            // Unsupported tags
+            return;
+    }
 }
 
 void Exif::setEntry(QuillMetadata::Tag tag, const QVariant &value)
