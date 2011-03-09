@@ -38,7 +38,10 @@
 ****************************************************************************/
 
 #include <QStringList>
+#include <QLocale>
+#include <QTextStream>
 #include <exempi-2.0/exempi/xmpconsts.h>
+#include <math.h>
 
 #include "xmp.h"
 
@@ -132,10 +135,29 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
             }
             else {
                 QString string = processXmpString(xmpStringPtr);
+                switch (tag) {
+                    case QuillMetadata::Tag_GPSLatitude:
+                    case QuillMetadata::Tag_GPSLongitude: {
+                        // Degrees and minutes are separated with a ','
+                        QStringList elements = string.split(",");
+                        QLocale c(QLocale::C);
+                        double value = 0, term = 0;
+                        for (int i = 0, power = 1; i < elements.length(); i ++, power *= 60) {
+                            term = c.toDouble(elements[i]);
+                            if (i == elements.length() - 1) {
+                                term = c.toDouble(elements[i].mid(0, elements[i].length() - 2));
+                            }
+                            value += term / power;
+                        }
 
-                if (!string.isEmpty()) {
-                    xmp_string_free(xmpStringPtr);
-                    return QVariant(string);
+                        return QVariant(value);
+                    }
+                    default:
+                        if (!string.isEmpty()) {
+                            xmp_string_free(xmpStringPtr);
+                            return QVariant(string);
+                        }
+                        break;
                 }
             }
         }
