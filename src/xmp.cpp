@@ -152,12 +152,30 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 
                         return QVariant(value);
                     }
+
                     case QuillMetadata::Tag_GPSLatitudeRef:
                     case QuillMetadata::Tag_GPSLongitudeRef: {
                         // The 'W', 'E', 'N' or 'S' character is the rightmost character
                         // in the field
                         return QVariant(string.right(1));
                     }
+
+                    case QuillMetadata::Tag_GPSAltitude: {
+                        const int separator = string.indexOf("/");
+                        const int len = string.length();
+                        QLocale c(QLocale::C);
+
+                        double numerator = c.toDouble(string.mid(0, separator));
+                        double denominator = c.toDouble(string.mid(separator + 1, len - separator - 1));
+
+                        if (denominator && separator != -1) {
+                            return QVariant(numerator / denominator);
+                        }
+                        else {
+                            return QVariant(numerator);
+                        }
+                    }
+
                     default:
                         if (!string.isEmpty()) {
                             xmp_string_free(xmpStringPtr);
