@@ -426,6 +426,55 @@ void ut_metadata::testWriteGps()
     QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("85"));
 }
 
+void ut_metadata::testGps_XmpExif()
+{
+    // TODO: Stop skipping the test once that it becomes possible to only read XMP data
+    QSKIP("Reading only XMP data is still unsupported", SkipSingle);
+
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+    gps->write(file.fileName());
+
+    QuillMetadata editMetadataEXIF(file.fileName(), QuillMetadata::ExifFormat);
+    QuillMetadata editMetadataXMP(file.fileName(), QuillMetadata::XmpFormat);
+
+    QVERIFY(editMetadataEXIF.isValid());
+    QVERIFY(editMetadataXMP.isValid());
+
+    // Latitude
+    QCOMPARE(editMetadataEXIF.entry(QuillMetadata::Tag_GPSLatitude).toString(),
+             editMetadataXMP.entry(QuillMetadata::Tag_GPSLatitude).toString());
+
+    // Latitude REF
+    QCOMPARE(editMetadataEXIF.entry(QuillMetadata::Tag_GPSLatitudeRef).toString(),
+             editMetadataXMP.entry(QuillMetadata::Tag_GPSLatitudeRef).toString());
+
+    // Longitude
+    QCOMPARE(editMetadataEXIF.entry(QuillMetadata::Tag_GPSLongitude).toString(),
+             editMetadataXMP.entry(QuillMetadata::Tag_GPSLongitude).toString());
+
+    // Longitude REF
+    QCOMPARE(editMetadataEXIF.entry(QuillMetadata::Tag_GPSLongitudeRef).toString(),
+             editMetadataXMP.entry(QuillMetadata::Tag_GPSLongitudeRef).toString());
+
+    // Altitude
+    QCOMPARE(editMetadataEXIF.entry(QuillMetadata::Tag_GPSAltitude).toString(),
+             editMetadataXMP.entry(QuillMetadata::Tag_GPSAltitude).toString());
+
+    // Altitude REF
+    QCOMPARE(editMetadataEXIF.entry(QuillMetadata::Tag_GPSAltitudeRef).toString(),
+             editMetadataXMP.entry(QuillMetadata::Tag_GPSAltitudeRef).toString());
+
+    // Direction
+    QCOMPARE(editMetadataEXIF.entry(QuillMetadata::Tag_GPSImgDirection).toString(),
+             editMetadataXMP.entry(QuillMetadata::Tag_GPSImgDirection).toString());
+
+    // Direction REF
+    QCOMPARE(editMetadataEXIF.entry(QuillMetadata::Tag_GPSImgDirectionRef).toString(),
+             editMetadataXMP.entry(QuillMetadata::Tag_GPSImgDirectionRef).toString());
+}
+
 void ut_metadata::testEditGps_latitude()
 {
     QuillMetadata editMetadata;
