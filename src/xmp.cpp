@@ -201,6 +201,26 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
     }
 
     switch (tag) {
+        case QuillMetadata::Tag_GPSAltitude: {
+            QString altitude = entry.toString();
+
+            // Check the existence of a slash. If there's not one, append it
+            if (!altitude.contains("/")) {
+                altitude.append("/1");
+            }
+
+            // Sanity check: if the input starts with "-", remove it and update the reference field
+            if (altitude.startsWith("-")) {
+                setXmpEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(1));
+                setXmpEntry(tag, QVariant(altitude.mid(1)));
+            }
+            else {
+                setXmpEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(0));
+                setXmpEntry(tag, QVariant(altitude));
+            }
+
+            break;
+        }
         case QuillMetadata::Tag_GPSLatitude:
         case QuillMetadata::Tag_GPSLongitude: {
             QString value = entry.toString();
