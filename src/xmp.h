@@ -84,6 +84,8 @@ class Xmp : public MetadataRepresentation
 
     static QString processXmpString(XmpStringPtr xmpString);
 
+    void setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry);
+
  private:
     static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
 

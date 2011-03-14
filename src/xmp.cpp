@@ -200,6 +200,52 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
         m_xmpPtr = xmp_new_empty();
     }
 
+    switch (tag) {
+        case QuillMetadata::Tag_GPSLatitude:
+        case QuillMetadata::Tag_GPSLongitude: {
+            QString value = entry.toString();
+            const QString refPositive(tag == QuillMetadata::Tag_GPSLatitude ? "N" : "E");
+            const QString refNegative(tag == QuillMetadata::Tag_GPSLatitude ? "S" : "W");
+
+            if (!value.contains(",")) {
+                double val = value.toDouble();
+                QString parsedEntry;
+                val = fabs(val);
+                double remains = (val - trunc(val)) * 3600;
+
+                QTextStream(&parsedEntry) << trunc(val) << ","
+                        << trunc(remains / 60) << ","
+                        << remains - trunc(remains / 60) * 60;
+
+                if (value.startsWith("-")) {
+                    parsedEntry.append(refNegative);
+                }
+                else {
+                    parsedEntry.append(refPositive);
+                }
+
+                setXmpEntry(tag, QVariant(parsedEntry));
+            }
+            else if (value.endsWith(refPositive) || value.endsWith(refNegative)) {
+                if (value.startsWith("-")) {
+                    value.replace(value.right(1), refNegative);
+                    setXmpEntry(tag, QVariant(value.mid(1)));
+                }
+            } else {
+                value.append(value.startsWith("-") ? refNegative : refPositive);
+                setXmpEntry(tag, QVariant(value));
+            }
+
+            break;
+        }
+        default:
+            setXmpEntry(tag, entry);
+            break;
+    }
+}
+
+void Xmp::setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry)
+{
     QList<XmpTag> xmpTags = m_xmpTags.values(tag);
 
     foreach (XmpTag xmpTag, xmpTags) {
