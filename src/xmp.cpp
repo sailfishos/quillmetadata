@@ -258,6 +258,33 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
             break;
         }
+        case QuillMetadata::Tag_GPSImgDirection: {
+            QString direction;
+            const int slash = entry.toString().indexOf("/");
+            double value;
+
+            // Check the existence of a slash. If there's not one, append it
+            if (slash == -1) {
+                value = entry.toDouble();
+                value = fmod(value, 360);
+                if (value < 0) {
+                    value = 360 + value;
+                }
+                QTextStream(&direction) << value << "/1";
+            }
+            else {
+                QLocale c(QLocale::C);
+                value = c.toDouble(direction.mid(0, slash)) / c.toDouble(direction.mid(slash + 1, direction.length() - slash - 1));
+                value = fmod(value, 360);
+                if (value < 0) {
+                    value = 360 + value;
+                }
+                QTextStream(&direction) << value << "/1";
+            }
+
+            setXmpEntry(tag, QVariant(direction));
+            break;
+        }
         default:
             setXmpEntry(tag, entry);
             break;
