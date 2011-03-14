@@ -43,6 +43,8 @@
 #include "quillmetadata.h"
 #include "ut_metadata.h"
 
+#define PRECISION 10000
+
 ut_metadata::ut_metadata()
 {
 }
@@ -478,17 +480,21 @@ void ut_metadata::testGps_XmpExif()
 void ut_metadata::testEditGps_latitude()
 {
     QuillMetadata editMetadata;
+    double expected = 60.1639;
+    double actual;
 
     QVERIFY(editMetadata.isValid());
 
     // Setting a latitude
-    editMetadata.setEntry(QuillMetadata::Tag_GPSLatitude, QVariant(double(60.1639)));
-    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("60.1639"));
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLatitude, QVariant(expected));
+    actual = editMetadata.entry(QuillMetadata::Tag_GPSLatitude).toDouble();
+    QCOMPARE(round(actual * PRECISION), round(expected * PRECISION));
     QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitudeRef).toString(), QString("N"));
 
     // Setting a negative latitude (that is: the latitude reference should be now "S"outh)
-    editMetadata.setEntry(QuillMetadata::Tag_GPSLatitude, QVariant(double(-60.1639)));
-    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitude).toString(), QString("60.1639"));
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLatitude, QVariant(-expected));
+    actual = editMetadata.entry(QuillMetadata::Tag_GPSLatitude).toDouble();
+    QCOMPARE(round(actual * PRECISION), round(expected * PRECISION));
     QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLatitudeRef).toString(), QString("S"));
 
     // 0 degrees latitude is "N"orth
@@ -504,17 +510,21 @@ void ut_metadata::testEditGps_latitude()
 void ut_metadata::testEditGps_longitude()
 {
     QuillMetadata editMetadata;
+    double expected = 60.1639;
+    double actual;
 
     QVERIFY(editMetadata.isValid());
 
     // Setting a setEntry
-    editMetadata.setEntry(QuillMetadata::Tag_GPSLongitude, QVariant(double(60.1639)));
-    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("60.1639"));
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLongitude, QVariant(expected));
+    actual = editMetadata.entry(QuillMetadata::Tag_GPSLongitude).toDouble();
+    QCOMPARE(round(actual * PRECISION), round(expected * PRECISION));
     QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitudeRef).toString(), QString("E"));
 
     // Setting a negative longitude (that is: the longitude reference should be now "W"est)
-    editMetadata.setEntry(QuillMetadata::Tag_GPSLongitude, QVariant(double(-60.1639)));
-    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitude).toString(), QString("60.1639"));
+    editMetadata.setEntry(QuillMetadata::Tag_GPSLongitude, QVariant(-expected));
+    actual = editMetadata.entry(QuillMetadata::Tag_GPSLongitude).toDouble();
+    QCOMPARE(round(actual * PRECISION), round(expected * PRECISION));
     QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSLongitudeRef).toString(), QString("W"));
 
     // 0 degrees longitude is "E"ast
@@ -530,17 +540,21 @@ void ut_metadata::testEditGps_longitude()
 void ut_metadata::testEditGps_altitude()
 {
     QuillMetadata editMetadata;
+    double expected = 60.1639;
+    double actual;
 
     QVERIFY(editMetadata.isValid());
 
     // Setting a latitude
-    editMetadata.setEntry(QuillMetadata::Tag_GPSAltitude, QVariant(double(60.1639)));
-    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("60.1639"));
+    editMetadata.setEntry(QuillMetadata::Tag_GPSAltitude, QVariant(expected));
+    actual = editMetadata.entry(QuillMetadata::Tag_GPSAltitude).toDouble();
+    QCOMPARE(round(actual * PRECISION), round(expected * PRECISION));
     QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitudeRef).toString(), QString("0"));
 
     // Setting a negative altitude (that is: the altitude reference should be now "1" (below sea level)
-    editMetadata.setEntry(QuillMetadata::Tag_GPSAltitude, QVariant(double(-60.1639)));
-    QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitude).toString(), QString("60.1639"));
+    editMetadata.setEntry(QuillMetadata::Tag_GPSAltitude, QVariant(-expected));
+    actual = editMetadata.entry(QuillMetadata::Tag_GPSAltitude).toDouble();
+    QCOMPARE(round(actual * PRECISION), round(expected * PRECISION));
     QCOMPARE(editMetadata.entry(QuillMetadata::Tag_GPSAltitudeRef).toString(), QString("1"));
 
     // 0 meters altitude is over sea level
