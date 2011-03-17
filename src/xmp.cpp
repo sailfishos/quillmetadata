@@ -135,54 +135,53 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
             }
             else {
                 QString string = processXmpString(xmpStringPtr);
-                switch (tag) {
-                    case QuillMetadata::Tag_GPSLatitude:
-                    case QuillMetadata::Tag_GPSLongitude: {
-                        // Degrees and minutes are separated with a ','
-                        QStringList elements = string.split(",");
-                        QLocale c(QLocale::C);
-                        double value = 0, term = 0;
-                        for (int i = 0, power = 1; i < elements.length(); i ++, power *= 60) {
-                            term = c.toDouble(elements[i]);
-                            if (i == elements.length() - 1) {
-                                term = c.toDouble(elements[i].mid(0, elements[i].length() - 2));
+                if (!string.isEmpty()) {
+                    xmp_string_free(xmpStringPtr);
+                    switch (tag) {
+                        case QuillMetadata::Tag_GPSLatitude:
+                        case QuillMetadata::Tag_GPSLongitude: {
+                            // Degrees and minutes are separated with a ','
+                            QStringList elements = string.split(",");
+                            QLocale c(QLocale::C);
+                            double value = 0, term = 0;
+                            for (int i = 0, power = 1; i < elements.length(); i ++, power *= 60) {
+                                term = c.toDouble(elements[i]);
+                                if (i == elements.length() - 1) {
+                                    term = c.toDouble(elements[i].mid(0, elements[i].length() - 2));
+                                }
+                                value += term / power;
                             }
-                            value += term / power;
+
+                            return QVariant(value);
                         }
 
-                        return QVariant(value);
-                    }
-
-                    case QuillMetadata::Tag_GPSLatitudeRef:
-                    case QuillMetadata::Tag_GPSLongitudeRef: {
-                        // The 'W', 'E', 'N' or 'S' character is the rightmost character
-                        // in the field
-                        return QVariant(string.right(1));
-                    }
-
-                    case QuillMetadata::Tag_GPSImgDirection:
-                    case QuillMetadata::Tag_GPSAltitude: {
-                        const int separator = string.indexOf("/");
-                        const int len = string.length();
-                        QLocale c(QLocale::C);
-
-                        double numerator = c.toDouble(string.mid(0, separator));
-                        double denominator = c.toDouble(string.mid(separator + 1, len - separator - 1));
-
-                        if (denominator && separator != -1) {
-                            return QVariant(numerator / denominator);
+                        case QuillMetadata::Tag_GPSLatitudeRef:
+                        case QuillMetadata::Tag_GPSLongitudeRef: {
+                            // The 'W', 'E', 'N' or 'S' character is the rightmost character
+                            // in the field
+                            return QVariant(string.right(1));
                         }
-                        else {
-                            return QVariant(numerator);
-                        }
-                    }
 
-                    default:
-                        if (!string.isEmpty()) {
-                            xmp_string_free(xmpStringPtr);
+                        case QuillMetadata::Tag_GPSImgDirection:
+                        case QuillMetadata::Tag_GPSAltitude: {
+                            const int separator = string.indexOf("/");
+                            const int len = string.length();
+                            QLocale c(QLocale::C);
+
+                            double numerator = c.toDouble(string.mid(0, separator));
+                            double denominator = c.toDouble(string.mid(separator + 1, len - separator - 1));
+
+                            if (denominator && separator != -1) {
+                                return QVariant(numerator / denominator);
+                            }
+                            else {
+                                return QVariant(numerator);
+                            }
+                        }
+
+                        default:
                             return QVariant(string);
-                        }
-                        break;
+                    }
                 }
             }
         }
