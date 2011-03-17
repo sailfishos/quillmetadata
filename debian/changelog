@@ -1,3 +1,9 @@
+libquillmetadata (1.110317.0) unstable; urgency=low
+
+  * Improved GPS support
+
+ -- Simon Pena <spena@igalia.com>  Thu, 17 Mar 2011 15:03:43 +0200
+
 libquillmetadata (1.110308.0) unstable; urgency=low
 
   * Added explicit QHash header includes
