@@ -1,3 +1,9 @@
+libquillmetadata (1.110328.0) unstable; urgency=low
+
+  * Fixes: NB#238538 libquillmetadata package fails to build with gcc-4.5
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Mon, 28 Mar 2011 12:23:30 +0300
+
 libquillmetadata (1.110317.0) unstable; urgency=low
 
   * Improved GPS support
