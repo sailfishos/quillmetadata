@@ -313,7 +313,7 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
     case EXIF_FORMAT_RATIONAL:
 
         // GPS tags are not members of the ExifTag enum so we need the int cast
-        switch ((int)entry->tag) {
+        switch (static_cast<int>(entry->tag)) {
         case EXIF_TAG_GPS_LATITUDE:
         case EXIF_TAG_GPS_LONGITUDE: {
             ExifRational rat;
@@ -383,7 +383,7 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 void Exif::updateReferenceTag(ExifTag tag, bool positive)
 {
     // GPS tags are not members of the ExifTag enum so we need the int cast
-    switch ((int)tag) {
+    switch (static_cast<int>(tag)) {
         case EXIF_TAG_GPS_LATITUDE:
             setEntry(QuillMetadata::Tag_GPSLatitudeRef, QVariant(positive ? "N" : "S"));
             break;
