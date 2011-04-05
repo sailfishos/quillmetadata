@@ -1,3 +1,11 @@
+libquillmetadata (1.110407.0) unstable; urgency=low
+
+  * Honor DEB_BUILD_OPTIONS for Debian packaging. Options "debug", "noopt"
+  	(builds with -O0) and "cov" (for adding coverage info) are supported.
+
+
+ -- Adrian Perez <aperez@igalia.com>  Thu, 07 Apr 2011 16:20:17 +0300
+
 libquillmetadata (1.110328.0) unstable; urgency=low
 
   * Fixes: NB#238538 libquillmetadata package fails to build with gcc-4.5

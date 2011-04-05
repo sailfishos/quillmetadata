@@ -2,7 +2,7 @@ Source: libquillmetadata
 Section: libs
 Priority: extra
 Maintainer: Pekka Marjola <Pekka.Marjola@nokia.com>
-Build-Depends: debhelper (>= 5),libqt4-dev,libqt4-opengl-dev,libexif-dev,libexempi-dev,libjpeg62-dev,doxygen
+Build-Depends: debhelper (>= 7.0.50),libqt4-dev,libqt4-opengl-dev,libexif-dev,libexempi-dev,libjpeg62-dev,doxygen
 Standards-Version: 3.8.0
 
 Package: libquillmetadata1

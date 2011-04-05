@@ -7,8 +7,6 @@ TARGET = quillmetadata
 
 MOC_DIR = .moc
 
-CONFIG += release
-
 LIBS += -lexif -lexempi -ljpeg
 # Generate pkg-config support by default
 # Note that we HAVE TO also create prl config as QMake implementation
