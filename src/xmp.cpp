@@ -303,7 +303,7 @@ void Xmp::setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry)
             xmp_set_property(m_xmpPtr,
                              xmpTag.schema.toAscii().constData(),
                              xmpTag.tag.toAscii().constData(),
-                             entry.toByteArray().constData(), 0);
+                             entry.toString().toUtf8().constData(), 0);
         else if (xmpTag.tagType == XmpTag::TagTypeStringList) {
             QStringList list = entry.toStringList();
             foreach (QString string, list)
@@ -318,7 +318,7 @@ void Xmp::setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry)
                                    xmpTag.schema.toAscii().constData(),
                                    xmpTag.tag.toAscii().constData(),
                                    "", "x-default",
-                                   entry.toByteArray().constData(), 0);
+                                   entry.toString().toUtf8().constData(), 0);
         }
     }
 }
