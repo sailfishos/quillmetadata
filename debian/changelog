@@ -1,3 +1,9 @@
+libquillmetadata (1.110412.0) unstable; urgency=low
+
+  * Fixes: NB#245726 City tags with scandic characters are corrupted.
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Tue, 12 Apr 2011 10:47:30 +0300
+
 libquillmetadata (1.110407.0) unstable; urgency=low
 
   * Honor DEB_BUILD_OPTIONS for Debian packaging. Options "debug", "noopt"
