@@ -29,6 +29,8 @@ for(OPTION,$$list($$lower($$COV_OPTION))){
     }
 }
 
+VERSION=4.0.0
+
 # --- input
 
 HEADERS += quillmetadata.h \
