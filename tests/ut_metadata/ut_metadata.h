@@ -116,6 +116,8 @@ private slots:
     void testCanRead();
     void testSetOrientationTag();
 
+    void testEditRegions();
+
 private:
     QImage sourceImage;
 

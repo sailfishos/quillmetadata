@@ -284,6 +284,9 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
             setXmpEntry(tag, QVariant(direction));
             break;
         }
+    case QuillMetadata::Tag_Regions: {
+
+	}
         default:
             setXmpEntry(tag, entry);
             break;
@@ -423,4 +426,7 @@ void Xmp::initTags()
                               XmpTag(NS_EXIF, "GPSLatitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLongitudeRef,
                               XmpTag(NS_EXIF, "GPSLongitude", XmpTag::TagTypeString));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_Regions,
+			  XmpTag("mwg-rs", "Regions", XmpTag::TagTypeRegions));
 }

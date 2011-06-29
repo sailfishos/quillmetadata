@@ -42,8 +42,42 @@
 
 #include <QString>
 #include <QVariant>
+#include <QRect>
 
 class QuillMetadataPrivate;
+
+enum RegionType { Face, Pet, Focus, BarCode };
+
+class Area
+{
+public:
+    QRect rectangle;
+    QPoint centerPoint() { return rectangle.center(); }
+};
+
+class Dimensions
+{
+public:
+    int width;
+    int height;
+};
+
+class RegionInfo
+{
+public:
+    Area area;
+    RegionType type;
+    QString name;
+    Dimensions imageDimensions;
+};
+
+class Regions
+{
+public:
+    QList<RegionInfo> regionList;
+};
+
+
 
 class QuillMetadata
 {
@@ -106,6 +140,8 @@ class QuillMetadata
         Tag_GPSImgDirection,
         //! GPS image direction reference (EXIF)
         Tag_GPSImgDirectionRef,
+	//! Region list of type QList<RegionInfo>
+	Tag_Regions,
         //! Undefined tag
         Tag_Undefined,
     };

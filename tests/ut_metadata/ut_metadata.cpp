@@ -640,6 +640,7 @@ void ut_metadata::testCanRead()
     file.open();
     QVERIFY(!QuillMetadata::canRead(file.fileName()));
 }
+
 //we add the case to test dump function by creating medatedata object with file name from other team.
 void ut_metadata::testSetOrientationTag()
 {
@@ -686,6 +687,23 @@ void ut_metadata::testOrientationTagSpeedup()
         QCOMPARE(orientation1, orientation2);
     }
 }
+
+#if 1
+void ut_metadata::testEditRegions()
+{
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+    QuillMetadata empty;
+    empty.setEntry(QuillMetadata::Tag_Regions, QString("Tapiola"));
+    empty.write(file.fileName());
+
+    QuillMetadata writtenMetadata(file.fileName());
+    QVERIFY(writtenMetadata.isValid());
+    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_City).toString(),
+	     QString("Tapiola"));
+}
+#endif
 
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );

@@ -51,7 +51,8 @@ public:
     enum TagType {
         TagTypeString,
         TagTypeStringList,
-        TagTypeAltLang
+	TagTypeAltLang,
+	TagTypeRegions
     };
 
     XmpTag(const QString &schema, const QString &tag, TagType tagType);
