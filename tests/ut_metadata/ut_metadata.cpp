@@ -61,10 +61,12 @@ void ut_metadata::cleanupTestCase()
 
 void ut_metadata::init()
 {
-    metadata = new QuillMetadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
-    xmp = new QuillMetadata("/usr/share/libquillmetadata-tests/images/xmp.jpg");
-    iptc = new QuillMetadata("/usr/share/libquillmetadata-tests/images/iptc.jpg");
-    gps = new QuillMetadata("/usr/share/libquillmetadata-tests/images/gps.jpg");
+    metadata	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
+    xmp		= new QuillMetadata("/usr/share/libquillmetadata-tests/images/xmp.jpg");
+    iptc	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/iptc.jpg");
+    gps		= new QuillMetadata("/usr/share/libquillmetadata-tests/images/gps.jpg");
+
+    region	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
 }
 
 void ut_metadata::cleanup()
@@ -73,6 +75,8 @@ void ut_metadata::cleanup()
     delete xmp;
     delete iptc;
     delete gps;
+
+    delete region;
 }
 
 void ut_metadata::testCameraMake()
@@ -691,17 +695,9 @@ void ut_metadata::testOrientationTagSpeedup()
 #if 1
 void ut_metadata::testEditRegions()
 {
-    QTemporaryFile file;
-    file.open();
-    sourceImage.save(file.fileName(), "jpg");
-    QuillMetadata empty;
-    empty.setEntry(QuillMetadata::Tag_Regions, QString("Tapiola"));
-    empty.write(file.fileName());
-
-    QuillMetadata writtenMetadata(file.fileName());
-    QVERIFY(writtenMetadata.isValid());
-    QCOMPARE(writtenMetadata.entry(QuillMetadata::Tag_City).toString(),
-	     QString("Tapiola"));
+    QVERIFY(region->isValid());
+    qDebug() << region->entry(QuillMetadata::Tag_Creator).toString();
+    qDebug() << region->entry(QuillMetadata::Tag_Regions).toString();
 }
 #endif
 

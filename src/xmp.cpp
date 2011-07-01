@@ -45,6 +45,8 @@
 
 #include "xmp.h"
 
+#include <QDebug>
+
 QHash<QuillMetadata::Tag,XmpTag> Xmp::m_xmpTags;
 bool Xmp::m_initialized = false;
 
@@ -98,23 +100,44 @@ QString Xmp::processXmpString(XmpStringPtr xmpString)
 
 QVariant Xmp::entry(QuillMetadata::Tag tag) const
 {
+    //qDebug() << "Xmp::entry";
+
     if (!supportsEntry(tag))
         return QVariant();
 
     QList<XmpTag> xmpTags = m_xmpTags.values(tag);
+
+    qDebug() << xmpTags.count();
 
     XmpStringPtr xmpStringPtr = xmp_string_new();
 
     foreach (XmpTag xmpTag, xmpTags) {
         uint32_t propBits;
 
-        if (xmp_get_property(m_xmpPtr,
-                             xmpTag.schema.toAscii().constData(),
+
+	qDebug() << xmpTag.tag << ";" << xmpTag.schema.toAscii().constData()
+			 << ";" << xmpTag.tag.toAscii().constData();
+
+
+#if 0
+	{
+	    XmpStringPtr registeredPrefix = xmp_string_new();
+	    bool bResult = xmp_namespace_prefix(
+		    "http://www.metadataworkinggroup.com/schemas/regions/",
+		    registeredPrefix);
+	    qDebug() << "namespace exists:" << bResult << processXmpString(registeredPrefix);
+	    xmp_string_free(registeredPrefix);
+	}
+#endif
+
+	if (xmp_get_property(m_xmpPtr,
+			     xmpTag.schema.toAscii().constData(),
                              xmpTag.tag.toAscii().constData(),
                              xmpStringPtr,
                              &propBits)) {
+
             if (XMP_IS_PROP_ARRAY(propBits)) {
-                QStringList list;
+		QStringList list;
                 int i = 1;
                 while (xmp_get_array_item(m_xmpPtr,
                                           xmpTag.schema.toAscii().constData(),
@@ -132,9 +155,17 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                     xmp_string_free(xmpStringPtr);
                     return QVariant(list);
                 }
-            }
-            else {
+	    } else if (XMP_IS_PROP_STRUCT(propBits)) {
+		qDebug() << "struct:";
+
+		xmp_serialize(m_xmpPtr, xmpStringPtr,
+			      XMP_SERIAL_OMITALLFORMATTING, 0);
+
+		qDebug() << processXmpString(xmpStringPtr);
+
+	    } else {
                 QString string = processXmpString(xmpStringPtr);
+		qDebug() << string;
                 if (!string.isEmpty()) {
                     xmp_string_free(xmpStringPtr);
                     switch (tag) {
@@ -184,7 +215,9 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                     }
                 }
             }
-        }
+	} else {
+	    qDebug() << "didn't get property";
+	}
     }
     xmp_string_free(xmpStringPtr);
     return QVariant();
@@ -428,5 +461,6 @@ void Xmp::initTags()
                               XmpTag(NS_EXIF, "GPSLongitude", XmpTag::TagTypeString));
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Regions,
-			  XmpTag("mwg-rs", "Regions", XmpTag::TagTypeRegions));
+			  XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+				 "Regions", XmpTag::TagTypeRegions));
 }

@@ -49,6 +49,7 @@ class QuillMetadataPrivate;
 enum RegionType { Face, Pet, Focus, BarCode };
 
 class Area
+
 {
 public:
     QRect rectangle;
@@ -76,7 +77,6 @@ class Regions
 public:
     QList<RegionInfo> regionList;
 };
-
 
 
 class QuillMetadata

@@ -58,6 +58,10 @@ private slots:
 
     // Unit tests for metadata reading
 
+    void testEditRegions();
+
+private:
+
     void testCameraMake();
     void testCameraModel();
     void testImageWidth();
@@ -116,8 +120,6 @@ private slots:
     void testCanRead();
     void testSetOrientationTag();
 
-    void testEditRegions();
-
 private:
     QImage sourceImage;
 
@@ -125,6 +127,8 @@ private:
     QuillMetadata *xmp;
     QuillMetadata *iptc;
     QuillMetadata *gps;
+
+    QuillMetadata *region;
 };
 
 #endif  // TEST_LIBQUILL_METADATA_H

@@ -43,6 +43,8 @@
 #include "xmp.h"
 #include "quillmetadata.h"
 
+#include "QDebug"
+
 class QuillMetadataPrivate
 {
 public:
