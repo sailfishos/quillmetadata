@@ -692,14 +692,12 @@ void ut_metadata::testOrientationTagSpeedup()
     }
 }
 
-#if 1
 void ut_metadata::testEditRegions()
 {
     QVERIFY(region->isValid());
-    qDebug() << region->entry(QuillMetadata::Tag_Creator).toString();
+    //qDebug() << region->entry(QuillMetadata::Tag_Creator).toString();
     qDebug() << region->entry(QuillMetadata::Tag_Regions).toString();
 }
-#endif
 
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );

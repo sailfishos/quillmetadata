@@ -43,41 +43,9 @@
 #include <QString>
 #include <QVariant>
 #include <QRect>
+#include "quillmetadataregions.h"
 
 class QuillMetadataPrivate;
-
-enum RegionType { Face, Pet, Focus, BarCode };
-
-class Area
-
-{
-public:
-    QRect rectangle;
-    QPoint centerPoint() { return rectangle.center(); }
-};
-
-class Dimensions
-{
-public:
-    int width;
-    int height;
-};
-
-class RegionInfo
-{
-public:
-    Area area;
-    RegionType type;
-    QString name;
-    Dimensions imageDimensions;
-};
-
-class Regions
-{
-public:
-    QList<RegionInfo> regionList;
-};
-
 
 class QuillMetadata
 {

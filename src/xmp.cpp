@@ -119,17 +119,6 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 			 << ";" << xmpTag.tag.toAscii().constData();
 
 
-#if 0
-	{
-	    XmpStringPtr registeredPrefix = xmp_string_new();
-	    bool bResult = xmp_namespace_prefix(
-		    "http://www.metadataworkinggroup.com/schemas/regions/",
-		    registeredPrefix);
-	    qDebug() << "namespace exists:" << bResult << processXmpString(registeredPrefix);
-	    xmp_string_free(registeredPrefix);
-	}
-#endif
-
 	if (xmp_get_property(m_xmpPtr,
 			     xmpTag.schema.toAscii().constData(),
                              xmpTag.tag.toAscii().constData(),
@@ -156,7 +145,7 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                     return QVariant(list);
                 }
 	    } else if (XMP_IS_PROP_STRUCT(propBits)) {
-		qDebug() << "struct:";
+		qDebug() << "struct:" << processXmpString(xmpStringPtr);
 
 		xmp_serialize(m_xmpPtr, xmpStringPtr,
 			      XMP_SERIAL_OMITALLFORMATTING, 0);
