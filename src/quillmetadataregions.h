@@ -10,16 +10,27 @@ enum RegionType { Face, Pet, Focus, BarCode };
 class RegionInfo
 {
 public:
-    QRectF area;
+    RegionInfo()
+    {
+	area = new QRectF();
+    }
+
+    QRectF *area;
     RegionType type;
     QString name;
+    QString extension;
 };
 
 class Regions
 {
 public:
-    QList<RegionInfo> regionList;
+    QList<RegionInfo*> regionList;
     QSize imageDimensions;
+
+    RegionInfo* operator[] (int i)
+    {
+	return regionList.at(i);
+    }
 };
 
 

@@ -44,6 +44,7 @@
 #include <math.h>
 
 #include "xmp.h"
+#include "quillmetadataregions.h"
 
 #include <QDebug>
 
@@ -144,13 +145,116 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                     xmp_string_free(xmpStringPtr);
                     return QVariant(list);
                 }
+
+
+	   /********************/
+
 	    } else if (XMP_IS_PROP_STRUCT(propBits)) {
-		qDebug() << "struct:" << processXmpString(xmpStringPtr);
 
-		xmp_serialize(m_xmpPtr, xmpStringPtr,
-			      XMP_SERIAL_OMITALLFORMATTING, 0);
+		XmpIterOptions iterOpts = XMP_ITER_OMITQUALIFIERS;
 
-		qDebug() << processXmpString(xmpStringPtr);
+		XmpIteratorPtr xmpIterPtr = xmp_iterator_new(
+			m_xmpPtr, xmpTag.schema.toAscii().constData(),
+			xmpTag.tag.toAscii().constData(),
+			iterOpts);
+
+		XmpStringPtr schema = xmp_string_new();
+		XmpStringPtr propName = xmp_string_new();
+		XmpStringPtr propValue = xmp_string_new();
+		uint32_t options;
+
+		Regions *regs = new Regions();
+		int nRegionNumber = 1;
+		bool bSuccess = true;
+
+		while (bSuccess)
+		{
+		    bSuccess = xmp_iterator_next(
+			    xmpIterPtr, schema, propName,
+			    propValue, &options);
+		    QString qPropValue = processXmpString(propValue);
+		    QString qPropName = processXmpString(propName);
+
+		    while (bSuccess && qPropName.contains("mwg-rs:AppliedToDimensions")) {
+			if (qPropName.contains("stDim:h")) {
+			    regs->imageDimensions.setHeight(qPropValue.toInt());
+			} else if (qPropName.contains("stDim:w")) {
+			    regs->imageDimensions.setWidth(qPropValue.toInt());
+			}
+
+			bSuccess = xmp_iterator_next(
+				xmpIterPtr, schema, propName,
+				propValue, &options);
+			qPropValue = processXmpString(propValue);
+			qPropName = processXmpString(propName);
+		    }
+
+		    qDebug() << bSuccess
+			    << processXmpString(propName)
+			    << processXmpString(propValue);
+
+
+		    QString searchString("RegionList[");
+		    searchString.append(QString::number(nRegionNumber));
+		    searchString.append("]");
+		    qDebug() << searchString;
+
+		    while (bSuccess && qPropName.contains(searchString)) {
+
+			if (regs->regionList.count() < nRegionNumber) {
+			    qDebug() << "adding new region";
+			    regs->regionList.insert(nRegionNumber-1, new RegionInfo());
+			}
+
+			QRectF *pArea = regs->regionList[nRegionNumber-1]->area;
+
+
+			if (qPropName.contains("stArea:h")) {
+			    pArea->setHeight(qPropValue.toFloat());
+			} else if (qPropName.contains("stArea:w")) {
+			    pArea->setWidth(qPropValue.toFloat());
+			} else if (qPropName.contains("stArea:x")) {
+			    pArea->moveCenter(
+				    QPointF(qPropValue.toFloat(), pArea->center().y()));
+			} else if (qPropName.contains("stArea:y")) {
+			    pArea->moveCenter(
+				    QPointF(pArea->center().x(), qPropValue.toFloat()));
+			}
+
+			qDebug() << pArea->width()
+				 << pArea->height()
+				 << pArea->center().x()
+				 << pArea->center().y();
+
+
+			bSuccess = xmp_iterator_next(
+				xmpIterPtr, schema, propName,
+				propValue, &options);
+			qPropValue = processXmpString(propValue);
+			qPropName = processXmpString(propName);
+			qDebug() << bSuccess
+				<< processXmpString(propName)
+				<< processXmpString(propValue);
+
+		    }
+		} // while (bSuccess)
+		xmp_string_free(schema);
+		xmp_string_free(propName);
+		xmp_string_free(propValue);
+
+
+		{
+		    qDebug() << "Regions: " << regs->regionList.count();
+		    qDebug() << "Dims: "    << regs->imageDimensions.width() << regs->imageDimensions.height();
+		    for (int i = 0; i < regs->regionList.count(); i++) {
+			qDebug() << (*regs)[i]->area->width()
+				 << (*regs)[i]->area->height()
+				 << (*regs)[i]->area->center().x()
+				 << (*regs)[i]->area->center().y();
+		    }
+		}
+
+	   /********************/
 
 	    } else {
                 QString string = processXmpString(xmpStringPtr);
