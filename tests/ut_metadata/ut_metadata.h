@@ -60,6 +60,9 @@ private slots:
 
     void testEditRegions();
 
+    void testArea();
+    void testDimensions();
+    void testRegionInfo();
 private:
 
     void testCameraMake();

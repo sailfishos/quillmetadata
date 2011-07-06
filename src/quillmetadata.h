@@ -46,19 +46,24 @@
 
 class QuillMetadataPrivate;
 
-enum RegionType { Face, Pet, Focus, BarCode };
-
 class Area
 
 {
 public:
-    QRect rectangle;
+    void setArea(QRect rect);
+    QRect getArea();
     QPoint centerPoint() { return rectangle.center(); }
+private:
+       QRect rectangle;
 };
 
 class Dimensions
 {
 public:
+    void setDimensions(int width, int height);
+    int getWidth();
+    int getHeight();
+private:
     int width;
     int height;
 };
@@ -66,10 +71,22 @@ public:
 class RegionInfo
 {
 public:
+    enum RegionType { Face, Pet, Focus, BarCode };
+    void setRegionType(RegionType type);
+    RegionType getRegionType();
+    void setArea(Area area);
+    Area getArea();
+    void setName(QString name);
+    QString getName();
+    void setDimensions(Dimensions dimension);
+    Dimensions getDimensions();
+
+private:
     Area area;
     RegionType type;
     QString name;
     Dimensions imageDimensions;
+
 };
 
 class Regions
@@ -140,8 +157,8 @@ class QuillMetadata
         Tag_GPSImgDirection,
         //! GPS image direction reference (EXIF)
         Tag_GPSImgDirectionRef,
-	//! Region list of type QList<RegionInfo>
-	Tag_Regions,
+        //! Region list of type QList<RegionInfo>
+        Tag_Regions,
         //! Undefined tag
         Tag_Undefined,
     };

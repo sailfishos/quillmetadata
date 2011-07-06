@@ -701,6 +701,55 @@ void ut_metadata::testEditRegions()
 }
 #endif
 
+void ut_metadata::testArea()
+{
+    Area area;
+    QRect rect(0,0,2,3);
+    area.setArea(rect);
+    QRect rect1 = area.getArea();
+    QCOMPARE(rect, rect1);
+}
+
+void ut_metadata::testDimensions()
+{
+    Dimensions dimension;
+    int width = 5;
+    int height = 6;
+    dimension.setDimensions(width, height);
+    int width1 = dimension.getWidth();
+    int height1 = dimension.getHeight();
+    QCOMPARE(width, width1);
+    QCOMPARE(height,height1);
+}
+
+void ut_metadata::testRegionInfo()
+{
+    RegionInfo region;
+    region.setName("this is testing");
+    QString name = region.getName();
+    QCOMPARE(name, QString("this is testing"));
+
+    RegionInfo::RegionType type = RegionInfo::Face;
+    region.setRegionType(type);
+    RegionInfo::RegionType type1 = region.getRegionType();
+    QCOMPARE(type, type1);
+
+    Area area;
+    QRect rect(0,0,2,3);
+    area.setArea(rect);
+    region.setArea(area);
+    Area area1 = region.getArea();
+    QCOMPARE(area.getArea(),area1.getArea());
+
+    Dimensions dimension;
+    int width = 5;
+    int height = 6;
+    dimension.setDimensions(width, height);
+    region.setDimensions(dimension);
+    Dimensions dimension1 = region.getDimensions();
+    QCOMPARE(dimension.getWidth(),dimension1.getWidth());
+    QCOMPARE(dimension.getHeight(),dimension1.getHeight());
+}
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );
     ut_metadata test;
