@@ -701,21 +701,21 @@ void ut_metadata::testEditRegions()
 
 void ut_metadata::testArea()
 {
-    Area area;
-    QRect rect(0,0,2,3);
-    area.setArea(rect);
-    QRect rect1 = area.getArea();
+    RegionInfo region;
+    QRectF rect(0,0,2,3);
+    region.setArea(rect);
+    QRectF rect1 = region.getArea();
     QCOMPARE(rect, rect1);
 }
 
 void ut_metadata::testDimensions()
 {
-    Dimensions dimension;
+    RegionInfo region;
     int width = 5;
     int height = 6;
-    dimension.setDimensions(width, height);
-    int width1 = dimension.getWidth();
-    int height1 = dimension.getHeight();
+    region.setDimensions(QSize(width, height));
+    int width1 = region.getDimensions().width();
+    int height1 = region.getDimensions().height();
     QCOMPARE(width, width1);
     QCOMPARE(height,height1);
 }
@@ -732,22 +732,21 @@ void ut_metadata::testRegionInfo()
     RegionInfo::RegionType type1 = region.getRegionType();
     QCOMPARE(type, type1);
 
-    Area area;
-    QRect rect(0,0,2,3);
-    area.setArea(rect);
-    region.setArea(area);
-    Area area1 = region.getArea();
-    QCOMPARE(area.getArea(),area1.getArea());
+    QRectF rect(0,0,2,3);
+    region.setArea(rect);
+    QRectF rect1 = region.getArea();
+    QCOMPARE(rect,rect1);
 
-    Dimensions dimension;
+    QSize dimension;
     int width = 5;
     int height = 6;
-    dimension.setDimensions(width, height);
+    dimension = QSize(width, height);
     region.setDimensions(dimension);
-    Dimensions dimension1 = region.getDimensions();
-    QCOMPARE(dimension.getWidth(),dimension1.getWidth());
-    QCOMPARE(dimension.getHeight(),dimension1.getHeight());
+    QSize dimension1 = region.getDimensions();
+    QCOMPARE(dimension.width(),dimension1.width());
+    QCOMPARE(dimension.height(),dimension1.height());
 }
+
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );
     ut_metadata test;

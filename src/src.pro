@@ -41,7 +41,8 @@ HEADERS += quillmetadata.h \
 SOURCES += quillmetadata.cpp \
            xmp.cpp \
            exif.cpp \
-           exifwriteback.cpp
+           exifwriteback.cpp \
+    quillmetadataregions.cpp
 
 INSTALL_HEADERS = QuillMetadata \
                   quillmetadata.h \

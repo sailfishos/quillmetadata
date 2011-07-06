@@ -205,32 +205,35 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 
 			    if (qPropName.contains(":Area")) {
 
-				QRectF *pArea = (*regs)[nRegionNumber-1]->area;
+				QRectF area = (*regs)[nRegionNumber-1]->getArea();
 
 				if (qPropName.contains("stArea:h")) {
-				    pArea->setHeight(qPropValue.toFloat());
+				    area.setHeight(qPropValue.toFloat());
 				} else if (qPropName.contains("stArea:w")) {
-				    pArea->setWidth(qPropValue.toFloat());
+				    area.setWidth(qPropValue.toFloat());
 				} else if (qPropName.contains("stArea:x")) {
-				    pArea->moveCenter(
-					    QPointF(qPropValue.toFloat(), pArea->center().y()));
+				    area.moveCenter(
+					    QPointF(qPropValue.toFloat(), area.center().y()));
 				} else if (qPropName.contains("stArea:y")) {
-				    pArea->moveCenter(
-					    QPointF(pArea->center().x(), qPropValue.toFloat()));
+				    area.moveCenter(
+					    QPointF(area.center().x(), qPropValue.toFloat()));
 				}
 
-				qDebug() << pArea->width()
-					<< pArea->height()
-					<< pArea->center().x()
-					<< pArea->center().y();
+				(*regs)[nRegionNumber-1]->setArea(area);
+
+				qDebug() << area.width()
+					<< area.height()
+					<< area.center().x()
+					<< area.center().y();
 
 			    } else if (qPropName.contains(":Name")) {
 
-				(*regs)[nRegionNumber-1]->name = processXmpString(propValue);
+				(*regs)[nRegionNumber-1]->setName(processXmpString(propValue));
 
 			    } else if (qPropName.contains(":Type")) {
 
-				(*regs)[nRegionNumber-1]->type = processXmpString(propValue);
+				if (processXmpString(propValue).contains("face"))
+				    (*regs)[nRegionNumber-1]->setRegionType(RegionInfo::Face);
 
 			    } else if (qPropName.contains(":Extensions")) {
 
