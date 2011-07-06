@@ -35,7 +35,8 @@ HEADERS += quillmetadata.h \
            metadatarepresentation.h \
            xmp.h \
            exif.h \
-           exifwriteback.h
+           exifwriteback.h \
+    quillmetadataregions.h
 
 SOURCES += quillmetadata.cpp \
            xmp.cpp \
@@ -58,5 +59,3 @@ INSTALLS += target headers pkgconfig prf
 
 
 QMAKE_CLEAN += *.gcov *.gcno *.log *.moc_* *.gcda
-
-
