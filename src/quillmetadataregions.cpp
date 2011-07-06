@@ -1,43 +1,71 @@
 #include "quillmetadataregions.h"
 
+#include <QDebug>
 
-void RegionInfo::setRegionType(RegionType regionType)
+
+QuillMetadataRegion::QuillMetadataRegion()
+{
+}
+
+QuillMetadataRegion::QuillMetadataRegion(const QuillMetadataRegion & other)
+{
+    area = other.area;
+    type = other.type;
+    name = other.name;
+}
+
+
+void QuillMetadataRegion::setRegionType(const QString & regionType)
 {
     type = regionType;
 }
 
-RegionInfo::RegionType RegionInfo::getRegionType()
+QString QuillMetadataRegion::RegionType() const
 {
     return type;
 }
 
-void RegionInfo::setArea(QRectF areaValue)
+void QuillMetadataRegion::setArea(const QRectF & areaValue)
 {
     area = areaValue;
 }
 
-QRectF RegionInfo::getArea()
+QRectF QuillMetadataRegion::Area() const
 {
     return area;
 }
 
-void RegionInfo::setName(QString nameValue)
+void QuillMetadataRegion::setName(const QString & nameValue)
 {
     name = nameValue;
 }
 
-QString RegionInfo::getName()
+QString QuillMetadataRegion::Name() const
 {
     return name;
 }
 
-void RegionInfo::setDimensions(QSize dimensionValue)
+QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &rhs)
 {
-    imageDimensions = dimensionValue;
+    if (this == &rhs)
+	return *this;
+
+    area = rhs.area;
+    type = rhs.type;
+    name = rhs.name;
+
+    return *this;
 }
 
-QSize RegionInfo::getDimensions()
+
+
+void QuillMetadataRegionBag::setFullImageSize(const QSize & dimensionValue)
 {
-    return imageDimensions;
+    fullImageSize = dimensionValue;
+}
+
+QSize QuillMetadataRegionBag::FullImageSize() const
+{
+    return fullImageSize;
 }
 

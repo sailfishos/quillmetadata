@@ -41,6 +41,7 @@
 #include <QtTest/QtTest>
 
 #include "quillmetadata.h"
+#include "quillmetadataregions.h"
 #include "ut_metadata.h"
 
 #define PRECISION 10000
@@ -692,6 +693,15 @@ void ut_metadata::testOrientationTagSpeedup()
     }
 }
 
+void ut_metadata::testReadRegions()
+{
+    QVariant data = region->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data.canConvert<QuillMetadataRegionBag>());
+    QuillMetadataRegionBag regs = data.value<QuillMetadataRegionBag>();
+    QCOMPARE(regs.count(), 1);
+    QCOMPARE(regs[0].Name(), QString("Albert Einstein"));
+}
+
 void ut_metadata::testEditRegions()
 {
     QVERIFY(region->isValid());
@@ -701,48 +711,53 @@ void ut_metadata::testEditRegions()
 
 void ut_metadata::testArea()
 {
-    RegionInfo region;
+    QuillMetadataRegion region;
     QRectF rect(0,0,2,3);
     region.setArea(rect);
-    QRectF rect1 = region.getArea();
+    QRectF rect1 = region.Area();
     QCOMPARE(rect, rect1);
 }
 
 void ut_metadata::testDimensions()
 {
-    RegionInfo region;
+    QuillMetadataRegionBag regionBag;
     int width = 5;
     int height = 6;
-    region.setDimensions(QSize(width, height));
-    int width1 = region.getDimensions().width();
-    int height1 = region.getDimensions().height();
+    regionBag.setFullImageSize(QSize(width, height));
+    int width1 = regionBag.FullImageSize().width();
+    int height1 = regionBag.FullImageSize().height();
     QCOMPARE(width, width1);
     QCOMPARE(height,height1);
 }
 
-void ut_metadata::testRegionInfo()
+void ut_metadata::testRegion()
 {
-    RegionInfo region;
+    QuillMetadataRegion region;
     region.setName("this is testing");
-    QString name = region.getName();
+    QString name = region.Name();
     QCOMPARE(name, QString("this is testing"));
 
-    RegionInfo::RegionType type = RegionInfo::Face;
+    QString type("face");
     region.setRegionType(type);
-    RegionInfo::RegionType type1 = region.getRegionType();
+    QString type1 = region.RegionType();
     QCOMPARE(type, type1);
 
     QRectF rect(0,0,2,3);
     region.setArea(rect);
-    QRectF rect1 = region.getArea();
+    QRectF rect1 = region.Area();
     QCOMPARE(rect,rect1);
+}
+
+void ut_metadata::testRegionBag()
+{
+    QuillMetadataRegionBag regionBag;
 
     QSize dimension;
     int width = 5;
     int height = 6;
     dimension = QSize(width, height);
-    region.setDimensions(dimension);
-    QSize dimension1 = region.getDimensions();
+    regionBag.setFullImageSize(dimension);
+    QSize dimension1 = regionBag.FullImageSize();
     QCOMPARE(dimension.width(),dimension1.width());
     QCOMPARE(dimension.height(),dimension1.height());
 }

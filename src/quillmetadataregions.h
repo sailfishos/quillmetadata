@@ -4,44 +4,45 @@
 #include <QRect>
 #include <QList>
 #include <QString>
+#include <QMetaType>
 
-class RegionInfo
+class QuillMetadataRegion
 {
 public:
-    RegionInfo()
-    {
-    }
+    QuillMetadataRegion();
+    QuillMetadataRegion(const QuillMetadataRegion & other);
 
-    enum RegionType { Face, Pet, Focus, BarCode };
-    void setRegionType(RegionType type);
-    RegionType getRegionType();
-    void setArea(QRectF area);
-    QRectF getArea();
-    void setName(QString name);
-    QString getName();
-    void setDimensions(QSize dimension);
-    QSize getDimensions();
+    void setRegionType(const QString & type);
+    QString RegionType() const;
+
+    void setArea( const QRectF & area);
+    QRectF Area() const;
+
+    void setName(const QString & name);
+    QString Name() const;
+
+    QuillMetadataRegion & operator=(const QuillMetadataRegion &rhs);
 
 private:
     QRectF area;
-    RegionType type;
+    QString type;
     QString name;
-    QSize imageDimensions;
-
 };
 
 
-class Regions
+class QuillMetadataRegionBag : public QList<QuillMetadataRegion>
 {
 public:
-    QList<RegionInfo*> regionList;
-    QSize imageDimensions;
+    void setFullImageSize(const QSize & dimension);
+    QSize FullImageSize() const;
 
-    RegionInfo* operator[] (int i)
-    {
-	return regionList.at(i);
-    }
+private:
+    QSize fullImageSize;
+
+    QList<QuillMetadataRegion> regionList;
 };
 
+Q_DECLARE_METATYPE(QuillMetadataRegion);
+Q_DECLARE_METATYPE(QuillMetadataRegionBag);
 
 #endif // QUILLMETADATAREGIONS_H
