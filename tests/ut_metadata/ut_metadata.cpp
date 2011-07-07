@@ -693,13 +693,37 @@ void ut_metadata::testOrientationTagSpeedup()
     }
 }
 
+#define FUZZYQCOMPARE(x, y) QCOMPARE((float)((int)(x*1000))/1000, (float)((int)(y*1000))/1000)
+
 void ut_metadata::testReadRegions()
 {
     QVariant data = region->entry(QuillMetadata::Tag_Regions);
     QVERIFY(data.canConvert<QuillMetadataRegionBag>());
     QuillMetadataRegionBag regs = data.value<QuillMetadataRegionBag>();
-    QCOMPARE(regs.count(), 1);
+    QCOMPARE(regs.count(), 2);
+    QCOMPARE(regs.FullImageSize().width(),  4288);
+    QCOMPARE(regs.FullImageSize().height(), 2848);
+    // Name:
     QCOMPARE(regs[0].Name(), QString("Albert Einstein"));
+    QCOMPARE(regs[1].Name(), QString("Dilbert"));
+    // Type:
+    QCOMPARE(regs[0].RegionType(), QString("Face"));
+    QCOMPARE(regs[1].RegionType(), QString("Face"));
+    // Area:
+    {
+	QRectF area = regs[0].Area();
+	FUZZYQCOMPARE(area.width(),	 0.15);
+	FUZZYQCOMPARE(area.height(),	 0.17);
+	FUZZYQCOMPARE(area.center().x(), 0.3);
+	FUZZYQCOMPARE(area.center().y(), 0.4);
+    }
+    {
+	QRectF area = regs[1].Area();
+	FUZZYQCOMPARE(area.width(),	 0.17);
+	FUZZYQCOMPARE(area.height(),	 0.15);
+	FUZZYQCOMPARE(area.center().x(), 0.4);
+	FUZZYQCOMPARE(area.center().y(), 0.3);
+    }
 }
 
 void ut_metadata::testEditRegions()

@@ -161,55 +161,58 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		XmpStringPtr schema = xmp_string_new();
 		XmpStringPtr propName = xmp_string_new();
 		XmpStringPtr propValue = xmp_string_new();
+
 		uint32_t options;
 
 		QuillMetadataRegionBag regions;
-		QuillMetadataRegionBag *regs = &regions;
-		bool bSuccess = true;
+
+		bool bSuccess = xmp_iterator_next(
+			xmpIterPtr, schema, propName,
+			propValue, &options);
 
 		while (bSuccess)
 		{
-		    bSuccess = xmp_iterator_next(
-			    xmpIterPtr, schema, propName,
-			    propValue, &options);
 		    QString qPropValue = processXmpString(propValue);
 		    QString qPropName = processXmpString(propName);
 
+		    qDebug() << qPropName << qPropValue;
+
 		    if (qPropName.contains("mwg-rs:AppliedToDimensions")) {
+
 			if (qPropName.contains("stDim:h")) {
-			    regs->setFullImageSize(
-				    QSize(regs->FullImageSize().width(), qPropValue.toInt()));
+			    regions.setFullImageSize(
+				    QSize(regions.FullImageSize().width(), qPropValue.toInt()));
 			} else if (qPropName.contains("stDim:w")) {
-			    regs->setFullImageSize(
-				    QSize(qPropValue.toInt(), regs->FullImageSize().height()));
+			    regions.setFullImageSize(
+				    QSize(qPropValue.toInt(), regions.FullImageSize().height()));
 			}
 		    }
 
-		    QString searchString("RegionList");
-		    if (qPropName.contains(searchString)) {
+		    else if (qPropName.contains("RegionList")) {
 
+			QString searchString("RegionList");
 			QRegExp rx("(" + searchString + ".)(\\d+).");
 			rx.indexIn(qPropName);
 
 			bool isOk = false;
 			int nRegionNumber = rx.cap(2).toInt(&isOk);
+			// TODO: Sanity check for number of regions
 
 			if (isOk) { //RegionList.%d. was found
 
 			    searchString.append(
 				    "[" + QString::number(nRegionNumber) + "]");
 
-			    if (qPropName.contains(searchString)) {
-				//RegionList[nRegionNumber] was found
+			    if (qPropName.contains(searchString)) { //RegionList[nRegionNumber] was found
 
-				if (regs->size() < nRegionNumber) {
+				if (regions.size() < nRegionNumber) {
 				    QuillMetadataRegion region;
-				    regs->append(region);
+				    regions.append(region);
 				}
 
 				if (qPropName.contains(":Area")) {
 
-				    QRectF area = (*regs)[nRegionNumber-1].Area();
+				    QRectF area = regions[nRegionNumber-1].Area();
 
 				    if (qPropName.contains("stArea:h")) {
 					area.setHeight(qPropValue.toFloat());
@@ -223,16 +226,15 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 						QPointF(area.center().x(), qPropValue.toFloat()));
 				    }
 
-				    (*regs)[nRegionNumber-1].setArea(area);
+				    regions[nRegionNumber-1].setArea(area);
 
 				} else if (qPropName.contains(":Name")) {
 
-				    (*regs)[nRegionNumber-1].setName(processXmpString(propValue));
+				    regions[nRegionNumber-1].setName(processXmpString(propValue));
 
 				} else if (qPropName.contains(":Type")) {
 
-				    if (processXmpString(propValue).contains("face"))
-					(*regs)[nRegionNumber-1].setRegionType("face");
+				    regions[nRegionNumber-1].setRegionType(processXmpString(propValue));
 
 				} else if (qPropName.contains(":Extensions")) {
 
@@ -242,6 +244,10 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 			    }
 			}
 		    }
+
+		    bSuccess = xmp_iterator_next(
+					    xmpIterPtr, schema, propName,
+					    propValue, &options);
 		} // while (bSuccess)
 		xmp_string_free(schema);
 		xmp_string_free(propName);
