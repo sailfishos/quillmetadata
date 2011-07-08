@@ -422,11 +422,22 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
             break;
         }
     case QuillMetadata::Tag_Regions: {
-
+        //we break down the region bag to different items
+        //we use region name and region type to test how can we modify region metadata
+        QList<QuillMetadataRegion> regionList = entry.value<QuillMetadataRegionBag>();
+        foreach(QuillMetadataRegion region, regionList){
+            QString regionName = region.Name();
+            qCritical()<<"+++++++++++ Xmp::setEntry:the region name is:"<<regionName;
+            setXmpEntry(QuillMetadata::Tag_RegionName, QVariant(QString(regionName)));
+            QString regionType = region.RegionType();
+            qCritical()<<"+++++++++++ Xmp::setEntry:the region type is:"<<regionType;
+            setXmpEntry(QuillMetadata::Tag_RegionType, QVariant(QString(regionType)));
+        }
+        break;
 	}
-        default:
-            setXmpEntry(tag, entry);
-            break;
+    default:
+        setXmpEntry(tag, entry);
+        break;
     }
 }
 
@@ -435,15 +446,23 @@ void Xmp::setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry)
     QList<XmpTag> xmpTags = m_xmpTags.values(tag);
 
     foreach (XmpTag xmpTag, xmpTags) {
-        xmp_delete_property(m_xmpPtr,
+        //just test if region name or region type exist
+        bool ret1 = xmp_has_property(m_xmpPtr,
+                                     xmpTag.schema.toAscii().constData(),
+                                     xmpTag.tag.toAscii().constData());
+        qCritical()<<"++++++++++++setXmpEntry:-1:has the property?"<<ret1;
+        //end
+        bool ret2 = xmp_delete_property(m_xmpPtr,
                             xmpTag.schema.toAscii().constData(),
                             xmpTag.tag.toAscii().constData());
-
-        if (xmpTag.tagType == XmpTag::TagTypeString)
-            xmp_set_property(m_xmpPtr,
+        qCritical()<<"++++++++++++setXmpEntry:-1"<<"schema:"<<xmpTag.schema.toAscii().constData()<<" tag:"<<xmpTag.tag.toAscii().constData()<<" delete?"<<ret2;
+        if (xmpTag.tagType == XmpTag::TagTypeString){
+            bool ret = xmp_set_property(m_xmpPtr,
                              xmpTag.schema.toAscii().constData(),
                              xmpTag.tag.toAscii().constData(),
                              entry.toString().toUtf8().constData(), 0);
+            qCritical()<<"++++++++++++setXmpEntry:-2:ret="<<ret<<"schema:"<<xmpTag.schema.toAscii().constData()<<" tag:"<<xmpTag.tag.toAscii().constData();
+        }
         else if (xmpTag.tagType == XmpTag::TagTypeStringList) {
             QStringList list = entry.toStringList();
             foreach (QString string, list)
@@ -459,6 +478,15 @@ void Xmp::setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry)
                                    xmpTag.tag.toAscii().constData(),
                                    "", "x-default",
                                    entry.toString().toUtf8().constData(), 0);
+        }
+
+        else if (xmpTag.tagType == XmpTag::TagTypeStringRegion) {
+            bool ret3 = xmp_set_array_item(m_xmpPtr,
+                                           xmpTag.schema.toAscii().constData(),
+                                           xmpTag.tag.toAscii().constData(),
+                                           XMP_PROP_ARRAY_IS_UNORDERED,
+                                           entry.toString().toUtf8().constData(), 0);
+            qCritical()<<"++++++++++++setXmpEntry:-3:ret="<<ret3<<"schema:"<<xmpTag.schema.toAscii().constData()<<" tag:"<<xmpTag.tag.toAscii().constData();
         }
     }
 }

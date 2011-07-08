@@ -728,9 +728,28 @@ void ut_metadata::testReadRegions()
 
 void ut_metadata::testEditRegions()
 {
+
     QVERIFY(region->isValid());
-    //qDebug() << region->entry(QuillMetadata::Tag_Creator).toString();
-    qDebug() << region->entry(QuillMetadata::Tag_Regions).toString();
+    QuillMetadataRegionBag bag;
+    QuillMetadataRegion reg;
+    reg.setName(QString("This is foo name"));
+    reg.setRegionType(QString("Pet"));
+    bag.append(reg);
+    QVariant entry;
+    entry.setValue(bag);
+    region->setEntry(QuillMetadata::Tag_Regions,entry);
+
+    region->write("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
+
+    QuillMetadata *region1 = new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
+    QVariant data = region1->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data.canConvert<QuillMetadataRegionBag>());
+    QuillMetadataRegionBag regs = data.value<QuillMetadataRegionBag>();
+    QCOMPARE(regs.count(), 1);
+    QCOMPARE(regs[0].Name(), QString("This is foo name"));
+    QCOMPARE(regs[0].RegionType(), QString("Pet"));
+
+    delete region1;
 }
 
 void ut_metadata::testArea()
