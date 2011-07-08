@@ -745,8 +745,8 @@ void ut_metadata::testEditRegions()
     QVariant data = region1->entry(QuillMetadata::Tag_Regions);
     QVERIFY(data.canConvert<QuillMetadataRegionBag>());
     QuillMetadataRegionBag regs = data.value<QuillMetadataRegionBag>();
-    QCOMPARE(regs.count(), 1);
-    QCOMPARE(regs[0].Name(), QString("This is foo name"));
+    QCOMPARE(regs.count(), 2);
+    QCOMPARE(regs[1].Name(), QString("This is foo name"));
     QCOMPARE(regs[0].RegionType(), QString("Pet"));
 
     delete region1;

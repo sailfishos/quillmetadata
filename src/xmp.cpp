@@ -587,4 +587,52 @@ void Xmp::initTags()
     m_xmpTags.insertMulti(QuillMetadata::Tag_Regions,
 			  XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
 				 "Regions", XmpTag::TagTypeRegions));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionName,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionName", XmpTag::TagTypeStringRegion));
+
+    /*m_xmpTags.insertMulti(QuillMetadata::Tag_RegionName,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionTitle", XmpTag::TagTypeString));
+    */
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionType,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionType", XmpTag::TagTypeString));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAppliedToDimensionsH,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionAppliedToDimensionsH", XmpTag::TagTypeReal));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAppliedToDimensionsW,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionAppliedToDimensionsW", XmpTag::TagTypeReal));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAppliedToDimensionsUnit,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionAppliedToDimensionsUnit", XmpTag::TagTypeString));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaD,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionAreaD", XmpTag::TagTypeReal));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaH,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionAreaH", XmpTag::TagTypeReal));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaW,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionAreaW", XmpTag::TagTypeReal));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaX,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionAreaX", XmpTag::TagTypeReal));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaY,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionAreaY", XmpTag::TagTypeReal));
+
+    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaUnit,
+                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+                                 "RegionAreaUnit", XmpTag::TagTypeReal));
 }
