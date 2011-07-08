@@ -103,7 +103,7 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 			     const QString & qPropName,
 			     QuillMetadataRegionBag & regions) const
 {
-    QString searchString("RegionList");
+    QString searchString("mwg-rs:RegionList");
     QRegExp rx("(" + searchString + ".)(\\d+).");
     rx.indexIn(qPropName);
 
@@ -125,7 +125,7 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 	regions.append(region);
     }
 
-    if (qPropName.contains(":Area")) {
+    if (qPropName.contains("mwg-rs:Area")) {
 
 	QRectF area = regions[nRegionNumber-1].Area();
 
@@ -143,15 +143,15 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 
 	regions[nRegionNumber-1].setArea(area);
 
-    } else if (qPropName.contains(":Name")) {
+    } else if (qPropName.contains("mwg-rs:Name")) {
 
 	regions[nRegionNumber-1].setName(qPropValue);
 
-    } else if (qPropName.contains(":Type")) {
+    } else if (qPropName.contains("mwg-rs:Type")) {
 
 	regions[nRegionNumber-1].setRegionType(qPropValue);
 
-    } else if (qPropName.contains(":Extensions")) {
+    } else if (qPropName.contains("mwg-rs:Extensions")) {
 
 	;
 
@@ -215,7 +215,6 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		XmpStringPtr propValue = xmp_string_new();
 
 		uint32_t options;
-
 		QuillMetadataRegionBag regions;
 
 		bool bSuccess = xmp_iterator_next(
@@ -237,10 +236,19 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 			} else if (qPropName.contains("stDim:w")) {
 			    regions.setFullImageSize(
 				    QSize(qPropValue.toInt(), regions.FullImageSize().height()));
+			    bool isOk = xmp_set_property_float(m_xmpPtr,
+					     xmpTag.schema.toAscii().constData(),
+					     qPropName.toAscii().constData(),
+					     666.0,
+					     0);
+			    qDebug() << xmpTag.schema.toAscii().constData()
+				    << qPropName.toAscii().constData();
+			    qDebug() << "isOk" << isOk;
 			}
+
 		    }
 
-		    else if (qPropName.contains("RegionList")) {
+		    else if (qPropName.contains("mwg-rs:RegionList")) {
 
 			this->readRegionListItem(qPropValue, qPropName, regions);
 
@@ -250,6 +258,7 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 					    xmpIterPtr, schema, propName,
 					    propValue, &options);
 		} // while (bSuccess)
+
 		xmp_string_free(schema);
 		xmp_string_free(propName);
 		xmp_string_free(propValue);
@@ -311,10 +320,9 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                     }
                 }
             }
-	} else {
-	    qDebug() << "didn't get property";
 	}
     }
+
     xmp_string_free(xmpStringPtr);
     return QVariant();
 }
