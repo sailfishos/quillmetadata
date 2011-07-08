@@ -99,10 +99,69 @@ QString Xmp::processXmpString(XmpStringPtr xmpString)
     return QString(xmp_string_cstr(xmpString)).trimmed();
 }
 
+void Xmp::readRegionListItem(const QString & qPropValue,
+			     const QString & qPropName,
+			     QuillMetadataRegionBag & regions) const
+{
+    QString searchString("RegionList");
+    QRegExp rx("(" + searchString + ".)(\\d+).");
+    rx.indexIn(qPropName);
+
+    bool isOk = false;
+    int nRegionNumber = rx.cap(2).toInt(&isOk);
+    // TODO: Sanity check for number of regions
+
+    if (!isOk)  //RegionList.%d. wasn't found
+	return;
+
+    searchString.append(
+	    "[" + QString::number(nRegionNumber) + "]");
+
+    if (!qPropName.contains(searchString)) //RegionList[nRegionNumber] wasn't found
+	return;
+
+    while (regions.size() < nRegionNumber) {
+	QuillMetadataRegion region;
+	regions.append(region);
+    }
+
+    if (qPropName.contains(":Area")) {
+
+	QRectF area = regions[nRegionNumber-1].Area();
+
+	if (qPropName.contains("stArea:h")) {
+	    area.setHeight(qPropValue.toFloat());
+	} else if (qPropName.contains("stArea:w")) {
+	    area.setWidth(qPropValue.toFloat());
+	} else if (qPropName.contains("stArea:x")) {
+	    area.moveCenter(
+		    QPointF(qPropValue.toFloat(), area.center().y()));
+	} else if (qPropName.contains("stArea:y")) {
+	    area.moveCenter(
+		    QPointF(area.center().x(), qPropValue.toFloat()));
+	}
+
+	regions[nRegionNumber-1].setArea(area);
+
+    } else if (qPropName.contains(":Name")) {
+
+	regions[nRegionNumber-1].setName(qPropValue);
+
+    } else if (qPropName.contains(":Type")) {
+
+	regions[nRegionNumber-1].setRegionType(qPropValue);
+
+    } else if (qPropName.contains(":Extensions")) {
+
+	;
+
+    }
+
+    return;
+}
+
 QVariant Xmp::entry(QuillMetadata::Tag tag) const
 {
-    //qDebug() << "Xmp::entry";
-
     if (!supportsEntry(tag))
         return QVariant();
 
@@ -114,11 +173,6 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 
     foreach (XmpTag xmpTag, xmpTags) {
         uint32_t propBits;
-
-
-	qDebug() << xmpTag.tag << ";" << xmpTag.schema.toAscii().constData()
-			 << ";" << xmpTag.tag.toAscii().constData();
-
 
 	if (xmp_get_property(m_xmpPtr,
 			     xmpTag.schema.toAscii().constData(),
@@ -147,8 +201,6 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                 }
 
 
-	   /********************/
-
 	    } else if (XMP_IS_PROP_STRUCT(propBits)) {
 
 		XmpIterOptions iterOpts = XMP_ITER_OMITQUALIFIERS;
@@ -161,89 +213,42 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		XmpStringPtr schema = xmp_string_new();
 		XmpStringPtr propName = xmp_string_new();
 		XmpStringPtr propValue = xmp_string_new();
+
 		uint32_t options;
 
 		QuillMetadataRegionBag regions;
-		QuillMetadataRegionBag *regs = &regions;
-		bool bSuccess = true;
+
+		bool bSuccess = xmp_iterator_next(
+			xmpIterPtr, schema, propName,
+			propValue, &options);
 
 		while (bSuccess)
 		{
-		    bSuccess = xmp_iterator_next(
-			    xmpIterPtr, schema, propName,
-			    propValue, &options);
 		    QString qPropValue = processXmpString(propValue);
 		    QString qPropName = processXmpString(propName);
 
+		    qDebug() << qPropName << qPropValue;
+
 		    if (qPropName.contains("mwg-rs:AppliedToDimensions")) {
+
 			if (qPropName.contains("stDim:h")) {
-			    regs->setFullImageSize(
-				    QSize(regs->FullImageSize().width(), qPropValue.toInt()));
+			    regions.setFullImageSize(
+				    QSize(regions.FullImageSize().width(), qPropValue.toInt()));
 			} else if (qPropName.contains("stDim:w")) {
-			    regs->setFullImageSize(
-				    QSize(qPropValue.toInt(), regs->FullImageSize().height()));
+			    regions.setFullImageSize(
+				    QSize(qPropValue.toInt(), regions.FullImageSize().height()));
 			}
 		    }
 
-		    QString searchString("RegionList");
-		    if (qPropName.contains(searchString)) {
+		    else if (qPropName.contains("RegionList")) {
 
-			QRegExp rx("(" + searchString + ".)(\\d+).");
-			rx.indexIn(qPropName);
+			this->readRegionListItem(qPropValue, qPropName, regions);
 
-			bool isOk = false;
-			int nRegionNumber = rx.cap(2).toInt(&isOk);
-
-			if (isOk) { //RegionList.%d. was found
-
-			    searchString.append(
-				    "[" + QString::number(nRegionNumber) + "]");
-
-			    if (qPropName.contains(searchString)) {
-				//RegionList[nRegionNumber] was found
-
-				if (regs->size() < nRegionNumber) {
-				    QuillMetadataRegion region;
-				    regs->append(region);
-				}
-
-				if (qPropName.contains(":Area")) {
-
-				    QRectF area = (*regs)[nRegionNumber-1].Area();
-
-				    if (qPropName.contains("stArea:h")) {
-					area.setHeight(qPropValue.toFloat());
-				    } else if (qPropName.contains("stArea:w")) {
-					area.setWidth(qPropValue.toFloat());
-				    } else if (qPropName.contains("stArea:x")) {
-					area.moveCenter(
-						QPointF(qPropValue.toFloat(), area.center().y()));
-				    } else if (qPropName.contains("stArea:y")) {
-					area.moveCenter(
-						QPointF(area.center().x(), qPropValue.toFloat()));
-				    }
-
-				    (*regs)[nRegionNumber-1].setArea(area);
-
-				} else if (qPropName.contains(":Name")) {
-
-				    (*regs)[nRegionNumber-1].setName(processXmpString(propValue));
-
-				} else if (qPropName.contains(":Type")) {
-
-				    if (processXmpString(propValue).contains("face"))
-                        (*regs)[nRegionNumber-1].setRegionType("face");
-                    else if(processXmpString(propValue).contains("pet"))
-                        (*regs)[nRegionNumber-1].setRegionType("Pet");
-
-				} else if (qPropName.contains(":Extensions")) {
-
-				    ;
-
-				}
-			    }
-			}
 		    }
+
+		    bSuccess = xmp_iterator_next(
+					    xmpIterPtr, schema, propName,
+					    propValue, &options);
 		} // while (bSuccess)
 		xmp_string_free(schema);
 		xmp_string_free(propName);
@@ -253,7 +258,6 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		var.setValue(regions);
 		return var;
 
-	   /********************/
 
 	    } else {
                 QString string = processXmpString(xmpStringPtr);
@@ -325,90 +329,90 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
     }
 
     switch (tag) {
-    case QuillMetadata::Tag_GPSAltitude: {
-        QString altitude = entry.toString();
+        case QuillMetadata::Tag_GPSAltitude: {
+            QString altitude = entry.toString();
 
-        // Check the existence of a slash. If there's not one, append it
-        if (!altitude.contains("/")) {
-            altitude.append("/1");
-        }
+            // Check the existence of a slash. If there's not one, append it
+            if (!altitude.contains("/")) {
+                altitude.append("/1");
+            }
 
-        // Sanity check: if the input starts with "-", remove it and update the reference field
-        if (altitude.startsWith("-")) {
-            setXmpEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(1));
-            setXmpEntry(tag, QVariant(altitude.mid(1)));
-        }
-        else {
-            setXmpEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(0));
-            setXmpEntry(tag, QVariant(altitude));
-        }
-
-        break;
-    }
-    case QuillMetadata::Tag_GPSLatitude:
-    case QuillMetadata::Tag_GPSLongitude: {
-        QString value = entry.toString();
-        const QString refPositive(tag == QuillMetadata::Tag_GPSLatitude ? "N" : "E");
-        const QString refNegative(tag == QuillMetadata::Tag_GPSLatitude ? "S" : "W");
-
-        if (!value.contains(",")) {
-            double val = value.toDouble();
-            QString parsedEntry;
-            val = fabs(val);
-            double remains = (val - trunc(val)) * 3600;
-
-            QTextStream(&parsedEntry) << trunc(val) << ","
-                                      << trunc(remains / 60) << ","
-                                      << remains - trunc(remains / 60) * 60;
-
-            if (value.startsWith("-")) {
-                parsedEntry.append(refNegative);
+            // Sanity check: if the input starts with "-", remove it and update the reference field
+            if (altitude.startsWith("-")) {
+                setXmpEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(1));
+                setXmpEntry(tag, QVariant(altitude.mid(1)));
             }
             else {
-                parsedEntry.append(refPositive);
+                setXmpEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(0));
+                setXmpEntry(tag, QVariant(altitude));
             }
 
-            setXmpEntry(tag, QVariant(parsedEntry));
+            break;
         }
-        else if (value.endsWith(refPositive) || value.endsWith(refNegative)) {
-            if (value.startsWith("-")) {
-                value.replace(value.right(1), refNegative);
-                setXmpEntry(tag, QVariant(value.mid(1)));
-            }
-        } else {
-            value.append(value.startsWith("-") ? refNegative : refPositive);
-            setXmpEntry(tag, QVariant(value));
-        }
+        case QuillMetadata::Tag_GPSLatitude:
+        case QuillMetadata::Tag_GPSLongitude: {
+            QString value = entry.toString();
+            const QString refPositive(tag == QuillMetadata::Tag_GPSLatitude ? "N" : "E");
+            const QString refNegative(tag == QuillMetadata::Tag_GPSLatitude ? "S" : "W");
 
-        break;
-    }
-    case QuillMetadata::Tag_GPSImgDirection: {
-        QString direction;
-        const int slash = entry.toString().indexOf("/");
-        double value;
+            if (!value.contains(",")) {
+                double val = value.toDouble();
+                QString parsedEntry;
+                val = fabs(val);
+                double remains = (val - trunc(val)) * 3600;
 
-        // Check the existence of a slash. If there's not one, append it
-        if (slash == -1) {
-            value = entry.toDouble();
-            value = fmod(value, 360);
-            if (value < 0) {
-                value = 360 + value;
-            }
-            QTextStream(&direction) << value << "/1";
-        }
-        else {
-            QLocale c(QLocale::C);
-            value = c.toDouble(direction.mid(0, slash)) / c.toDouble(direction.mid(slash + 1, direction.length() - slash - 1));
-            value = fmod(value, 360);
-            if (value < 0) {
-                value = 360 + value;
-            }
-            QTextStream(&direction) << value << "/1";
-        }
+                QTextStream(&parsedEntry) << trunc(val) << ","
+                        << trunc(remains / 60) << ","
+                        << remains - trunc(remains / 60) * 60;
 
-        setXmpEntry(tag, QVariant(direction));
-        break;
-    }
+                if (value.startsWith("-")) {
+                    parsedEntry.append(refNegative);
+                }
+                else {
+                    parsedEntry.append(refPositive);
+                }
+
+                setXmpEntry(tag, QVariant(parsedEntry));
+            }
+            else if (value.endsWith(refPositive) || value.endsWith(refNegative)) {
+                if (value.startsWith("-")) {
+                    value.replace(value.right(1), refNegative);
+                    setXmpEntry(tag, QVariant(value.mid(1)));
+                }
+            } else {
+                value.append(value.startsWith("-") ? refNegative : refPositive);
+                setXmpEntry(tag, QVariant(value));
+            }
+
+            break;
+        }
+        case QuillMetadata::Tag_GPSImgDirection: {
+            QString direction;
+            const int slash = entry.toString().indexOf("/");
+            double value;
+
+            // Check the existence of a slash. If there's not one, append it
+            if (slash == -1) {
+                value = entry.toDouble();
+                value = fmod(value, 360);
+                if (value < 0) {
+                    value = 360 + value;
+                }
+                QTextStream(&direction) << value << "/1";
+            }
+            else {
+                QLocale c(QLocale::C);
+                value = c.toDouble(direction.mid(0, slash)) / c.toDouble(direction.mid(slash + 1, direction.length() - slash - 1));
+                value = fmod(value, 360);
+                if (value < 0) {
+                    value = 360 + value;
+                }
+                QTextStream(&direction) << value << "/1";
+            }
+
+            setXmpEntry(tag, QVariant(direction));
+            break;
+        }
     case QuillMetadata::Tag_Regions: {
         //we break down the region bag to different items
         //we use region name and region type to test how can we modify region metadata
@@ -422,7 +426,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
             setXmpEntry(QuillMetadata::Tag_RegionType, QVariant(QString(regionType)));
         }
         break;
-    }
+	}
     default:
         setXmpEntry(tag, entry);
         break;
@@ -478,6 +482,7 @@ void Xmp::setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry)
         }
     }
 }
+
 void Xmp::removeEntry(QuillMetadata::Tag tag)
 {
     if (!supportsEntry(tag))
@@ -580,54 +585,6 @@ void Xmp::initTags()
                               XmpTag(NS_EXIF, "GPSLongitude", XmpTag::TagTypeString));
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Regions,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "Regions", XmpTag::TagTypeRegions));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionName,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionName", XmpTag::TagTypeStringRegion));
-
-    /*m_xmpTags.insertMulti(QuillMetadata::Tag_RegionName,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionTitle", XmpTag::TagTypeString));
-    */
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionType,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionType", XmpTag::TagTypeString));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAppliedToDimensionsH,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionAppliedToDimensionsH", XmpTag::TagTypeReal));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAppliedToDimensionsW,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionAppliedToDimensionsW", XmpTag::TagTypeReal));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAppliedToDimensionsUnit,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionAppliedToDimensionsUnit", XmpTag::TagTypeString));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaD,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionAreaD", XmpTag::TagTypeReal));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaH,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionAreaH", XmpTag::TagTypeReal));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaW,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionAreaW", XmpTag::TagTypeReal));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaX,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionAreaX", XmpTag::TagTypeReal));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaY,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionAreaY", XmpTag::TagTypeReal));
-
-    m_xmpTags.insertMulti(QuillMetadata::Tag_RegionAreaUnit,
-                          XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-                                 "RegionAreaUnit", XmpTag::TagTypeReal));
+			  XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
+				 "Regions", XmpTag::TagTypeRegions));
 }

@@ -38,8 +38,6 @@ public:
 
 private:
     QSize fullImageSize;
-
-    QList<QuillMetadataRegion> regionList;
 };
 
 Q_DECLARE_METATYPE(QuillMetadataRegion);
