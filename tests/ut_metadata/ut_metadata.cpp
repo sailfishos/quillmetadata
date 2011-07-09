@@ -701,24 +701,24 @@ void ut_metadata::testReadRegions()
     QVERIFY(data.canConvert<QuillMetadataRegionBag>());
     QuillMetadataRegionBag regs = data.value<QuillMetadataRegionBag>();
     QCOMPARE(regs.count(), 2);
-    QCOMPARE(regs.FullImageSize().width(),  4288);
-    QCOMPARE(regs.FullImageSize().height(), 2848);
+    QCOMPARE(regs.fullImageSize().width(),  4288);
+    QCOMPARE(regs.fullImageSize().height(), 2848);
     // Name:
-    QCOMPARE(regs[0].Name(), QString("Albert Einstein"));
-    QCOMPARE(regs[1].Name(), QString("Dilbert"));
+    QCOMPARE(regs[0].name(), QString("Albert Einstein"));
+    QCOMPARE(regs[1].name(), QString("Dilbert"));
     // Type:
-    QCOMPARE(regs[0].RegionType(), QString("Face"));
-    QCOMPARE(regs[1].RegionType(), QString("Face"));
+    QCOMPARE(regs[0].regionType(), QString("Face"));
+    QCOMPARE(regs[1].regionType(), QString("Face"));
     // Area:
     {
-	QRectF area = regs[0].Area();
+	QRectF area = regs[0].area();
 	FUZZYQCOMPARE(area.width(),	 0.15);
 	FUZZYQCOMPARE(area.height(),	 0.17);
 	FUZZYQCOMPARE(area.center().x(), 0.3);
 	FUZZYQCOMPARE(area.center().y(), 0.4);
     }
     {
-	QRectF area = regs[1].Area();
+	QRectF area = regs[1].area();
 	FUZZYQCOMPARE(area.width(),	 0.17);
 	FUZZYQCOMPARE(area.height(),	 0.15);
 	FUZZYQCOMPARE(area.center().x(), 0.4);
@@ -728,26 +728,47 @@ void ut_metadata::testReadRegions()
 
 void ut_metadata::testEditRegions()
 {
-
     QVERIFY(region->isValid());
-    QuillMetadataRegionBag bag;
-    QuillMetadataRegion reg;
-    reg.setName(QString("This is foo name"));
-    reg.setRegionType(QString("Pet"));
-    bag.append(reg);
+    QVariant data = region->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data.canConvert<QuillMetadataRegionBag>());
+    QuillMetadataRegionBag bag = data.value<QuillMetadataRegionBag>();
+
+    bag[0].setName(QString("This is foo name"));
+    bag[0].setRegionType(QString("Pet"));
+    QRectF area;
+    QPointF centerPoint(0.3, 0.4);
+    area.moveCenter(centerPoint);
+    area.setWidth(0.1);
+    area.setHeight(0.2);
+    bag[0].setArea(area);
+    qDebug() << area;
     QVariant entry;
     entry.setValue(bag);
     region->setEntry(QuillMetadata::Tag_Regions,entry);
 
-    region->write("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
 
-    QuillMetadata *region1 = new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
-    QVariant data = region1->entry(QuillMetadata::Tag_Regions);
-    QVERIFY(data.canConvert<QuillMetadataRegionBag>());
-    QuillMetadataRegionBag regs = data.value<QuillMetadataRegionBag>();
-    QCOMPARE(regs.count(), 2);
-    QCOMPARE(regs[1].Name(), QString("This is foo name"));
-    QCOMPARE(regs[0].RegionType(), QString("Pet"));
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+
+    region->write(file.fileName());
+
+
+    QuillMetadata *region1 = new QuillMetadata(file.fileName());
+    QVariant data1 = region1->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data1.canConvert<QuillMetadataRegionBag>());
+    QuillMetadataRegionBag bag1 = data1.value<QuillMetadataRegionBag>();
+    QCOMPARE(bag1.count(), 2);
+
+    QCOMPARE(bag1[0].name(), QString("This is foo name"));
+    QCOMPARE(bag1[0].regionType(), QString("Pet"));
+    {
+	QRectF area = bag1[0].area();
+	FUZZYQCOMPARE(area.width(),	 0.1);
+	FUZZYQCOMPARE(area.height(),	 0.2);
+	FUZZYQCOMPARE(area.center().x(), 0.3);
+	FUZZYQCOMPARE(area.center().y(), 0.4);
+    }
 
     delete region1;
 }
@@ -757,7 +778,7 @@ void ut_metadata::testArea()
     QuillMetadataRegion region;
     QRectF rect(0,0,2,3);
     region.setArea(rect);
-    QRectF rect1 = region.Area();
+    QRectF rect1 = region.area();
     QCOMPARE(rect, rect1);
 }
 
@@ -767,8 +788,8 @@ void ut_metadata::testDimensions()
     int width = 5;
     int height = 6;
     regionBag.setFullImageSize(QSize(width, height));
-    int width1 = regionBag.FullImageSize().width();
-    int height1 = regionBag.FullImageSize().height();
+    int width1 = regionBag.fullImageSize().width();
+    int height1 = regionBag.fullImageSize().height();
     QCOMPARE(width, width1);
     QCOMPARE(height,height1);
 }
@@ -777,17 +798,17 @@ void ut_metadata::testRegion()
 {
     QuillMetadataRegion region;
     region.setName("this is testing");
-    QString name = region.Name();
+    QString name = region.name();
     QCOMPARE(name, QString("this is testing"));
 
     QString type("face");
     region.setRegionType(type);
-    QString type1 = region.RegionType();
+    QString type1 = region.regionType();
     QCOMPARE(type, type1);
 
     QRectF rect(0,0,2,3);
     region.setArea(rect);
-    QRectF rect1 = region.Area();
+    QRectF rect1 = region.area();
     QCOMPARE(rect,rect1);
 }
 
@@ -800,7 +821,7 @@ void ut_metadata::testRegionBag()
     int height = 6;
     dimension = QSize(width, height);
     regionBag.setFullImageSize(dimension);
-    QSize dimension1 = regionBag.FullImageSize();
+    QSize dimension1 = regionBag.fullImageSize();
     QCOMPARE(dimension.width(),dimension1.width());
     QCOMPARE(dimension.height(),dimension1.height());
 }

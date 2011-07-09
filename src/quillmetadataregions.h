@@ -13,20 +13,20 @@ public:
     QuillMetadataRegion(const QuillMetadataRegion & other);
 
     void setRegionType(const QString & type);
-    QString RegionType() const;
+    QString regionType() const;
 
     void setArea( const QRectF & area);
-    QRectF Area() const;
+    QRectF area() const;
 
     void setName(const QString & name);
-    QString Name() const;
+    QString name() const;
 
     QuillMetadataRegion & operator=(const QuillMetadataRegion &rhs);
 
 private:
-    QRectF area;
-    QString type;
-    QString name;
+    QRectF m_area;
+    QString m_type;
+    QString m_name;
 };
 
 
@@ -34,10 +34,10 @@ class QuillMetadataRegionBag : public QList<QuillMetadataRegion>
 {
 public:
     void setFullImageSize(const QSize & dimension);
-    QSize FullImageSize() const;
+    QSize fullImageSize() const;
 
 private:
-    QSize fullImageSize;
+    QSize m_fullImageSize;
 };
 
 Q_DECLARE_METATYPE(QuillMetadataRegion);

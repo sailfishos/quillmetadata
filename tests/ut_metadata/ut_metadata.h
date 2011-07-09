@@ -57,14 +57,13 @@ private slots:
     void cleanupTestCase();
 
     // Unit tests for metadata reading
-
     void testReadRegions();
-    void testEditRegions();
-
     void testArea();
     void testDimensions();
     void testRegion();
     void testRegionBag();
+    void testEditRegions();
+
 private:
 
     void testCameraMake();

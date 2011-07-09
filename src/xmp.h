@@ -52,9 +52,10 @@ public:
         TagTypeString,
         TagTypeStringList,
         TagTypeAltLang,
-        TagTypeRegions,
-        TagTypeReal,
-        TagTypeStringRegion
+	TagTypeReal,
+	TagTypeRegions,
+	TagTypeRegionString,
+	TagTypeRegionReal,
     };
 
     XmpTag(const QString &schema, const QString &tag, TagType tagType);
@@ -62,6 +63,15 @@ public:
     QString schema;
     QString tag;
     TagType tagType;
+};
+
+class XmpRegionTag : public XmpTag {
+public:
+    QString baseTag;
+
+    XmpRegionTag();
+    XmpRegionTag(const QString &schema, const QString &baseTag, const QString &tag, TagType tagType);
+    XmpRegionTag& operator=(const XmpRegionTag &rhs);
 };
 
 class Xmp : public MetadataRepresentation
@@ -89,12 +99,15 @@ class Xmp : public MetadataRepresentation
 
     void setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry);
 
+    void setXmpEntry(XmpTag xmpTag, const QVariant &entry);
+
     void readRegionListItem(const QString & qPropValue,
 			    const QString & qPropName,
 			    QuillMetadataRegionBag & regions) const;
 
  private:
     static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
+    static QHash<QuillMetadata::Tag,XmpRegionTag> m_regionXmpTags;
 
     XmpPtr m_xmpPtr;
 

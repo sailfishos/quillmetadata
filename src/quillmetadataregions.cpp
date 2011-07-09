@@ -9,40 +9,40 @@ QuillMetadataRegion::QuillMetadataRegion()
 
 QuillMetadataRegion::QuillMetadataRegion(const QuillMetadataRegion & other)
 {
-    area = other.area;
-    type = other.type;
-    name = other.name;
+    m_area = other.m_area;
+    m_type = other.m_type;
+    m_name = other.m_name;
 }
 
 
 void QuillMetadataRegion::setRegionType(const QString & regionType)
 {
-    type = regionType;
+    m_type = regionType;
 }
 
-QString QuillMetadataRegion::RegionType() const
+QString QuillMetadataRegion::regionType() const
 {
-    return type;
+    return m_type;
 }
 
 void QuillMetadataRegion::setArea(const QRectF & areaValue)
 {
-    area = areaValue;
+    m_area = areaValue;
 }
 
-QRectF QuillMetadataRegion::Area() const
+QRectF QuillMetadataRegion::area() const
 {
-    return area;
+    return m_area;
 }
 
 void QuillMetadataRegion::setName(const QString & nameValue)
 {
-    name = nameValue;
+    m_name = nameValue;
 }
 
-QString QuillMetadataRegion::Name() const
+QString QuillMetadataRegion::name() const
 {
-    return name;
+    return m_name;
 }
 
 QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &rhs)
@@ -50,9 +50,9 @@ QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &r
     if (this == &rhs)
 	return *this;
 
-    area = rhs.area;
-    type = rhs.type;
-    name = rhs.name;
+    m_area = rhs.m_area;
+    m_type = rhs.m_type;
+    m_name = rhs.m_name;
 
     return *this;
 }
@@ -61,11 +61,11 @@ QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &r
 
 void QuillMetadataRegionBag::setFullImageSize(const QSize & dimensionValue)
 {
-    fullImageSize = dimensionValue;
+    m_fullImageSize = dimensionValue;
 }
 
-QSize QuillMetadataRegionBag::FullImageSize() const
+QSize QuillMetadataRegionBag::fullImageSize() const
 {
-    return fullImageSize;
+    return m_fullImageSize;
 }
 
