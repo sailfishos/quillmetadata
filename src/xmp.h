@@ -67,11 +67,11 @@ public:
 
 class XmpRegionTag : public XmpTag {
 public:
-    QString baseTag;
-
     XmpRegionTag();
     XmpRegionTag(const QString &schema, const QString &baseTag, const QString &tag, TagType tagType);
     QString getIndexedTag(int arrayIndex);
+private:
+    QString baseTag;
 };
 
 

@@ -58,6 +58,7 @@ XmpTag::XmpTag(const QString &schema, const QString &tag, TagType tagType) :
 {
 }
 
+
 XmpRegionTag::XmpRegionTag(const QString &schema, const QString &baseTag,
 			   const QString &tag, TagType tagType) :
 XmpTag(schema, tag, tagType), baseTag(baseTag)
@@ -431,10 +432,9 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 	case QuillMetadata::Tag_Regions: {
 	    QuillMetadataRegionBag regions = entry.value<QuillMetadataRegionBag>();
 
-	    XmpRegionTag xmpTag;
 	    // Write all tags of all regions.
 	    // RegionAppliedToDimensionsH
-	    xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionAppliedToDimensionsH);
+	    XmpRegionTag xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionAppliedToDimensionsH);
 	    setXmpEntry(XmpTag(xmpTag.schema, xmpTag.tag, xmpTag.tagType),
 			regions.fullImageSize().height());
 
