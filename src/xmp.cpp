@@ -69,18 +69,11 @@ XmpTag("", "", TagTypeString), baseTag("")
 {
 }
 
-XmpRegionTag& XmpRegionTag::operator=(const XmpRegionTag &rhs)
+QString XmpRegionTag::getIndexedTag(int zeroBasedIndex)
 {
-    if (this == &rhs)
-	return *this;
-
-    schema  = rhs.schema;
-    baseTag = rhs.baseTag;
-    tag	    = rhs.tag;
-    tagType = rhs.tagType;
-
-    return *this;
+    return baseTag + QString("%1").arg(zeroBasedIndex+1) + tag;
 }
+
 
 
 Xmp::Xmp()
@@ -440,52 +433,45 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 	    XmpRegionTag xmpTag;
 	    // Write all tags of all regions.
-	    //! RegionAppliedToDimensionsH
+	    // RegionAppliedToDimensionsH
 	    xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionAppliedToDimensionsH);
 	    setXmpEntry(XmpTag(xmpTag.schema, xmpTag.tag, xmpTag.tagType),
 			regions.fullImageSize().height());
 
-	    //! RegionAppliedToDimensionsW
+	    // RegionAppliedToDimensionsW
 	    xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionAppliedToDimensionsW);
 	    setXmpEntry(XmpTag(xmpTag.schema, xmpTag.tag, xmpTag.tagType),
 			regions.fullImageSize().width());
 
-	    QString strTag;
 	    for (int i = 0; i < regions.count(); i++) {
-		//! Region name
+		// Region name
 		xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionName);
-		strTag = xmpTag.baseTag + QString("%1").arg(i+1) + xmpTag.tag;
-		setXmpEntry(XmpTag(xmpTag.schema, strTag, xmpTag.tagType),
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
 			    regions[i].name());
 
-		//! Region type
+		// Region type
 		xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionType);
-		strTag = xmpTag.baseTag + QString("%1").arg(i+1) + xmpTag.tag;
-		setXmpEntry(XmpTag(xmpTag.schema, strTag, xmpTag.tagType),
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
 			    regions[i].regionType());
 
-		//! RegionAreaH
+		// RegionAreaH
 		xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionAreaH);
-		strTag = xmpTag.baseTag + QString("%1").arg(i+1) + xmpTag.tag;
-		setXmpEntry(XmpTag(xmpTag.schema, strTag, xmpTag.tagType),
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
 			    regions[i].area().height());
 
-		//! RegionAreaW
+		// RegionAreaW
 		xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionAreaW);
-		strTag = xmpTag.baseTag + QString("%1").arg(i+1) + xmpTag.tag;
-		setXmpEntry(XmpTag(xmpTag.schema, strTag, xmpTag.tagType),
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
 			    regions[i].area().width());
 
-		//! RegionAreaX,
+		// RegionAreaX,
 		xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionAreaX);
-		strTag = xmpTag.baseTag + QString("%1").arg(i+1) + xmpTag.tag;
-		setXmpEntry(XmpTag(xmpTag.schema, strTag, xmpTag.tagType),
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
 			    regions[i].area().x());
 
-		//! RegionAreaY
+		// RegionAreaY
 		xmpTag = m_regionXmpTags.value(QuillMetadata::Tag_RegionAreaY);
-		strTag = xmpTag.baseTag + QString("%1").arg(i+1) + xmpTag.tag;
-		setXmpEntry(XmpTag(xmpTag.schema, strTag, xmpTag.tagType),
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
 			    regions[i].area().y());
 	    }
 

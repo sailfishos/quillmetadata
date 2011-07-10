@@ -71,8 +71,10 @@ public:
 
     XmpRegionTag();
     XmpRegionTag(const QString &schema, const QString &baseTag, const QString &tag, TagType tagType);
-    XmpRegionTag& operator=(const XmpRegionTag &rhs);
+    QString getIndexedTag(int arrayIndex);
 };
+
+
 
 class Xmp : public MetadataRepresentation
 {
