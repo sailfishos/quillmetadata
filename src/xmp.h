@@ -71,7 +71,6 @@ public:
     XmpRegionTag();
     XmpRegionTag(const QString &schema, const QString &baseTag, const QString &tag, TagType tagType);
     QString getIndexedTag(int arrayIndex);
-private:
     QString baseTag;
 };
 
@@ -130,6 +129,10 @@ class Xmp : public MetadataRepresentation
     void setXmpEntry(Xmp::Tag tag, const QVariant &entry);
 
     void setXmpEntry(XmpTag xmpTag, const QVariant &entry);
+
+    bool hasXmpEntry(Xmp::Tag tag, int zeroBasedIndex = 0) const;
+
+    bool hasXmpEntry(QuillMetadata::Tag tag) const;
 
     void readRegionListItem(const QString & qPropValue,
 			    const QString & qPropName,

@@ -120,6 +120,37 @@ bool Xmp::hasEntry(QuillMetadata::Tag tag) const
             !m_xmpTags.values(tag).isEmpty());
 }
 
+bool Xmp::hasXmpEntry(QuillMetadata::Tag tag) const
+{
+    QList<XmpTag> xmpTags = m_xmpTags.values(tag);
+    if (!xmpTags.isEmpty()) {
+	foreach (XmpTag tag, xmpTags) {
+	    qDebug() << tag.schema.toAscii().constData();
+	    if (xmp_has_property(m_xmpPtr,
+				 tag.schema.toAscii().constData(),
+				 tag.tag.toAscii().constData()))
+		return true;
+	}
+    }
+    return false;
+}
+
+bool Xmp::hasXmpEntry(Xmp::Tag tag, int zeroBasedIndex) const
+{
+    XmpRegionTag xmpTag = m_regionXmpTags.value(tag);
+    if (xmpTag.tag.isEmpty())
+	return false;
+
+    if (xmpTag.baseTag.isEmpty())
+	return (xmp_has_property(m_xmpPtr,
+				 xmpTag.schema.toAscii().constData(),
+				 xmpTag.tag.toAscii().constData()));
+    else
+	return (xmp_has_property(m_xmpPtr,
+				 xmpTag.schema.toAscii().constData(),
+				 xmpTag.getIndexedTag(zeroBasedIndex).toAscii().constData()));
+}
+
 QString Xmp::processXmpString(XmpStringPtr xmpString)
 {
     return QString(xmp_string_cstr(xmpString)).trimmed();
@@ -253,7 +284,7 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		{
 		    QString qPropValue	= processXmpString(propValue);
 		    QString qPropName	= processXmpString(propName);
-
+		    qDebug() << qPropName << qPropValue;
 
 		    if (qPropName.contains("mwg-rs:AppliedToDimensions")) {
 
@@ -442,25 +473,43 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 	case QuillMetadata::Tag_Regions: {
 	    QuillMetadataRegionBag regions = entry.value<QuillMetadataRegionBag>();
 
-	    if (regions.count() == 0) { // No regions: delete all
-		setXmpEntry(QuillMetadata::Tag_Regions, QVariant(""));
-		break;
+	    {
+		XmpTag xmpTag = m_xmpTags.value(QuillMetadata::Tag_Regions);
+		if (regions.count() == 0) { // No regions to be written: delete all
+		    removeEntry(QuillMetadata::Tag_Regions);
+		    break;
+		}
+
+		if (regions.count() > 0) { // Regions to be written: create if needed
+		    if (!hasXmpEntry(QuillMetadata::Tag_Regions)) {
+			setXmpEntry(QuillMetadata::Tag_Regions, QVariant(""));
+
+			XmpRegionTag xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionList);
+			setXmpEntry(XmpTag(xmpTag.schema,
+					   xmpTag.tag,
+					   xmpTag.tagType), "");
+		    }
+		}
+
+
+		// Write all tags of all regions.
+		// RegionAppliedToDimensionsH
+		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAppliedToDimensionsH);
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.tag, xmpTag.tagType),
+			    regions.fullImageSize().height());
+
+		// RegionAppliedToDimensionsW
+		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAppliedToDimensionsW);
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.tag, xmpTag.tagType),
+			    regions.fullImageSize().width());
 	    }
 
-	    // Write all tags of all regions.
-	    // RegionAppliedToDimensionsH
-	    XmpRegionTag xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAppliedToDimensionsH);
-	    setXmpEntry(XmpTag(xmpTag.schema, xmpTag.tag, xmpTag.tagType),
-			regions.fullImageSize().height());
-
-	    // RegionAppliedToDimensionsW
-	    xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAppliedToDimensionsW);
-	    setXmpEntry(XmpTag(xmpTag.schema, xmpTag.tag, xmpTag.tagType),
-			regions.fullImageSize().width());
-
-
+	    XmpRegionTag xmpTag;
 	    int nRegion;
+	    qDebug() << "regions.count()" << regions.count();
+
 	    for (nRegion = 0; nRegion < regions.count(); nRegion++) {
+
 		// Region name
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionName);
 		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
@@ -494,9 +543,8 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 	    // Delete regions that aren't valid anymore
 	    xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionListItem);
-	    while (xmp_has_property(m_xmpPtr,
-				    xmpTag.schema.toAscii().constData(),
-				    xmpTag.getIndexedTag(nRegion).toAscii().constData())) {
+	    while (hasXmpEntry(Xmp::Tag_RegionListItem, nRegion)) {
+		qDebug() << "deleting";
 		xmp_delete_property(m_xmpPtr, xmpTag.schema.toAscii().constData(),
 				    xmpTag.getIndexedTag(nRegion).toAscii().constData());
 		nRegion++;
@@ -537,6 +585,7 @@ void Xmp::setXmpEntry(XmpTag xmpTag, const QVariant &entry)
 			 entry.toString().toUtf8().constData(), 0);
     }
     else if (xmpTag.tagType == XmpTag::TagTypeStruct){
+	qDebug() << "type struct";
 	xmp_set_property(m_xmpPtr,
 			 xmpTag.schema.toAscii().constData(),
 			 xmpTag.tag.toAscii().constData(),
@@ -594,6 +643,7 @@ void Xmp::removeEntry(QuillMetadata::Tag tag)
                             xmpTag.tag.toAscii().constData());
     }
 }
+
 
 bool Xmp::write(const QString &fileName) const
 {
