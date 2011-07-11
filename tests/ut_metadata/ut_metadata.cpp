@@ -742,12 +742,9 @@ void ut_metadata::testEditRegions()
     QPointF centerPoint(0.3, 0.4);
     area.moveCenter(centerPoint);
     bag[0].setArea(area);
-    qDebug() << area << area.center().x() << area.center().y();
     QVariant entry;
     entry.setValue(bag);
     region->setEntry(QuillMetadata::Tag_Regions,entry);
-
-#if 0
 
     QTemporaryFile file;
     file.open();
@@ -773,8 +770,6 @@ void ut_metadata::testEditRegions()
     }
 
     delete region1;
-#endif
-
 }
 
 void ut_metadata::testArea()
@@ -942,7 +937,6 @@ void ut_metadata::testRegionBagRemoveRegion()
 	region->write(file.fileName());
 
 	QuillMetadata *region1 = new QuillMetadata(file.fileName());
-	qDebug() << regs.count();
 	QVariant data1 = region1->entry(QuillMetadata::Tag_Regions);
 	if (!data1.isNull())
 	{
@@ -993,9 +987,7 @@ void ut_metadata::testCreateRegionBag()
     QVERIFY(data.isNull());
 
     QVariant entry;
-    qDebug() << regionBag[0].name();
     entry.setValue(regionBag);
-    qDebug() << "djilhsdf";
     metadata->setEntry(QuillMetadata::Tag_Regions,entry);
     QVariant data1 = metadata->entry(QuillMetadata::Tag_Regions);
 
@@ -1009,7 +1001,6 @@ void ut_metadata::testCreateRegionBag()
     QVERIFY(data2.canConvert<QuillMetadataRegionBag>());
 
     QuillMetadataRegionBag regs1 = data1.value<QuillMetadataRegionBag>();
-    qDebug() << "1" << regs1.count() << regs1.fullImageSize();
 
     QCOMPARE(regs1[0].name(), QString("this is testing"));
     QCOMPARE(regs1[0].regionType(), QString("face"));
