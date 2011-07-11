@@ -949,12 +949,12 @@ void ut_metadata::testRegionBagRemoveRegion()
 	    QCOMPARE(regs1.fullImageSize().width(),  4288);
 	    QCOMPARE(regs1.fullImageSize().height(), 2848);
 	    // Name:
-	    QCOMPARE(regs1[0].name(), QString("Dilbert"));
+	    QCOMPARE(regs1.last().name(), QString("Dilbert"));
 	    // Type:
-	    QCOMPARE(regs1[0].regionType(), QString("Face"));
+	    QCOMPARE(regs1.last().regionType(), QString("Face"));
 	    // Area:
 	    {
-		QRectF area = regs1[0].area();
+		QRectF area = regs1.last().area();
 		FUZZYQCOMPARE(area.width(),	 0.17);
 		FUZZYQCOMPARE(area.height(),	 0.15);
 		FUZZYQCOMPARE(area.center().x(), 0.4);
@@ -963,6 +963,7 @@ void ut_metadata::testRegionBagRemoveRegion()
 	}
     }
 }
+
 
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );
