@@ -9,6 +9,7 @@
 class QuillMetadataRegion
 {
 public:
+
     QuillMetadataRegion();
     QuillMetadataRegion(const QuillMetadataRegion & other);
 

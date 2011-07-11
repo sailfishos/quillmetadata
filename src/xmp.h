@@ -108,8 +108,28 @@ class Xmp : public MetadataRepresentation
 			    QuillMetadataRegionBag & regions) const;
 
  private:
+
+    enum Tag {
+	//! RegionAppliedToDimensionsH
+	Tag_RegionAppliedToDimensionsH,
+	//! RegionAppliedToDimensionsW
+	Tag_RegionAppliedToDimensionsW,
+	//! Region name
+	Tag_RegionName,
+	//! Region type
+	Tag_RegionType,
+	//! RegionAreaH
+	Tag_RegionAreaH,
+	//! RegionAreaW
+	Tag_RegionAreaW,
+	//! RegionAreaX,
+	Tag_RegionAreaX,
+	//! RegionAreaY
+	Tag_RegionAreaY
+    };
+
     static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
-    static QHash<QuillMetadata::Tag,XmpRegionTag> m_regionXmpTags;
+    static QHash<Xmp::Tag,XmpRegionTag> m_regionXmpTags;
 
     XmpPtr m_xmpPtr;
 

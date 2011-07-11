@@ -110,23 +110,25 @@ class QuillMetadata
         Tag_GPSImgDirectionRef,
         //! Region list of type QList<RegionInfo>
         Tag_Regions,
+
 	//! RegionAppliedToDimensionsH
 	Tag_RegionAppliedToDimensionsH,
 	//! RegionAppliedToDimensionsW
 	Tag_RegionAppliedToDimensionsW,
 	//! Region name
-        Tag_RegionName,
-        //! Region type
-        Tag_RegionType,
-        //! RegionAreaH
-        Tag_RegionAreaH,
-        //! RegionAreaW
-        Tag_RegionAreaW,
-        //! RegionAreaX,
-        Tag_RegionAreaX,
-        //! RegionAreaY
-        Tag_RegionAreaY,
-        //! Undefined tag
+	Tag_RegionName,
+	//! Region type
+	Tag_RegionType,
+	//! RegionAreaH
+	Tag_RegionAreaH,
+	//! RegionAreaW
+	Tag_RegionAreaW,
+	//! RegionAreaX,
+	Tag_RegionAreaX,
+	//! RegionAreaY
+	Tag_RegionAreaY,
+
+	//! Undefined tag
         Tag_Undefined,
     };
 
