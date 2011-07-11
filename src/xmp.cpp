@@ -526,22 +526,15 @@ void Xmp::setXmpEntry(Xmp::Tag tag, const QVariant &entry)
 
 void Xmp::setXmpEntry(XmpTag xmpTag, const QVariant &entry)
 {
-    //just test if region name or region type exist
-    bool ret1 = xmp_has_property(m_xmpPtr,
-				 xmpTag.schema.toAscii().constData(),
-				 xmpTag.tag.toAscii().constData());
-    qCritical()<<"++++++++++++setXmpEntry:-1:has the property?"<<ret1;
-    //end
-    bool ret2 = xmp_delete_property(m_xmpPtr,
-				    xmpTag.schema.toAscii().constData(),
-				    xmpTag.tag.toAscii().constData());
-    qCritical()<<"++++++++++++setXmpEntry:-1"<<"schema:"<<xmpTag.schema.toAscii().constData()<<" tag:"<<xmpTag.tag.toAscii().constData()<<" delete?"<<ret2;
+    xmp_delete_property(m_xmpPtr,
+			xmpTag.schema.toAscii().constData(),
+			xmpTag.tag.toAscii().constData());
+
     if (xmpTag.tagType == XmpTag::TagTypeString){
-	bool ret = xmp_set_property(m_xmpPtr,
-				    xmpTag.schema.toAscii().constData(),
-				    xmpTag.tag.toAscii().constData(),
-				    entry.toString().toUtf8().constData(), 0);
-	qCritical()<<"++++++++++++setXmpEntry:-2:ret="<<ret<<"schema:"<<xmpTag.schema.toAscii().constData()<<" tag:"<<xmpTag.tag.toAscii().constData();
+	xmp_set_property(m_xmpPtr,
+			 xmpTag.schema.toAscii().constData(),
+			 xmpTag.tag.toAscii().constData(),
+			 entry.toString().toUtf8().constData(), 0);
     }
     else if (xmpTag.tagType == XmpTag::TagTypeStruct){
 	xmp_set_property(m_xmpPtr,
