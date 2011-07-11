@@ -1,49 +1,53 @@
+#include <QSharedData>
 #include "quillmetadataregions.h"
 
 #include <QDebug>
 
 /*** QuillMeatadataRegion Definitions ***/
 
+const QLatin1String QuillMetadataRegion::RegionType_Face("Face");
+const QLatin1String QuillMetadataRegion::RegionType_Pet("Pet");
+const QLatin1String QuillMetadataRegion::RegionType_Focus("Focus");
+const QLatin1String QuillMetadataRegion::RegionType_BarCode("BarCode");
+
 QuillMetadataRegion::QuillMetadataRegion()
 {
+    d = new QuillMetadataRegionPrivate;
 }
 
 QuillMetadataRegion::QuillMetadataRegion(const QuillMetadataRegion & other)
+    :d(other.d)
 {
-    m_area = other.m_area;
-    m_type = other.m_type;
-    m_name = other.m_name;
 }
-
 
 void QuillMetadataRegion::setRegionType(const QString & regionType)
 {
-    m_type = regionType;
+    d->type = regionType;
 }
 
 QString QuillMetadataRegion::regionType() const
 {
-    return m_type;
+    return d->type;
 }
 
 void QuillMetadataRegion::setArea(const QRectF & areaValue)
 {
-    m_area = areaValue;
+    d->area = areaValue;
 }
 
 QRectF QuillMetadataRegion::area() const
 {
-    return m_area;
+    return d->area;
 }
 
 void QuillMetadataRegion::setName(const QString & nameValue)
 {
-    m_name = nameValue;
+    d->name = nameValue;
 }
 
 QString QuillMetadataRegion::name() const
 {
-    return m_name;
+    return d->name;
 }
 
 QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &other)
@@ -51,23 +55,28 @@ QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &o
     if (this == &other)
 	return *this;
 
-    m_area = other.m_area;
-    m_type = other.m_type;
-    m_name = other.m_name;
+    d->area = other.d->area;
+    d->type = other.d->type;
+    d->name = other.d->name;
 
     return *this;
 }
 
 /*** QuillMeatadataRegionBag Definitions ***/
 
+QuillMetadataRegionBag::QuillMetadataRegionBag()
+{
+    d = new QuillMetadataRegionBagPrivate;
+}
+
 void QuillMetadataRegionBag::setFullImageSize(const QSize & dimensionValue)
 {
-    m_fullImageSize = dimensionValue;
+    d->fullImageSize = dimensionValue;
 }
 
 QSize QuillMetadataRegionBag::fullImageSize() const
 {
-    return m_fullImageSize;
+    return d->fullImageSize;
 }
 
 QuillMetadataRegionBag& QuillMetadataRegionBag::operator=(const QuillMetadataRegionBag &other)
@@ -75,7 +84,7 @@ QuillMetadataRegionBag& QuillMetadataRegionBag::operator=(const QuillMetadataReg
     if (this == &other)
 	return *this;
 
-    this->m_fullImageSize = other.m_fullImageSize;
+    d->fullImageSize = other.d->fullImageSize;
     this->clear();
     QList<QuillMetadataRegion>::operator =(other);
 

@@ -5,6 +5,22 @@
 #include <QList>
 #include <QString>
 #include <QMetaType>
+#include <QSharedDataPointer>
+
+class QuillMetadataRegionPrivate: public QSharedData
+
+{
+public:
+    QuillMetadataRegionPrivate(){};
+    QuillMetadataRegionPrivate(const QuillMetadataRegionPrivate& other)
+        :QSharedData(other),area(other.area),
+         type(other.type),name(other.name)
+        {};
+    ~QuillMetadataRegionPrivate(){};
+    QRectF area;
+    QString type;
+    QString name;
+};
 
 class QuillMetadataRegion
 {
@@ -24,23 +40,34 @@ public:
 
     QuillMetadataRegion & operator=(const QuillMetadataRegion &other);
 
+    static const QLatin1String RegionType_Face;
+    static const QLatin1String RegionType_Pet;
+    static const QLatin1String RegionType_Focus;
+    static const QLatin1String RegionType_BarCode;
+
 private:
-    QRectF m_area;
-    QString m_type;
-    QString m_name;
+    QSharedDataPointer<QuillMetadataRegionPrivate> d;
 };
 
+class QuillMetadataRegionBagPrivate: public QSharedData
+{
+public:
+    QuillMetadataRegionBagPrivate(){};
+    ~QuillMetadataRegionBagPrivate(){};
+    QSize fullImageSize;
+};
 
 class QuillMetadataRegionBag : public QList<QuillMetadataRegion>
 {
 public:
+    QuillMetadataRegionBag();
     void setFullImageSize(const QSize & dimension);
     QSize fullImageSize() const;
 
     QuillMetadataRegionBag & operator=(const QuillMetadataRegionBag &other);
 
 private:
-    QSize m_fullImageSize;
+    QSharedDataPointer<QuillMetadataRegionBagPrivate> d;
 };
 
 Q_DECLARE_METATYPE(QuillMetadataRegion);
