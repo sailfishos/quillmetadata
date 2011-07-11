@@ -693,7 +693,8 @@ void ut_metadata::testOrientationTagSpeedup()
     }
 }
 
-#define FUZZYQCOMPARE(x, y) QCOMPARE((float)((int)(x*1000))/1000, (float)((int)(y*1000))/1000)
+#define FUZZYQCOMPARE(x, y) QCOMPARE((float)((int)(x*100.0+.5))/100, (float)((int)(y*100.0+.5))/100)
+
 
 void ut_metadata::testReadRegions()
 {
@@ -736,12 +737,12 @@ void ut_metadata::testEditRegions()
     bag[0].setName(QString("This is foo name"));
     bag[0].setRegionType(QString("Pet"));
     QRectF area;
-    QPointF centerPoint(0.3, 0.4);
-    area.moveCenter(centerPoint);
     area.setWidth(0.1);
     area.setHeight(0.2);
+    QPointF centerPoint(0.3, 0.4);
+    area.moveCenter(centerPoint);
     bag[0].setArea(area);
-    qDebug() << area;
+    qDebug() << area << area.center().x() << area.center().y();
     QVariant entry;
     entry.setValue(bag);
     region->setEntry(QuillMetadata::Tag_Regions,entry);
@@ -824,6 +825,143 @@ void ut_metadata::testRegionBag()
     QSize dimension1 = regionBag.fullImageSize();
     QCOMPARE(dimension.width(),dimension1.width());
     QCOMPARE(dimension.height(),dimension1.height());
+}
+
+void ut_metadata::testRegionAssignment()
+{
+    QVariant data = region->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data.canConvert<QuillMetadataRegionBag>());
+    QuillMetadataRegionBag regionBag = data.value<QuillMetadataRegionBag>();
+    QuillMetadataRegion region = regionBag[0];
+
+    QuillMetadataRegion region1;
+
+    region1 = region;
+
+    QCOMPARE(region1.regionType(),  region.regionType());
+    QCOMPARE(region1.area(),	    region.area());
+    QCOMPARE(region1.name(),	    region.name());
+}
+
+
+void ut_metadata::testRegionBagAssignment()
+{
+    QVariant data = region->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data.canConvert<QuillMetadataRegionBag>());
+    QuillMetadataRegionBag regionBag = data.value<QuillMetadataRegionBag>();
+
+    QuillMetadataRegionBag regionBag1;
+
+    regionBag1 = regionBag;
+
+    QCOMPARE(regionBag1.count(), regionBag.count());
+    QCOMPARE(regionBag1.fullImageSize(), regionBag.fullImageSize());
+
+    for (int i = 0; i < regionBag.count(); i++)
+    {
+	QCOMPARE(regionBag1[i].regionType(),regionBag[i].regionType());
+	QCOMPARE(regionBag1[i].area(),	    regionBag[i].area());
+	QCOMPARE(regionBag1[i].name(),	    regionBag[i].name());
+    }
+}
+
+void ut_metadata::testRegionBagAppend()
+{
+    QVariant data = region->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data.canConvert<QuillMetadataRegionBag>());
+    QuillMetadataRegionBag regs = data.value<QuillMetadataRegionBag>();
+
+    regs.append(regs[0]);
+    regs[2].setName("appended region");
+
+
+    QVariant entry;
+    entry.setValue(regs);
+    region->setEntry(QuillMetadata::Tag_Regions,entry);
+
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+    region->write(file.fileName());
+    QuillMetadata *region1 = new QuillMetadata(file.fileName());
+    QVariant data1 = region1->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data1.canConvert<QuillMetadataRegionBag>());
+
+    QuillMetadataRegionBag regs1 = data1.value<QuillMetadataRegionBag>();
+
+
+    QCOMPARE(regs1.count(), 3);
+    QCOMPARE(regs.fullImageSize().width(),  4288);
+    QCOMPARE(regs1.fullImageSize().width(),  4288);
+    //QCOMPARE(regs1.fullImageSize().height(), 2848);
+    // Name:
+    QCOMPARE(regs1[0].name(), QString("Albert Einstein"));
+    QCOMPARE(regs1[1].name(), QString("Dilbert"));
+    QCOMPARE(regs1[2].name(), QString("appended region"));
+    // Type:
+    QCOMPARE(regs1[0].regionType(), QString("Face"));
+    QCOMPARE(regs1[1].regionType(), QString("Face"));
+    QCOMPARE(regs1[2].regionType(), QString("Face"));
+    // Area:
+    for (int i=0; i<3; i+=2){
+	QRectF area = regs[i].area();
+	FUZZYQCOMPARE(area.width(),	 0.15);
+	FUZZYQCOMPARE(area.height(),	 0.17);
+	FUZZYQCOMPARE(area.center().x(), 0.3);
+	FUZZYQCOMPARE(area.center().y(), 0.4);
+    }
+    {
+	QRectF area = regs[1].area();
+	FUZZYQCOMPARE(area.width(),	 0.17);
+	FUZZYQCOMPARE(area.height(),	 0.15);
+	FUZZYQCOMPARE(area.center().x(), 0.4);
+	FUZZYQCOMPARE(area.center().y(), 0.3);
+    }
+}
+
+void ut_metadata::testRegionBagRemoveRegion()
+{
+    QVariant data = region->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data.canConvert<QuillMetadataRegionBag>());
+    QuillMetadataRegionBag regs = data.value<QuillMetadataRegionBag>();
+
+    while (regs.count()>0) // Remove, until no regions left.
+    {
+	regs.removeFirst();
+
+	QVariant entry;
+	entry.setValue(regs);
+	region->setEntry(QuillMetadata::Tag_Regions,entry);
+
+	QTemporaryFile file;
+	file.open();
+	sourceImage.save(file.fileName(), "jpg");
+	region->write(file.fileName());
+	QuillMetadata *region1 = new QuillMetadata(file.fileName());
+	QVariant data1 = region1->entry(QuillMetadata::Tag_Regions);
+	QVERIFY(data1.canConvert<QuillMetadataRegionBag>());
+
+	QuillMetadataRegionBag regs1 = data1.value<QuillMetadataRegionBag>();
+
+	QCOMPARE(regs1.count(), regs.count());
+	if (regs1.count() > 0)
+	{
+	    QCOMPARE(regs1.fullImageSize().width(),  4288);
+	    QCOMPARE(regs1.fullImageSize().height(), 2848);
+	    // Name:
+	    QCOMPARE(regs1[0].name(), QString("Dilbert"));
+	    // Type:
+	    QCOMPARE(regs1[0].regionType(), QString("Face"));
+	    // Area:
+	    {
+		QRectF area = regs1[0].area();
+		FUZZYQCOMPARE(area.width(),	 0.17);
+		FUZZYQCOMPARE(area.height(),	 0.15);
+		FUZZYQCOMPARE(area.center().x(), 0.4);
+		FUZZYQCOMPARE(area.center().y(), 0.3);
+	    }
+	}
+    }
 }
 
 int main ( int argc, char *argv[] ){

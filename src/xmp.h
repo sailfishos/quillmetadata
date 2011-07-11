@@ -53,11 +53,12 @@ public:
         TagTypeStringList,
         TagTypeAltLang,
 	TagTypeReal,
-	TagTypeRegions,
-	TagTypeRegionString,
-	TagTypeRegionReal,
+	TagTypeArray,
+	TagTypeStruct,
+	TagTypeInteger
     };
 
+    XmpTag();
     XmpTag(const QString &schema, const QString &tag, TagType tagType);
 
     QString schema;
@@ -95,38 +96,44 @@ class Xmp : public MetadataRepresentation
     bool write(const QString &fileName) const;
 
  private:
+
+   enum Tag {
+       // RegionAppliedToDimensions
+       Tag_RegionAppliedToDimensions,
+       // RegionAppliedToDimensionsH
+       Tag_RegionAppliedToDimensionsH,
+       // RegionAppliedToDimensionsW
+       Tag_RegionAppliedToDimensionsW,
+       // Bag of regions
+       Tag_RegionList,
+       // One region
+       Tag_RegionListItem,
+       // Region name
+       Tag_RegionName,
+       // Region type
+       Tag_RegionType,
+       // RegionAreaH
+       Tag_RegionAreaH,
+       // RegionAreaW
+       Tag_RegionAreaW,
+       // RegionAreaX,
+       Tag_RegionAreaX,
+       // RegionAreaY
+       Tag_RegionAreaY
+   };
     void initTags();
 
     static QString processXmpString(XmpStringPtr xmpString);
 
     void setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry);
 
+    void setXmpEntry(Xmp::Tag tag, const QVariant &entry);
+
     void setXmpEntry(XmpTag xmpTag, const QVariant &entry);
 
     void readRegionListItem(const QString & qPropValue,
 			    const QString & qPropName,
 			    QuillMetadataRegionBag & regions) const;
-
- private:
-
-    enum Tag {
-	//! RegionAppliedToDimensionsH
-	Tag_RegionAppliedToDimensionsH,
-	//! RegionAppliedToDimensionsW
-	Tag_RegionAppliedToDimensionsW,
-	//! Region name
-	Tag_RegionName,
-	//! Region type
-	Tag_RegionType,
-	//! RegionAreaH
-	Tag_RegionAreaH,
-	//! RegionAreaW
-	Tag_RegionAreaW,
-	//! RegionAreaX,
-	Tag_RegionAreaX,
-	//! RegionAreaY
-	Tag_RegionAreaY
-    };
 
     static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
     static QHash<Xmp::Tag,XmpRegionTag> m_regionXmpTags;

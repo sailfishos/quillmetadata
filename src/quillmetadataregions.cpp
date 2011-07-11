@@ -2,6 +2,7 @@
 
 #include <QDebug>
 
+/*** QuillMeatadataRegion Definitions ***/
 
 QuillMetadataRegion::QuillMetadataRegion()
 {
@@ -45,19 +46,19 @@ QString QuillMetadataRegion::name() const
     return m_name;
 }
 
-QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &rhs)
+QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &other)
 {
-    if (this == &rhs)
+    if (this == &other)
 	return *this;
 
-    m_area = rhs.m_area;
-    m_type = rhs.m_type;
-    m_name = rhs.m_name;
+    m_area = other.m_area;
+    m_type = other.m_type;
+    m_name = other.m_name;
 
     return *this;
 }
 
-
+/*** QuillMeatadataRegionBag Definitions ***/
 
 void QuillMetadataRegionBag::setFullImageSize(const QSize & dimensionValue)
 {
@@ -69,3 +70,14 @@ QSize QuillMetadataRegionBag::fullImageSize() const
     return m_fullImageSize;
 }
 
+QuillMetadataRegionBag& QuillMetadataRegionBag::operator=(const QuillMetadataRegionBag &other)
+{
+    if (this == &other)
+	return *this;
+
+    this->m_fullImageSize = other.m_fullImageSize;
+    this->clear();
+    QList<QuillMetadataRegion>::operator =(other);
+
+    return *this;
+}

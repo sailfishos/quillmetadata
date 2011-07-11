@@ -54,7 +54,12 @@ QHash<Xmp::Tag,XmpRegionTag> Xmp::m_regionXmpTags;
 bool Xmp::m_initialized = false;
 
 XmpTag::XmpTag(const QString &schema, const QString &tag, TagType tagType) :
-    schema(schema), tag(tag), tagType(tagType)
+	schema(schema), tag(tag), tagType(tagType)
+{
+}
+
+XmpTag::XmpTag() :
+	schema(""), tag(""), tagType(TagTypeString)
 {
 }
 
@@ -66,7 +71,7 @@ XmpTag(schema, tag, tagType), baseTag(baseTag)
 }
 
 XmpRegionTag::XmpRegionTag() :
-XmpTag("", "", TagTypeString), baseTag("")
+	XmpTag(), baseTag("")
 {
 }
 
@@ -151,9 +156,13 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 	QRectF area = regions[nRegionNumber-1].area();
 
 	if (qPropName.contains("stArea:h")) {
+	    QPointF center = area.center();
 	    area.setHeight(qPropValue.toFloat());
+	    area.moveCenter(center);
 	} else if (qPropName.contains("stArea:w")) {
+	    QPointF center = area.center();
 	    area.setWidth(qPropValue.toFloat());
+	    area.moveCenter(center);
 	} else if (qPropName.contains("stArea:x")) {
 	    area.moveCenter(
 		    QPointF(qPropValue.toFloat(), area.center().y()));
@@ -242,8 +251,9 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 
 		while (bSuccess)
 		{
-		    QString qPropValue = processXmpString(propValue);
-		    QString qPropName = processXmpString(propName);
+		    QString qPropValue	= processXmpString(propValue);
+		    QString qPropName	= processXmpString(propName);
+
 
 		    if (qPropName.contains("mwg-rs:AppliedToDimensions")) {
 
@@ -432,6 +442,11 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 	case QuillMetadata::Tag_Regions: {
 	    QuillMetadataRegionBag regions = entry.value<QuillMetadataRegionBag>();
 
+	    if (regions.count() == 0) { // No regions: delete all
+		setXmpEntry(QuillMetadata::Tag_Regions, QVariant(""));
+		break;
+	    }
+
 	    // Write all tags of all regions.
 	    // RegionAppliedToDimensionsH
 	    XmpRegionTag xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAppliedToDimensionsH);
@@ -443,36 +458,48 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 	    setXmpEntry(XmpTag(xmpTag.schema, xmpTag.tag, xmpTag.tagType),
 			regions.fullImageSize().width());
 
-	    for (int i = 0; i < regions.count(); i++) {
+
+	    int nRegion;
+	    for (nRegion = 0; nRegion < regions.count(); nRegion++) {
 		// Region name
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionName);
-		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
-			    regions[i].name());
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
+			    regions[nRegion].name());
 
 		// Region type
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionType);
-		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
-			    regions[i].regionType());
-
-		// RegionAreaH
-		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaH);
-		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
-			    regions[i].area().height());
-
-		// RegionAreaW
-		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaW);
-		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
-			    regions[i].area().width());
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
+			    regions[nRegion].regionType());
 
 		// RegionAreaX,
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaX);
-		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
-			    regions[i].area().x());
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
+			    regions[nRegion].area().center().x());
 
 		// RegionAreaY
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaY);
-		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(i), xmpTag.tagType),
-			    regions[i].area().y());
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
+			    regions[nRegion].area().center().y());
+
+		// RegionAreaH
+		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaH);
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
+			    regions[nRegion].area().height());
+
+		// RegionAreaW
+		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaW);
+		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
+			    regions[nRegion].area().width());
+	    }
+
+	    // Delete regions that aren't valid anymore
+	    xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionListItem);
+	    while (xmp_has_property(m_xmpPtr,
+				    xmpTag.schema.toAscii().constData(),
+				    xmpTag.getIndexedTag(nRegion).toAscii().constData())) {
+		xmp_delete_property(m_xmpPtr, xmpTag.schema.toAscii().constData(),
+				    xmpTag.getIndexedTag(nRegion).toAscii().constData());
+		nRegion++;
 	    }
 
 	    break;
@@ -489,6 +516,12 @@ void Xmp::setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry)
     foreach (XmpTag xmpTag, xmpTags) {
 	setXmpEntry(xmpTag, entry);
     }
+}
+
+void Xmp::setXmpEntry(Xmp::Tag tag, const QVariant &entry)
+{
+    XmpTag xmpTag = m_regionXmpTags.value(tag);
+    setXmpEntry(xmpTag, entry);
 }
 
 void Xmp::setXmpEntry(XmpTag xmpTag, const QVariant &entry)
@@ -509,6 +542,18 @@ void Xmp::setXmpEntry(XmpTag xmpTag, const QVariant &entry)
 				    xmpTag.tag.toAscii().constData(),
 				    entry.toString().toUtf8().constData(), 0);
 	qCritical()<<"++++++++++++setXmpEntry:-2:ret="<<ret<<"schema:"<<xmpTag.schema.toAscii().constData()<<" tag:"<<xmpTag.tag.toAscii().constData();
+    }
+    else if (xmpTag.tagType == XmpTag::TagTypeStruct){
+	xmp_set_property(m_xmpPtr,
+			 xmpTag.schema.toAscii().constData(),
+			 xmpTag.tag.toAscii().constData(),
+			 entry.toString().toUtf8().constData(), XMP_PROP_VALUE_IS_STRUCT);
+    }
+    else if (xmpTag.tagType == XmpTag::TagTypeArray){
+	xmp_set_property(m_xmpPtr,
+			 xmpTag.schema.toAscii().constData(),
+			 xmpTag.tag.toAscii().constData(),
+			 entry.toString().toUtf8().constData(), XMP_PROP_VALUE_IS_ARRAY);
     }
     else if (xmpTag.tagType == XmpTag::TagTypeStringList) {
 	QStringList list = entry.toStringList();
@@ -531,6 +576,12 @@ void Xmp::setXmpEntry(XmpTag xmpTag, const QVariant &entry)
 			       xmpTag.schema.toAscii().constData(),
 			       xmpTag.tag.toAscii().constData(),
 			       entry.toReal(), 0);
+    }
+    else if (xmpTag.tagType == XmpTag::TagTypeInteger) {
+	xmp_set_property_int32(m_xmpPtr,
+			       xmpTag.schema.toAscii().constData(),
+			       xmpTag.tag.toAscii().constData(),
+			       entry.toInt(), 0);
     }
 }
 
@@ -637,23 +688,39 @@ void Xmp::initTags()
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Regions,
 			  XmpTag("http://www.metadataworkinggroup.com/schemas/regions/",
-				 "mwg-rs:Regions", XmpTag::TagTypeRegions));
+				 "mwg-rs:Regions", XmpTag::TagTypeStruct));
 
+    /***/
+
+    m_regionXmpTags.insert(Xmp::Tag_RegionAppliedToDimensions,
+			   XmpRegionTag("http://www.metadataworkinggroup.com/schemas/regions/",
+					"", "mwg-rs:Regions/mwg-rs:AppliedToDimensions",
+					XmpTag::TagTypeStruct));
+
+    m_regionXmpTags.insert(Xmp::Tag_RegionAppliedToDimensionsH,
+			   XmpRegionTag("http://www.metadataworkinggroup.com/schemas/regions/",
+					"", "mwg-rs:Regions/mwg-rs:AppliedToDimensions/stDim:h",
+					XmpTag::TagTypeInteger));
+
+    m_regionXmpTags.insert(Xmp::Tag_RegionAppliedToDimensionsW,
+			   XmpRegionTag("http://www.metadataworkinggroup.com/schemas/regions/",
+					"", "mwg-rs:Regions/mwg-rs:AppliedToDimensions/stDim:w",
+					XmpTag::TagTypeInteger));
+
+    m_regionXmpTags.insert(Xmp::Tag_RegionList,
+			   XmpRegionTag("http://www.metadataworkinggroup.com/schemas/regions/",
+					"", "mwg-rs:Regions/mwg-rs:RegionList",
+					XmpTag::TagTypeArray));
+
+    m_regionXmpTags.insert(Xmp::Tag_RegionListItem,
+			   XmpRegionTag("http://www.metadataworkinggroup.com/schemas/regions/",
+					"mwg-rs:Regions/mwg-rs:RegionList[", "]",
+					XmpTag::TagTypeStruct));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionName,
 			   XmpRegionTag("http://www.metadataworkinggroup.com/schemas/regions/",
 					"mwg-rs:Regions/mwg-rs:RegionList[", "]/mwg-rs:Name",
 					XmpTag::TagTypeString));
-
-    m_regionXmpTags.insert(Xmp::Tag_RegionAppliedToDimensionsH,
-			   XmpRegionTag("http://www.metadataworkinggroup.com/schemas/regions/",
-					"", "mwg-rs:Regions/mwg-rs:AppliedToDimensions/stDim:h",
-					XmpTag::TagTypeReal));
-
-    m_regionXmpTags.insert(Xmp::Tag_RegionAppliedToDimensionsW,
-			   XmpRegionTag("http://www.metadataworkinggroup.com/schemas/regions/",
-					"", "mwg-rs:Regions/mwg-rs:AppliedToDimensions/stDim:w",
-					XmpTag::TagTypeReal));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionType,
 			   XmpRegionTag("http://www.metadataworkinggroup.com/schemas/regions/",

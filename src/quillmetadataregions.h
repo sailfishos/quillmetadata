@@ -22,7 +22,7 @@ public:
     void setName(const QString & name);
     QString name() const;
 
-    QuillMetadataRegion & operator=(const QuillMetadataRegion &rhs);
+    QuillMetadataRegion & operator=(const QuillMetadataRegion &other);
 
 private:
     QRectF m_area;
@@ -36,6 +36,8 @@ class QuillMetadataRegionBag : public QList<QuillMetadataRegion>
 public:
     void setFullImageSize(const QSize & dimension);
     QSize fullImageSize() const;
+
+    QuillMetadataRegionBag & operator=(const QuillMetadataRegionBag &other);
 
 private:
     QSize m_fullImageSize;

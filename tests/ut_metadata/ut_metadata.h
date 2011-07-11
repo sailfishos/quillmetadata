@@ -63,6 +63,10 @@ private slots:
     void testRegion();
     void testRegionBag();
     void testEditRegions();
+    void testRegionAssignment();
+    void testRegionBagAssignment();
+    void testRegionBagAppend();
+    void testRegionBagRemoveRegion();
 
 private:
 
