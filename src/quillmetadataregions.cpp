@@ -1,48 +1,50 @@
+#include <QSharedData>
 #include "quillmetadataregions.h"
 
 #include <QDebug>
 
-
+const QLatin1String QuillMetadataRegion::RegionType_Face("Face");
+const QLatin1String QuillMetadataRegion::RegionType_Pet("Pet");
+const QLatin1String QuillMetadataRegion::RegionType_Focus("Focus");
+const QLatin1String QuillMetadataRegion::RegionType_BarCode("BarCode");
 QuillMetadataRegion::QuillMetadataRegion()
 {
+    d = new QuillMetadataRegionPrivate;
 }
 
 QuillMetadataRegion::QuillMetadataRegion(const QuillMetadataRegion & other)
+    :d(other.d)
 {
-    m_area = other.m_area;
-    m_type = other.m_type;
-    m_name = other.m_name;
 }
-
 
 void QuillMetadataRegion::setRegionType(const QString & regionType)
 {
-    m_type = regionType;
+    d->type = regionType;
 }
 
 QString QuillMetadataRegion::regionType() const
 {
-    return m_type;
+    return d->type;
 }
 
 void QuillMetadataRegion::setArea(const QRectF & areaValue)
 {
-    m_area = areaValue;
+    d->area = areaValue;
 }
 
 QRectF QuillMetadataRegion::area() const
 {
-    return m_area;
+    return d->area;
 }
 
 void QuillMetadataRegion::setName(const QString & nameValue)
 {
-    m_name = nameValue;
+    d->name = nameValue;
 }
 
 QString QuillMetadataRegion::name() const
 {
-    return m_name;
+    return d->name;
 }
 
 QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &rhs)
@@ -50,22 +52,24 @@ QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &r
     if (this == &rhs)
 	return *this;
 
-    m_area = rhs.m_area;
-    m_type = rhs.m_type;
-    m_name = rhs.m_name;
+    d->area = rhs.d->area;
+    d->type = rhs.d->type;
+    d->name = rhs.d->name;
 
     return *this;
 }
 
-
-
+QuillMetadataRegionBag::QuillMetadataRegionBag()
+{
+    d = new QuillMetadataRegionBagPrivate;
+}
 void QuillMetadataRegionBag::setFullImageSize(const QSize & dimensionValue)
 {
-    m_fullImageSize = dimensionValue;
+    d->fullImageSize = dimensionValue;
 }
 
 QSize QuillMetadataRegionBag::fullImageSize() const
 {
-    return m_fullImageSize;
+    return d->fullImageSize;
 }
 

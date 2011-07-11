@@ -52,10 +52,10 @@ public:
         TagTypeString,
         TagTypeStringList,
         TagTypeAltLang,
-	TagTypeReal,
-	TagTypeRegions,
-	TagTypeRegionString,
-	TagTypeRegionReal,
+        TagTypeReal,
+        TagTypeRegions,
+        TagTypeRegionString,
+        TagTypeRegionReal,
     };
 
     XmpTag(const QString &schema, const QString &tag, TagType tagType);
