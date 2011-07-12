@@ -482,7 +482,8 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 		if (regions.count() > 0) { // Regions to be written: create if needed
 		    if (!hasEntry(QuillMetadata::Tag_Regions)) {
 			setXmpEntry(QuillMetadata::Tag_Regions, QVariant(""));
-
+		    }
+		    if (!hasEntry(Xmp::Tag_RegionList)) {
 			XmpRegionTag xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionList);
 			setXmpEntry(XmpTag(xmpTag.schema,
 					   xmpTag.tag,
