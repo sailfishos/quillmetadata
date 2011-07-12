@@ -21,7 +21,6 @@ QuillMetadataRegion::QuillMetadataRegion(const QuillMetadataRegion & other)
 {
 }
 
-
 void QuillMetadataRegion::setArea(const QRect & areaValue)
 {
     d->area = areaValue;
@@ -30,17 +29,6 @@ QRect QuillMetadataRegion::area() const
 {
     return d->area;
 }
-
-void QuillMetadataRegionFloatingPoints::setAreaF(const QRectF & areaValue)
-{
-    m_areaF = areaValue;
-}
-
-QRectF QuillMetadataRegionFloatingPoints::areaF() const
-{
-    return m_areaF;
-}
-
 
 void QuillMetadataRegion::setRegionType(const QString & regionType)
 {
@@ -75,6 +63,16 @@ QuillMetadataRegion& QuillMetadataRegion::
     return *this;
 }
 
+void QuillMetadataRegionFloatingPoints::setAreaF(const QRectF & areaValue)
+{
+    m_areaF = areaValue;
+}
+
+QRectF QuillMetadataRegionFloatingPoints::areaF() const
+{
+    return m_areaF;
+}
+
 /*** QuillMetadataRegionBag Definitions ***/
 
 QuillMetadataRegionBag::QuillMetadataRegionBag()
@@ -91,20 +89,6 @@ QSize QuillMetadataRegionBag::fullImageSize() const
 {
     return d->fullImageSize;
 }
-
-#if 0
-void QuillMetadataRegionBag::updatePixelCoordinates()
-{
-    QList<QuillMetadataRegion>::iterator region;
-    for (region = begin(); region != end(); ++region) {
-	region->setArea(QRect(
-		region->areaF().left()	* fullImageSize().width(),
-		region->areaF().top()	* fullImageSize().height(),
-		region->areaF().width()	* fullImageSize().width(),
-		region->areaF().height() * fullImageSize().height()));
-    }
-}
-#endif
 
 QuillMetadataRegionBag& QuillMetadataRegionBag::operator=(const QuillMetadataRegionBag &other)
 							 {
