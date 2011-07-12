@@ -7,17 +7,54 @@
 #include <QMetaType>
 #include <QSharedDataPointer>
 
+
+
+/*** QuillMetadataRegionBag ***/
+class QuillMetadataRegion;
+class QuillMetadataRegionFloatingPoints;
+
+class QuillMetadataRegionBagPrivate: public QSharedData
+{
+public:
+    QuillMetadataRegionBagPrivate(){};
+    ~QuillMetadataRegionBagPrivate(){};
+    QSize fullImageSize;
+};
+
+
+class QuillMetadataRegionBag : public QList<QuillMetadataRegion>
+{
+public:
+    QuillMetadataRegionBag();
+    void setFullImageSize(const QSize & dimension);
+    QSize fullImageSize() const;
+
+    QuillMetadataRegionBag & operator=(const QuillMetadataRegionBag &other);
+
+    QuillMetadataRegionFloatingPoints &
+	    getFloatingPointRegion(int i);
+
+    void setFloatingPointRegion(
+	    QuillMetadataRegionFloatingPoints & region,
+	    int i);
+private:
+    QSharedDataPointer<QuillMetadataRegionBagPrivate> d;
+};
+
+
+/*** QuillMetadataRegion ***/
+
 class QuillMetadataRegionPrivate: public QSharedData
 
 {
 public:
     QuillMetadataRegionPrivate(){};
     QuillMetadataRegionPrivate(const QuillMetadataRegionPrivate& other)
-        :QSharedData(other),area(other.area),
-         type(other.type),name(other.name)
-        {};
+	:QSharedData(other),area(other.area),
+	 type(other.type),name(other.name)
+	{};
     ~QuillMetadataRegionPrivate(){};
-    QRectF area;
+    QRect  area;
     QString type;
     QString name;
 };
@@ -32,11 +69,11 @@ public:
     void setRegionType(const QString & type);
     QString regionType() const;
 
-    void setArea( const QRectF & area);
-    QRectF area() const;
-
     void setName(const QString & name);
     QString name() const;
+
+    void setArea( const QRect & area);
+    QRect area() const;
 
     QuillMetadataRegion & operator=(const QuillMetadataRegion &other);
 
@@ -45,29 +82,19 @@ public:
     static const QLatin1String RegionType_Focus;
     static const QLatin1String RegionType_BarCode;
 
-private:
+protected:
     QSharedDataPointer<QuillMetadataRegionPrivate> d;
 };
 
-class QuillMetadataRegionBagPrivate: public QSharedData
+
+
+class QuillMetadataRegionFloatingPoints : public QuillMetadataRegion
 {
 public:
-    QuillMetadataRegionBagPrivate(){};
-    ~QuillMetadataRegionBagPrivate(){};
-    QSize fullImageSize;
-};
-
-class QuillMetadataRegionBag : public QList<QuillMetadataRegion>
-{
-public:
-    QuillMetadataRegionBag();
-    void setFullImageSize(const QSize & dimension);
-    QSize fullImageSize() const;
-
-    QuillMetadataRegionBag & operator=(const QuillMetadataRegionBag &other);
-
+    void setAreaF( const QRectF & area);
+    QRectF areaF() const;
 private:
-    QSharedDataPointer<QuillMetadataRegionBagPrivate> d;
+    QRectF m_areaF;
 };
 
 Q_DECLARE_METATYPE(QuillMetadataRegion);

@@ -181,9 +181,12 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 	regions.append(region);
     }
 
+    QuillMetadataRegionFloatingPoints region
+	    = regions.getFloatingPointRegion(nRegionNumber-1);
+
     if (qPropName.contains("mwg-rs:Area")) {
 
-	QRectF area = regions[nRegionNumber-1].area();
+	QRectF area = region.areaF();
 
 	if (qPropName.contains("stArea:h")) {
 	    QPointF center = area.center();
@@ -201,21 +204,24 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 		    QPointF(area.center().x(), qPropValue.toFloat()));
 	}
 
-	regions[nRegionNumber-1].setArea(area);
+	region.setAreaF(area);
 
     } else if (qPropName.contains("mwg-rs:Name")) {
 
-	regions[nRegionNumber-1].setName(qPropValue);
+	region.setName(qPropValue);
 
     } else if (qPropName.contains("mwg-rs:Type")) {
 
-	regions[nRegionNumber-1].setRegionType(qPropValue);
+	region.setRegionType(qPropValue);
 
     } else if (qPropName.contains("mwg-rs:Extensions")) {
 
 	;
 
     }
+
+    regions.setFloatingPointRegion(region,
+				   nRegionNumber-1);
 
     return;
 }
@@ -508,35 +514,38 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 	    for (nRegion = 0; nRegion < regions.count(); nRegion++) {
 
+		QuillMetadataRegionFloatingPoints region
+			= regions.getFloatingPointRegion(nRegion);
+
 		// Region name
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionName);
 		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
-			    regions[nRegion].name());
+			    region.name());
 
 		// Region type
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionType);
 		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
-			    regions[nRegion].regionType());
+			    region.regionType());
 
 		// RegionAreaX,
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaX);
 		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
-			    regions[nRegion].area().center().x());
+			    region.areaF().center().x());
 
 		// RegionAreaY
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaY);
 		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
-			    regions[nRegion].area().center().y());
+			    region.areaF().center().y());
 
 		// RegionAreaH
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaH);
 		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
-			    regions[nRegion].area().height());
+			    region.areaF().height());
 
 		// RegionAreaW
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaW);
 		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
-			    regions[nRegion].area().width());
+			    region.areaF().width());
 	    }
 
 	    // Delete regions that aren't valid anymore

@@ -698,6 +698,7 @@ void ut_metadata::testOrientationTagSpeedup()
 
 void ut_metadata::testReadRegions()
 {
+
     QVariant data = region->entry(QuillMetadata::Tag_Regions);
     QVERIFY(data.canConvert<QuillMetadataRegionBag>());
     QuillMetadataRegionBag regs = data.value<QuillMetadataRegionBag>();
@@ -712,14 +713,14 @@ void ut_metadata::testReadRegions()
     QCOMPARE(regs[1].regionType(), QString("Face"));
     // Area:
     {
-	QRectF area = regs[0].area();
+	QRectF area = regs.getFloatingPointRegion(0).areaF();
 	FUZZYQCOMPARE(area.width(),	 0.15);
 	FUZZYQCOMPARE(area.height(),	 0.17);
 	FUZZYQCOMPARE(area.center().x(), 0.3);
 	FUZZYQCOMPARE(area.center().y(), 0.4);
     }
     {
-	QRectF area = regs[1].area();
+	QRectF area = regs.getFloatingPointRegion(1).areaF();
 	FUZZYQCOMPARE(area.width(),	 0.17);
 	FUZZYQCOMPARE(area.height(),	 0.15);
 	FUZZYQCOMPARE(area.center().x(), 0.4);
@@ -729,6 +730,7 @@ void ut_metadata::testReadRegions()
 
 void ut_metadata::testEditRegions()
 {
+
     QVERIFY(region->isValid());
     QVariant data = region->entry(QuillMetadata::Tag_Regions);
     QVERIFY(data.canConvert<QuillMetadataRegionBag>());
@@ -736,10 +738,10 @@ void ut_metadata::testEditRegions()
 
     bag[0].setName(QString("This is foo name"));
     bag[0].setRegionType(QString("Pet"));
-    QRectF area;
-    area.setWidth(0.1);
-    area.setHeight(0.2);
-    QPointF centerPoint(0.3, 0.4);
+    QRect area;
+    area.setWidth(1);
+    area.setHeight(2);
+    QPoint centerPoint(3, 4);
     area.moveCenter(centerPoint);
     bag[0].setArea(area);
     QVariant entry;
@@ -758,26 +760,26 @@ void ut_metadata::testEditRegions()
     QVERIFY(data1.canConvert<QuillMetadataRegionBag>());
     QuillMetadataRegionBag bag1 = data1.value<QuillMetadataRegionBag>();
     QCOMPARE(bag1.count(), 2);
-
     QCOMPARE(bag1[0].name(), QString("This is foo name"));
     QCOMPARE(bag1[0].regionType(), QString("Pet"));
     {
-	QRectF area = bag1[0].area();
-	FUZZYQCOMPARE(area.width(),	 0.1);
-	FUZZYQCOMPARE(area.height(),	 0.2);
-	FUZZYQCOMPARE(area.center().x(), 0.3);
-	FUZZYQCOMPARE(area.center().y(), 0.4);
+	QRect area = bag1[0].area();
+	QCOMPARE(area.width(),	 1);
+	QCOMPARE(area.height(),	 2);
+	QCOMPARE(area.center().x(), 3);
+	QCOMPARE(area.center().y(), 4);
     }
 
     delete region1;
+
 }
 
 void ut_metadata::testArea()
 {
     QuillMetadataRegion region;
-    QRectF rect(0,0,2,3);
+    QRect rect(0,0,2,3);
     region.setArea(rect);
-    QRectF rect1 = region.area();
+    QRect rect1 = region.area();
     QCOMPARE(rect, rect1);
 }
 
@@ -805,9 +807,9 @@ void ut_metadata::testRegion()
     QString type1 = region.regionType();
     QCOMPARE(type, type1);
 
-    QRectF rect(0,0,2,3);
+    QRect rect(0,0,2,3);
     region.setArea(rect);
-    QRectF rect1 = region.area();
+    QRect rect1 = region.area();
     QCOMPARE(rect,rect1);
 }
 
@@ -902,14 +904,14 @@ void ut_metadata::testRegionBagAppend()
     QCOMPARE(regs1[2].regionType(), QString("Face"));
     // Area:
     for (int i=0; i<3; i+=2){
-	QRectF area = regs[i].area();
+	QRectF area = regs.getFloatingPointRegion(i).areaF();
 	FUZZYQCOMPARE(area.width(),	 0.15);
 	FUZZYQCOMPARE(area.height(),	 0.17);
 	FUZZYQCOMPARE(area.center().x(), 0.3);
 	FUZZYQCOMPARE(area.center().y(), 0.4);
     }
     {
-	QRectF area = regs[1].area();
+	QRectF area = regs.getFloatingPointRegion(1).areaF();
 	FUZZYQCOMPARE(area.width(),	 0.17);
 	FUZZYQCOMPARE(area.height(),	 0.15);
 	FUZZYQCOMPARE(area.center().x(), 0.4);
@@ -952,11 +954,11 @@ void ut_metadata::testRegionBagRemoveRegion()
 	    QCOMPARE(regs1.last().regionType(), QString("Face"));
 	    // Area:
 	    {
-		QRectF area = regs1.last().area();
-		FUZZYQCOMPARE(area.width(),	 0.17);
-		FUZZYQCOMPARE(area.height(),	 0.15);
-		FUZZYQCOMPARE(area.center().x(), 0.4);
-		FUZZYQCOMPARE(area.center().y(), 0.3);
+		QRect area = regs1.last().area();
+		QVERIFY(abs(area.width() - 0.17*4288)	<= 1);
+		QVERIFY(abs(area.height()- 0.15*2848)	<= 1);
+		QVERIFY(abs(area.center().x() - 0.4*4288) <= 1);
+		QVERIFY(abs(area.center().y() - 0.3*2848) <= 1);
 	    }
 	}
     }
@@ -972,11 +974,11 @@ void ut_metadata::testCreateRegionBag()
     QString type("face");
     region.setRegionType(type);
 
-    QRectF rect(.1,.2,.3,.4);
+    QRect rect(10,20,30,40);
     region.setArea(rect);
 
-    int width = 5;
-    int height = 6;
+    int width = 500;
+    int height = 600;
     QSize dimension = QSize(width, height);
     regionBag.setFullImageSize(dimension);
 
@@ -1005,11 +1007,11 @@ void ut_metadata::testCreateRegionBag()
     QCOMPARE(regs1[0].name(), QString("this is testing"));
     QCOMPARE(regs1[0].regionType(), QString("face"));
     {
-	QRectF area = regs1[0].area();
-	FUZZYQCOMPARE(area.x(),		0.1);
-	FUZZYQCOMPARE(area.y(),		0.2);
-	FUZZYQCOMPARE(area.width(),	0.3);
-	FUZZYQCOMPARE(area.height(),	0.4);
+	QRect area = regs1[0].area();
+	QVERIFY(abs((area.x() -10)	<= 1));
+	QVERIFY(abs((area.y() -20)	<= 1));
+	QVERIFY(abs((area.width() -30)	<= 1));
+	QVERIFY(abs((area.height()-40)	<= 1));
     }
 }
 
