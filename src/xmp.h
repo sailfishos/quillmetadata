@@ -87,7 +87,6 @@ class Xmp : public MetadataRepresentation
     bool isValid() const;
 
     bool supportsEntry(QuillMetadata::Tag tag) const;
-    bool hasEntry(QuillMetadata::Tag tag) const;
     QVariant entry(QuillMetadata::Tag tag) const;
     void setEntry(QuillMetadata::Tag tag, const QVariant &entry);
     void removeEntry(QuillMetadata::Tag tag);
@@ -130,9 +129,9 @@ class Xmp : public MetadataRepresentation
 
     void setXmpEntry(XmpTag xmpTag, const QVariant &entry);
 
-    bool hasXmpEntry(Xmp::Tag tag, int zeroBasedIndex = 0) const;
+    bool hasEntry(Xmp::Tag tag, int zeroBasedIndex = 0) const;
 
-    bool hasXmpEntry(QuillMetadata::Tag tag) const;
+    bool hasEntry(QuillMetadata::Tag tag) const;
 
     void readRegionListItem(const QString & qPropValue,
 			    const QString & qPropName,

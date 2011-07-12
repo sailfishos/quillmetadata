@@ -116,12 +116,6 @@ bool Xmp::supportsEntry(QuillMetadata::Tag tag) const
 
 bool Xmp::hasEntry(QuillMetadata::Tag tag) const
 {
-    return (supportsEntry(tag) &&
-            !m_xmpTags.values(tag).isEmpty());
-}
-
-bool Xmp::hasXmpEntry(QuillMetadata::Tag tag) const
-{
     QList<XmpTag> xmpTags = m_xmpTags.values(tag);
     if (!xmpTags.isEmpty()) {
 	foreach (XmpTag tag, xmpTags) {
@@ -134,7 +128,7 @@ bool Xmp::hasXmpEntry(QuillMetadata::Tag tag) const
     return false;
 }
 
-bool Xmp::hasXmpEntry(Xmp::Tag tag, int zeroBasedIndex) const
+bool Xmp::hasEntry(Xmp::Tag tag, int zeroBasedIndex) const
 {
     XmpRegionTag xmpTag = m_regionXmpTags.value(tag);
     if (xmpTag.tag.isEmpty())
@@ -183,43 +177,43 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 
     QuillMetadataRegionFloatingPoints region
 	    = regions.getFloatingPointRegion(nRegionNumber-1);
+    {
+	if (qPropName.contains("mwg-rs:Area")) {
 
-    if (qPropName.contains("mwg-rs:Area")) {
+	    QRectF area = region.areaF();
 
-	QRectF area = region.areaF();
+	    if (qPropName.contains("stArea:h")) {
+		QPointF center = area.center();
+		area.setHeight(qPropValue.toFloat());
+		area.moveCenter(center);
+	    } else if (qPropName.contains("stArea:w")) {
+		QPointF center = area.center();
+		area.setWidth(qPropValue.toFloat());
+		area.moveCenter(center);
+	    } else if (qPropName.contains("stArea:x")) {
+		area.moveCenter(
+			QPointF(qPropValue.toFloat(), area.center().y()));
+	    } else if (qPropName.contains("stArea:y")) {
+		area.moveCenter(
+			QPointF(area.center().x(), qPropValue.toFloat()));
+	    }
 
-	if (qPropName.contains("stArea:h")) {
-	    QPointF center = area.center();
-	    area.setHeight(qPropValue.toFloat());
-	    area.moveCenter(center);
-	} else if (qPropName.contains("stArea:w")) {
-	    QPointF center = area.center();
-	    area.setWidth(qPropValue.toFloat());
-	    area.moveCenter(center);
-	} else if (qPropName.contains("stArea:x")) {
-	    area.moveCenter(
-		    QPointF(qPropValue.toFloat(), area.center().y()));
-	} else if (qPropName.contains("stArea:y")) {
-	    area.moveCenter(
-		    QPointF(area.center().x(), qPropValue.toFloat()));
+	    region.setAreaF(area);
+
+	} else if (qPropName.contains("mwg-rs:Name")) {
+
+	    region.setName(qPropValue);
+
+	} else if (qPropName.contains("mwg-rs:Type")) {
+
+	    region.setRegionType(qPropValue);
+
+	} else if (qPropName.contains("mwg-rs:Extensions")) {
+
+	    ;
+
 	}
-
-	region.setAreaF(area);
-
-    } else if (qPropName.contains("mwg-rs:Name")) {
-
-	region.setName(qPropValue);
-
-    } else if (qPropName.contains("mwg-rs:Type")) {
-
-	region.setRegionType(qPropValue);
-
-    } else if (qPropName.contains("mwg-rs:Extensions")) {
-
-	;
-
     }
-
     regions.setFloatingPointRegion(region,
 				   nRegionNumber-1);
 
@@ -486,7 +480,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 		}
 
 		if (regions.count() > 0) { // Regions to be written: create if needed
-		    if (!hasXmpEntry(QuillMetadata::Tag_Regions)) {
+		    if (!hasEntry(QuillMetadata::Tag_Regions)) {
 			setXmpEntry(QuillMetadata::Tag_Regions, QVariant(""));
 
 			XmpRegionTag xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionList);
@@ -550,7 +544,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 	    // Delete regions that aren't valid anymore
 	    xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionListItem);
-	    while (hasXmpEntry(Xmp::Tag_RegionListItem, nRegion)) {
+	    while (hasEntry(Xmp::Tag_RegionListItem, nRegion)) {
 		xmp_delete_property(m_xmpPtr, xmpTag.schema.toAscii().constData(),
 				    xmpTag.getIndexedTag(nRegion).toAscii().constData());
 		nRegion++;
