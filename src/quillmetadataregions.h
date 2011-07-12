@@ -32,15 +32,15 @@ public:
 
     QuillMetadataRegionBag & operator=(const QuillMetadataRegionBag &other);
 
+private:
+    QSharedDataPointer<QuillMetadataRegionBagPrivate> d;
+
     QuillMetadataRegionFloatingPoints &
 	    getFloatingPointRegion(int i);
 
     void setFloatingPointRegion(
 	    QuillMetadataRegionFloatingPoints & region,
 	    int i);
-
-private:
-    QSharedDataPointer<QuillMetadataRegionBagPrivate> d;
 
 };
 

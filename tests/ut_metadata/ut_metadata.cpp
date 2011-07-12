@@ -693,7 +693,9 @@ void ut_metadata::testOrientationTagSpeedup()
     }
 }
 
-#define FUZZYQCOMPARE(x, y) QCOMPARE((float)((int)(x*100.0+.5))/100, (float)((int)(y*100.0+.5))/100)
+
+#define FUZZYACC 0.2
+#define FUZZYQCOMPARE(x, y) do { QCOMPARE((float)((int)(x*FUZZYACC+.5))/FUZZYACC, (float)((int)(y*FUZZYACC+.5))/FUZZYACC); } while (0)
 
 
 void ut_metadata::testReadRegions()
@@ -713,18 +715,18 @@ void ut_metadata::testReadRegions()
     QCOMPARE(regs[1].regionType(), QString("Face"));
     // Area:
     {
-	QRectF area = regs.getFloatingPointRegion(0).areaF();
-	FUZZYQCOMPARE(area.width(),	 0.15);
-	FUZZYQCOMPARE(area.height(),	 0.17);
-	FUZZYQCOMPARE(area.center().x(), 0.3);
-	FUZZYQCOMPARE(area.center().y(), 0.4);
+	QRectF area = regs[0].area();
+	FUZZYQCOMPARE(area.width(),	 0.15*4288);
+	FUZZYQCOMPARE(area.height(),	 0.17*2848);
+	FUZZYQCOMPARE(area.center().x(), 0.3*4288);
+	FUZZYQCOMPARE(area.center().y(), 0.4*2848);
     }
     {
-	QRectF area = regs.getFloatingPointRegion(1).areaF();
-	FUZZYQCOMPARE(area.width(),	 0.17);
-	FUZZYQCOMPARE(area.height(),	 0.15);
-	FUZZYQCOMPARE(area.center().x(), 0.4);
-	FUZZYQCOMPARE(area.center().y(), 0.3);
+	QRectF area = regs[1].area();
+	FUZZYQCOMPARE(area.width(),	 0.17*4288);
+	FUZZYQCOMPARE(area.height(),	 0.15*2848);
+	FUZZYQCOMPARE(area.center().x(), 0.4*4288);
+	FUZZYQCOMPARE(area.center().y(), 0.3*2848);
     }
 }
 
@@ -904,19 +906,20 @@ void ut_metadata::testRegionBagAppend()
     QCOMPARE(regs1[2].regionType(), QString("Face"));
     // Area:
     for (int i=0; i<3; i+=2){
-	QRectF area = regs.getFloatingPointRegion(i).areaF();
-	FUZZYQCOMPARE(area.width(),	 0.15);
-	FUZZYQCOMPARE(area.height(),	 0.17);
-	FUZZYQCOMPARE(area.center().x(), 0.3);
-	FUZZYQCOMPARE(area.center().y(), 0.4);
+	QRect area = regs[i].area();
+	FUZZYQCOMPARE(area.width(),	 0.15*4288);
+	FUZZYQCOMPARE(area.height(),	 0.17*2848);
+	FUZZYQCOMPARE(area.center().x(), 0.3*4288);
+	FUZZYQCOMPARE(area.center().y(), 0.4*2848);
     }
     {
-	QRectF area = regs.getFloatingPointRegion(1).areaF();
-	FUZZYQCOMPARE(area.width(),	 0.17);
-	FUZZYQCOMPARE(area.height(),	 0.15);
-	FUZZYQCOMPARE(area.center().x(), 0.4);
-	FUZZYQCOMPARE(area.center().y(), 0.3);
+	QRectF area = regs[1].area();
+	FUZZYQCOMPARE(area.width(),	 0.17*4288);
+	FUZZYQCOMPARE(area.height(),	 0.15*2848);
+	FUZZYQCOMPARE(area.center().x(), 0.4*4288);
+	FUZZYQCOMPARE(area.center().y(), 0.3*2848);
     }
+
 }
 
 void ut_metadata::testRegionBagRemoveRegion()
