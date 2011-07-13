@@ -695,11 +695,11 @@ void ut_metadata::testOrientationTagSpeedup()
 
 
 
-// Maximum allowed difference = FUZZYACC
+// Rounds to FUZZYACC precision, then asserts that difference is <= FUZZYACC
 #define FUZZYACC 1
 #define MYQCOMPARE(x, y) do {\
 QVERIFY2(abs(((int)(x/FUZZYACC+.5)) -\
-	     ((int)(y/FUZZYACC+.5))) <=1,\
+	     ((int)(y/FUZZYACC+.5))) <= 1,\
 	 (QString("%1 vs. %2").arg(x).arg(y)).toAscii());} while (0)
 
 void ut_metadata::testReadRegions()
@@ -720,17 +720,17 @@ void ut_metadata::testReadRegions()
     // Area:
     {
 	QRectF area = regs[0].area();
-	MYQCOMPARE(area.width(),	 0.15*4288);
-	MYQCOMPARE(area.height(),	 0.17*2848);
-	MYQCOMPARE(area.center().x(), 0.3*4288);
-	MYQCOMPARE(area.center().y(), 0.4*2848);
+	MYQCOMPARE(area.width(),	0.15*4288);
+	MYQCOMPARE(area.height(),	0.17*2848);
+	MYQCOMPARE(area.center().x(),	0.3*4288);
+	MYQCOMPARE(area.center().y(),	0.4*2848);
     }
     {
 	QRectF area = regs[1].area();
-	MYQCOMPARE(area.width(),	 0.17*4288);
-	MYQCOMPARE(area.height(),	 0.15*2848);
-	MYQCOMPARE(area.center().x(), 0.4*4288);
-	MYQCOMPARE(area.center().y(), 0.3*2848);
+	MYQCOMPARE(area.width(),	0.17*4288);
+	MYQCOMPARE(area.height(),	0.15*2848);
+	MYQCOMPARE(area.center().x(),	0.4*4288);
+	MYQCOMPARE(area.center().y(),	0.3*2848);
     }
 }
 
@@ -754,6 +754,7 @@ void ut_metadata::testEditRegions()
     entry.setValue(bag);
     region->setEntry(QuillMetadata::Tag_Regions,entry);
 
+
     QTemporaryFile file;
     file.open();
     sourceImage.save(file.fileName(), "jpg");
@@ -770,8 +771,8 @@ void ut_metadata::testEditRegions()
     QCOMPARE(bag1[0].regionType(), QString("Pet"));
     {
 	QRect area = bag1[0].area();
-	QCOMPARE(area.width(),	 1);
-	QCOMPARE(area.height(),	 2);
+	QCOMPARE(area.width(),	    1);
+	QCOMPARE(area.height(),	    2);
 	QCOMPARE(area.center().x(), 3);
 	QCOMPARE(area.center().y(), 4);
     }
@@ -911,17 +912,17 @@ void ut_metadata::testRegionBagAppend()
     // Area:
     for (int i=0; i<3; i+=2){
 	QRect area = regs[i].area();
-	MYQCOMPARE(area.width(),	 0.15*4288);
-	MYQCOMPARE(area.height(),	 0.17*2848);
-	MYQCOMPARE(area.center().x(), 0.3*4288);
-	MYQCOMPARE(area.center().y(), 0.4*2848);
+	MYQCOMPARE(area.width(),	0.15*4288);
+	MYQCOMPARE(area.height(),	0.17*2848);
+	MYQCOMPARE(area.center().x(),	0.3*4288);
+	MYQCOMPARE(area.center().y(),	0.4*2848);
     }
     {
 	QRectF area = regs[1].area();
-	MYQCOMPARE(area.width(),	 0.17*4288);
-	MYQCOMPARE(area.height(),	 0.15*2848);
-	MYQCOMPARE(area.center().x(), 0.4*4288);
-	MYQCOMPARE(area.center().y(), 0.3*2848);
+	MYQCOMPARE(area.width(),	0.17*4288);
+	MYQCOMPARE(area.height(),	0.15*2848);
+	MYQCOMPARE(area.center().x(),	0.4*4288);
+	MYQCOMPARE(area.center().y(),	0.3*2848);
     }
 
 }
@@ -962,10 +963,10 @@ void ut_metadata::testRegionBagRemoveRegion()
 	    // Area:
 	    {
 		QRect area = regs1.last().area();
-		QVERIFY(abs(area.width() - 0.17*4288)	<= 1);
-		QVERIFY(abs(area.height()- 0.15*2848)	<= 1);
-		QVERIFY(abs(area.center().x() - 0.4*4288) <= 1);
-		QVERIFY(abs(area.center().y() - 0.3*2848) <= 1);
+		MYQCOMPARE(area.width(),	0.17*4288);
+		MYQCOMPARE(area.height(),	0.15*2848);
+		MYQCOMPARE(area.center().x(),	0.4*4288);
+		MYQCOMPARE(area.center().y(),	0.3*2848);
 	    }
 	}
     }
@@ -1015,10 +1016,10 @@ void ut_metadata::testCreateRegionBag()
     QCOMPARE(regs1[0].regionType(), QString("face"));
     {
 	QRect area = regs1[0].area();
-	QVERIFY(abs((area.x() -10)	<= 1));
-	QVERIFY(abs((area.y() -20)	<= 1));
-	QVERIFY(abs((area.width() -30)	<= 1));
-	QVERIFY(abs((area.height()-40)	<= 1));
+	MYQCOMPARE(area.x(),	    10);
+	MYQCOMPARE(area.y(),	    20);
+	MYQCOMPARE(area.width(),    30);
+	MYQCOMPARE(area.height(),   40);
     }
 }
 

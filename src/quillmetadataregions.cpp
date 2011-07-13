@@ -108,11 +108,7 @@ void QuillMetadataRegionBag::updatePixelCoordinates()
 {
     QList<QuillMetadataRegion>::iterator region;
     for (region = begin(); region != end(); ++region) {
-	region->setArea(QRect(
-		qFloor(region->areaF().left()	* fullImageSize().width()   + .5),
-		qFloor(region->areaF().top()	* fullImageSize().height()  + .5),
-		qFloor(region->areaF().width()	* fullImageSize().width()   + .5),
-		qFloor(region->areaF().height()	* fullImageSize().height()  + .5)));
+	region->setArea(relativeToPixelCoordinates(region->areaF()));
     }
 }
 
@@ -120,11 +116,28 @@ void QuillMetadataRegionBag::updateRelativeCoordinates()
 {
     QList<QuillMetadataRegion>::iterator region;
     for (region = begin(); region != end(); ++region) {
-	region->setAreaF(QRectF(
-		(float)(region->area().left())   / fullImageSize().width(),
-		(float)(region->area().top())    / fullImageSize().height(),
-		(float)(region->area().width())  / fullImageSize().width(),
-		(float)(region->area().height()) / fullImageSize().height()));
+	QRectF relative = pixelToRelativeCoordinates(region->area());
+	if (region->area() != relativeToPixelCoordinates(region->areaF())) {
+	    // don't update if new relative coords wouldn't change pixel coods
+	    region->setAreaF(relative);
+	}
     }
 }
 
+QRectF QuillMetadataRegionBag::pixelToRelativeCoordinates(const QRect &relative) const
+{
+    return QRectF(
+	    (float)(relative.left())   / fullImageSize().width(),
+	    (float)(relative.top())    / fullImageSize().height(),
+	    (float)(relative.width())  / fullImageSize().width(),
+	    (float)(relative.height()) / fullImageSize().height());
+}
+
+QRect QuillMetadataRegionBag::relativeToPixelCoordinates(const QRectF &pixel) const
+{
+    return QRect(
+	    qFloor(pixel.left()	    * fullImageSize().width()   + .5),
+	    qFloor(pixel.top()	    * fullImageSize().height()  + .5),
+	    qFloor(pixel.width()    * fullImageSize().width()   + .5),
+	    qFloor(pixel.height()   * fullImageSize().height()  + .5));
+}

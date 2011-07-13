@@ -35,8 +35,10 @@ public:
 private:
     QSharedDataPointer<QuillMetadataRegionBagPrivate> d;
 
-    void updatePixelCoordinates();   // Call after reading relative coordinates (QRectF)
-    void updateRelativeCoordinates();// Call before writing relative coordinates
+    void    updatePixelCoordinates();   // Call after reading relative coordinates (QRectF)
+    void    updateRelativeCoordinates();// Call before writing relative coordinates
+    QRectF  pixelToRelativeCoordinates(const QRect &relative) const;
+    QRect   relativeToPixelCoordinates(const QRectF &pixel) const;
 
 };
 
@@ -54,7 +56,7 @@ public:
 	{};
     ~QuillMetadataRegionPrivate(){};
     QRect   area;
-    QRectF  areaF;
+    QRectF  areaF; // Used when reading and writing relative coordinates
     QString type;
     QString name;
 };
