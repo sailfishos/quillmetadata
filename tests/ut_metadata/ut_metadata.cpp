@@ -985,8 +985,8 @@ void ut_metadata::testCreateRegionBag()
     QRect rect(10,20,30,40);
     region.setArea(rect);
 
-    int width = 500;
-    int height = 600;
+    int width = 50;
+    int height = 60;
     QSize dimension = QSize(width, height);
     regionBag.setFullImageSize(dimension);
 

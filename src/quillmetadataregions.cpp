@@ -118,7 +118,7 @@ void QuillMetadataRegionBag::updateRelativeCoordinates()
     for (region = begin(); region != end(); ++region) {
 	QRectF relative = pixelToRelativeCoordinates(region->area());
 	if (region->area() != relativeToPixelCoordinates(region->areaF())) {
-	    // don't update if new relative coords wouldn't change pixel coods
+	    //don't update if new relative coords wouldn't change pixel coods
 	    region->setAreaF(relative);
 	}
     }
