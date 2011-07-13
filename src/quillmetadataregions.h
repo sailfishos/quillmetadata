@@ -35,8 +35,8 @@ public:
 private:
     QSharedDataPointer<QuillMetadataRegionBagPrivate> d;
 
-    void updatePixelCoordinates();
-    void updateRelativeCoordinates();
+    void updatePixelCoordinates();   // Call after reading relative coordinates (QRectF)
+    void updateRelativeCoordinates();// Call before writing relative coordinates
 
 };
 
