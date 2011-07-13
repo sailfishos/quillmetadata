@@ -63,11 +63,13 @@ void ut_metadata::cleanupTestCase()
 void ut_metadata::init()
 {
     metadata	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
+#if 1
     xmp		= new QuillMetadata("/usr/share/libquillmetadata-tests/images/xmp.jpg");
     iptc	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/iptc.jpg");
     gps		= new QuillMetadata("/usr/share/libquillmetadata-tests/images/gps.jpg");
 
     region	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
+#endif
 }
 
 void ut_metadata::cleanup()
@@ -696,7 +698,7 @@ void ut_metadata::testOrientationTagSpeedup()
 
 
 // Rounds to FUZZYACC precision, then asserts that difference is <= FUZZYACC
-#define FUZZYACC 1.0
+#define FUZZYACC 1
 #define MYQCOMPARE(x, y) do {\
 QVERIFY2(abs(((int)(x/FUZZYACC+.5)) -\
 	     ((int)(y/FUZZYACC+.5))) <= 1,\
@@ -979,6 +981,7 @@ void ut_metadata::testCreateRegionBag()
     entry.setValue(regionBag);
     metadata->setEntry(QuillMetadata::Tag_Regions,entry);
     QVariant data1 = metadata->entry(QuillMetadata::Tag_Regions);
+
 
     QTemporaryFile file;
     file.open();
