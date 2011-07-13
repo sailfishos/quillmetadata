@@ -53,13 +53,15 @@ class QuillMetadataRegionPrivate: public QSharedData
 public:
     QuillMetadataRegionPrivate(){};
     QuillMetadataRegionPrivate(const QuillMetadataRegionPrivate& other)
-	:QSharedData(other),area(other.area),
-	 type(other.type),name(other.name)
-	{};
+        :QSharedData(other),area(other.area),
+         type(other.type),name(other.name),trackContact(other.trackContact)
+        {};
+
     ~QuillMetadataRegionPrivate(){};
     QRect  area;
     QString type;
     QString name;
+    QString trackContact;
 };
 
 class QuillMetadataRegion
@@ -77,6 +79,9 @@ public:
 
     void setArea( const QRect & area);
     QRect area() const;
+
+    void setExtension(const QString& trackContact);
+    QString extension() const;
 
     QuillMetadataRegion & operator=(const QuillMetadataRegion &other);
 

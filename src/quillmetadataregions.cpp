@@ -1,4 +1,3 @@
-#include <QSharedData>
 #include "quillmetadataregions.h"
 
 #include <QDebug>
@@ -50,9 +49,17 @@ QString QuillMetadataRegion::name() const
     return d->name;
 }
 
-QuillMetadataRegion& QuillMetadataRegion::
-	operator=(const QuillMetadataRegion &other)
-		 {
+void QuillMetadataRegion::setExtension(const QString& extensionValue)
+{
+    d->trackContact = extensionValue;
+}
+
+QString QuillMetadataRegion::extension() const
+{
+    return d->trackContact;
+}
+QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &other)
+{
     if (this == &other)
 	return *this;
 
