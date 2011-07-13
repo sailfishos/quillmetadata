@@ -781,27 +781,6 @@ void ut_metadata::testEditRegions()
 
 }
 
-void ut_metadata::testArea()
-{
-    QuillMetadataRegion region;
-    QRect rect(0,0,2,3);
-    region.setArea(rect);
-    QRect rect1 = region.area();
-    QCOMPARE(rect, rect1);
-}
-
-void ut_metadata::testDimensions()
-{
-    QuillMetadataRegionBag regionBag;
-    int width = 5;
-    int height = 6;
-    regionBag.setFullImageSize(QSize(width, height));
-    int width1 = regionBag.fullImageSize().width();
-    int height1 = regionBag.fullImageSize().height();
-    QCOMPARE(width, width1);
-    QCOMPARE(height,height1);
-}
-
 void ut_metadata::testRegion()
 {
     QuillMetadataRegion region;

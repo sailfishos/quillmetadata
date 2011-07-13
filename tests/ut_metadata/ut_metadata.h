@@ -60,8 +60,6 @@ private slots:
 
     // Unit tests for metadata reading
     void testReadRegions();
-    void testArea();
-    void testDimensions();
     void testRegion();
     void testRegionBag();
     void testRegionAssignment();

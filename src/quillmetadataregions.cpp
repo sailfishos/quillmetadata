@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QtCore/qmath.h>
 
-/*** QuillMeatadataRegion Definitions ***/
+/*** QuillMeatadataRegion ***/
 
 const QLatin1String QuillMetadataRegion::RegionType_Face("Face");
 const QLatin1String QuillMetadataRegion::RegionType_Pet("Pet");
@@ -75,7 +75,7 @@ QRectF QuillMetadataRegion::areaF() const
 }
 
 
-/*** QuillMetadataRegionBag Definitions ***/
+/*** QuillMetadataRegionBag ***/
 
 QuillMetadataRegionBag::QuillMetadataRegionBag()
 {
@@ -118,7 +118,8 @@ void QuillMetadataRegionBag::updateRelativeCoordinates()
     for (region = begin(); region != end(); ++region) {
 	QRectF relative = pixelToRelativeCoordinates(region->area());
 	if (region->area() != relativeToPixelCoordinates(region->areaF())) {
-	    //don't update if new relative coords wouldn't change pixel coods
+	    // If new relative coords produce same pixel coords
+	    // as the old ones, don't update.
 	    region->setAreaF(relative);
 	}
     }
