@@ -694,9 +694,13 @@ void ut_metadata::testOrientationTagSpeedup()
 }
 
 
-#define FUZZYACC 0.2
-#define FUZZYQCOMPARE(x, y) do { QCOMPARE((float)((int)(x*FUZZYACC+.5))/FUZZYACC, (float)((int)(y*FUZZYACC+.5))/FUZZYACC); } while (0)
 
+// Maximum allowed difference = FUZZYACC
+#define FUZZYACC 1
+#define MYQCOMPARE(x, y) do {\
+QVERIFY2(abs(((int)(x/FUZZYACC+.5)) -\
+	     ((int)(y/FUZZYACC+.5))) <=1,\
+	 (QString("%1 vs. %2").arg(x).arg(y)).toAscii());} while (0)
 
 void ut_metadata::testReadRegions()
 {
@@ -716,17 +720,17 @@ void ut_metadata::testReadRegions()
     // Area:
     {
 	QRectF area = regs[0].area();
-	FUZZYQCOMPARE(area.width(),	 0.15*4288);
-	FUZZYQCOMPARE(area.height(),	 0.17*2848);
-	FUZZYQCOMPARE(area.center().x(), 0.3*4288);
-	FUZZYQCOMPARE(area.center().y(), 0.4*2848);
+	MYQCOMPARE(area.width(),	 0.15*4288);
+	MYQCOMPARE(area.height(),	 0.17*2848);
+	MYQCOMPARE(area.center().x(), 0.3*4288);
+	MYQCOMPARE(area.center().y(), 0.4*2848);
     }
     {
 	QRectF area = regs[1].area();
-	FUZZYQCOMPARE(area.width(),	 0.17*4288);
-	FUZZYQCOMPARE(area.height(),	 0.15*2848);
-	FUZZYQCOMPARE(area.center().x(), 0.4*4288);
-	FUZZYQCOMPARE(area.center().y(), 0.3*2848);
+	MYQCOMPARE(area.width(),	 0.17*4288);
+	MYQCOMPARE(area.height(),	 0.15*2848);
+	MYQCOMPARE(area.center().x(), 0.4*4288);
+	MYQCOMPARE(area.center().y(), 0.3*2848);
     }
 }
 
@@ -907,17 +911,17 @@ void ut_metadata::testRegionBagAppend()
     // Area:
     for (int i=0; i<3; i+=2){
 	QRect area = regs[i].area();
-	FUZZYQCOMPARE(area.width(),	 0.15*4288);
-	FUZZYQCOMPARE(area.height(),	 0.17*2848);
-	FUZZYQCOMPARE(area.center().x(), 0.3*4288);
-	FUZZYQCOMPARE(area.center().y(), 0.4*2848);
+	MYQCOMPARE(area.width(),	 0.15*4288);
+	MYQCOMPARE(area.height(),	 0.17*2848);
+	MYQCOMPARE(area.center().x(), 0.3*4288);
+	MYQCOMPARE(area.center().y(), 0.4*2848);
     }
     {
 	QRectF area = regs[1].area();
-	FUZZYQCOMPARE(area.width(),	 0.17*4288);
-	FUZZYQCOMPARE(area.height(),	 0.15*2848);
-	FUZZYQCOMPARE(area.center().x(), 0.4*4288);
-	FUZZYQCOMPARE(area.center().y(), 0.3*2848);
+	MYQCOMPARE(area.width(),	 0.17*4288);
+	MYQCOMPARE(area.height(),	 0.15*2848);
+	MYQCOMPARE(area.center().x(), 0.4*4288);
+	MYQCOMPARE(area.center().y(), 0.3*2848);
     }
 
 }

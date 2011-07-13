@@ -24,7 +24,7 @@ public:
 
 class QuillMetadataRegionBag : public QList<QuillMetadataRegion>
 {
-    friend class Xmp;
+    friend class Xmp; // Permission to use relative coordinates
 public:
     QuillMetadataRegionBag();
     void setFullImageSize(const QSize & dimension);
@@ -35,12 +35,8 @@ public:
 private:
     QSharedDataPointer<QuillMetadataRegionBagPrivate> d;
 
-    QuillMetadataRegionFloatingPoints &
-	    getFloatingPointRegion(int i);
-
-    void setFloatingPointRegion(
-	    QuillMetadataRegionFloatingPoints & region,
-	    int i);
+    void updatePixelCoordinates();
+    void updateRelativeCoordinates();
 
 };
 
@@ -53,17 +49,21 @@ class QuillMetadataRegionPrivate: public QSharedData
 public:
     QuillMetadataRegionPrivate(){};
     QuillMetadataRegionPrivate(const QuillMetadataRegionPrivate& other)
-	:QSharedData(other),area(other.area),
+	:QSharedData(other),area(other.area),areaF(other.areaF),
 	 type(other.type),name(other.name)
 	{};
     ~QuillMetadataRegionPrivate(){};
-    QRect  area;
+    QRect   area;
+    QRectF  areaF;
     QString type;
     QString name;
 };
 
 class QuillMetadataRegion
 {
+    // Permissions to relative coordinate usage
+    friend class QuillMetadataRegionBag;
+    friend class Xmp;
 public:
 
     QuillMetadataRegion();
@@ -75,7 +75,7 @@ public:
     void setName(const QString & name);
     QString name() const;
 
-    void setArea( const QRect & area);
+    void setArea(const QRect & area);
     QRect area() const;
 
     QuillMetadataRegion & operator=(const QuillMetadataRegion &other);
@@ -85,20 +85,13 @@ public:
     static const QLatin1String RegionType_Focus;
     static const QLatin1String RegionType_BarCode;
 
-protected:
-    QSharedDataPointer<QuillMetadataRegionPrivate> d;
-};
-
-
-
-class QuillMetadataRegionFloatingPoints : public QuillMetadataRegion
-{
-public:
-    void setAreaF( const QRectF & area);
-    QRectF areaF() const;
 private:
-    QRectF m_areaF;
+    QSharedDataPointer<QuillMetadataRegionPrivate> d;
+
+    void   setAreaF(const QRectF & area);
+    QRectF areaF() const;
 };
+
 
 Q_DECLARE_METATYPE(QuillMetadataRegion);
 Q_DECLARE_METATYPE(QuillMetadataRegionBag);

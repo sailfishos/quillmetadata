@@ -175,8 +175,7 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 	regions.append(region);
     }
 
-    QuillMetadataRegionFloatingPoints region
-	    = regions.getFloatingPointRegion(nRegionNumber-1);
+    QuillMetadataRegion region = regions[nRegionNumber-1];
     {
 	if (qPropName.contains("mwg-rs:Area")) {
 
@@ -214,8 +213,7 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 
 	}
     }
-    regions.setFloatingPointRegion(region,
-				   nRegionNumber-1);
+    regions[nRegionNumber-1] = region;
 
     return;
 }
@@ -313,6 +311,7 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		xmp_string_free(propValue);
 
 		QVariant var;
+		regions.updatePixelCoordinates();
 		var.setValue(regions);
 		return var;
 
@@ -509,8 +508,9 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 	    for (nRegion = 0; nRegion < regions.count(); nRegion++) {
 
-		QuillMetadataRegionFloatingPoints region
-			= regions.getFloatingPointRegion(nRegion);
+		regions.updateRelativeCoordinates();
+
+		QuillMetadataRegion region = regions[nRegion];
 
 		// Region name
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionName);

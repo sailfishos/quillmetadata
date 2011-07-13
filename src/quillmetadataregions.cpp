@@ -57,21 +57,23 @@ QuillMetadataRegion& QuillMetadataRegion::
 	return *this;
 
     d->area  = other.d->area;
+    d->areaF = other.d->areaF;
     d->type  = other.d->type;
     d->name  = other.d->name;
 
     return *this;
 }
 
-void QuillMetadataRegionFloatingPoints::setAreaF(const QRectF & areaValue)
+void QuillMetadataRegion::setAreaF(const QRectF & areaValue)
 {
-    m_areaF = areaValue;
+    d->areaF = areaValue;
 }
 
-QRectF QuillMetadataRegionFloatingPoints::areaF() const
+QRectF QuillMetadataRegion::areaF() const
 {
-    return m_areaF;
+    return d->areaF;
 }
+
 
 /*** QuillMetadataRegionBag Definitions ***/
 
@@ -102,43 +104,27 @@ QuillMetadataRegionBag& QuillMetadataRegionBag::operator=(const QuillMetadataReg
     return *this;
 }
 
-void QuillMetadataRegionBag::setFloatingPointRegion(
-	QuillMetadataRegionFloatingPoints & region,
-	int i)
+void QuillMetadataRegionBag::updatePixelCoordinates()
 {
-    QRect area = QRect(
-	    qFloor(region.areaF().left()  * fullImageSize().width()
-	    + .5),
-	    qFloor(region.areaF().top()   * fullImageSize().height()
-	    + .5),
-	    qFloor(region.areaF().width() * fullImageSize().width()
-	    + .5),
-	    qFloor(region.areaF().height()* fullImageSize().height()
-	    + .5));
-
-    (*this)[i].setArea(area);
-    (*this)[i].setName(region.name());
-    (*this)[i].setRegionType(region.regionType());
+    QList<QuillMetadataRegion>::iterator region;
+    for (region = begin(); region != end(); ++region) {
+	region->setArea(QRect(
+		qFloor(region->areaF().left()	* fullImageSize().width()   + .5),
+		qFloor(region->areaF().top()	* fullImageSize().height()  + .5),
+		qFloor(region->areaF().width()	* fullImageSize().width()   + .5),
+		qFloor(region->areaF().height()	* fullImageSize().height()  + .5)));
+    }
 }
 
-QuillMetadataRegionFloatingPoints &
-	QuillMetadataRegionBag::getFloatingPointRegion(int i)
+void QuillMetadataRegionBag::updateRelativeCoordinates()
 {
-    QuillMetadataRegionFloatingPoints *regionF =
-	    new QuillMetadataRegionFloatingPoints();
-
-    QuillMetadataRegion region = this->at(i);
-
-    QRectF areaF = QRectF(
-	    (float)(region.area().left())   / fullImageSize().width(),
-	    (float)(region.area().top())    / fullImageSize().height(),
-	    (float)(region.area().width())  / fullImageSize().width(),
-	    (float)(region.area().height()) / fullImageSize().height());
-
-    regionF->setAreaF(areaF);
-    regionF->setArea(region.area());
-    regionF->setName(region.name());
-    regionF->setRegionType(region.regionType());
-
-    return *regionF;
+    QList<QuillMetadataRegion>::iterator region;
+    for (region = begin(); region != end(); ++region) {
+	region->setAreaF(QRectF(
+		(float)(region->area().left())   / fullImageSize().width(),
+		(float)(region->area().top())    / fullImageSize().height(),
+		(float)(region->area().width())  / fullImageSize().width(),
+		(float)(region->area().height()) / fullImageSize().height()));
+    }
 }
+
