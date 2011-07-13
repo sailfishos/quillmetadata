@@ -1002,7 +1002,6 @@ void ut_metadata::testCreateRegionBag()
     }
 }
 
-
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );
     ut_metadata test;
