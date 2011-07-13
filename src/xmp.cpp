@@ -727,35 +727,47 @@ void Xmp::initTags()
     m_initialized = true;
 
     const char regionSchema[] = "http://www.metadataworkinggroup.com/schemas/regions/";
+    QString regionPrefix("mwg-rs:");
     {
 
 	XmpStringPtr registeredPrefix = xmp_string_new();
-	bool bOk = xmp_register_namespace(regionSchema, "mwg-rs:", registeredPrefix);
-	if (bOk)
-	    qDebug() << "Registered prefix:" << processXmpString(registeredPrefix);
-	else
+	bool bOk = xmp_register_namespace(regionSchema,
+					  regionPrefix.toAscii().constData(),
+					  registeredPrefix);
+	if (bOk) {
+	    regionPrefix = processXmpString(registeredPrefix);
+	    qDebug() << "Registered prefix:" << regionPrefix;
+	} else
 	    qDebug() << "Namespace registration failed";
     }
-#if 1
+
+    QString xmpAreaPrefix("stArea:");
     {
 	const char areaNamespace[] = "http://ns.adobe.com/xmp/sType/Area#";
 	XmpStringPtr registeredPrefix = xmp_string_new();
-	bool bOk = xmp_register_namespace(areaNamespace, "stArea:", registeredPrefix);
-	if (bOk)
-	    qDebug() << "Registered prefix:" << processXmpString(registeredPrefix);
-	else
+	bool bOk = xmp_register_namespace(areaNamespace,
+					  xmpAreaPrefix.toAscii().constData(),
+					  registeredPrefix);
+	if (bOk) {
+	    xmpAreaPrefix = processXmpString(registeredPrefix);
+	    qDebug() << "Registered prefix:" << xmpAreaPrefix;
+	} else
 	    qDebug() << "Namespace registration failed";
     }
+
+    QString xapAreaPrefix("stArea_xap:");
     {
 	const char areaNamespace[] = "http://ns.adobe.com/xap/1.0/sType/Area#";
 	XmpStringPtr registeredPrefix = xmp_string_new();
-	bool bOk = xmp_register_namespace(areaNamespace, "stArea_xap:", registeredPrefix);
-	if (bOk)
-	    qDebug() << "Registered prefix:" << processXmpString(registeredPrefix);
-	else
+	bool bOk = xmp_register_namespace(areaNamespace,
+					  xapAreaPrefix.toAscii().constData(),
+					  registeredPrefix);
+	if (bOk) {
+	    xapAreaPrefix = processXmpString(registeredPrefix);
+	    qDebug() << "Registered prefix:" << xapAreaPrefix;
+	} else
 	    qDebug() << "Namespace registration failed";
     }
-#endif
 
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
@@ -834,53 +846,56 @@ void Xmp::initTags()
 					"", "mwg-rs:Regions/mwg-rs:RegionList",
 					XmpTag::TagTypeArray));
 
-    const char baseTag[] = "mwg-rs:Regions/mwg-rs:RegionList[";
+    QString baseTag(regionPrefix + "Regions/" + regionPrefix + "RegionList[");
     m_regionXmpTags.insert(Xmp::Tag_RegionListItem,
 			   XmpRegionTag(regionSchema, baseTag, "]",
 					XmpTag::TagTypeStruct));
 
+    regionPrefix = QString("]/") + regionPrefix;
     m_regionXmpTags.insert(Xmp::Tag_RegionName,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Name",
+			   XmpRegionTag(regionSchema, baseTag, regionPrefix + "Name",
 					XmpTag::TagTypeString));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionType,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Type",
+			   XmpRegionTag(regionSchema, baseTag, regionPrefix + "Type",
 					XmpTag::TagTypeString));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionArea,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Area",
+			   XmpRegionTag(regionSchema, baseTag, regionPrefix + "Area",
 					XmpTag::TagTypeStruct));
 
+    xmpAreaPrefix = regionPrefix + "Area/" + xmpAreaPrefix;
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaH,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Area/stArea:h",
+			   XmpRegionTag(regionSchema, baseTag, xmpAreaPrefix + "h",
 					XmpTag::TagTypeReal));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaW,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Area/stArea:w",
+			   XmpRegionTag(regionSchema, baseTag, xmpAreaPrefix + "w",
 					XmpTag::TagTypeReal));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaX,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Area/stArea:x",
+			   XmpRegionTag(regionSchema, baseTag, xmpAreaPrefix + "x",
 					XmpTag::TagTypeReal));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaY,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Area/stArea:y",
+			   XmpRegionTag(regionSchema, baseTag, xmpAreaPrefix + "y",
 					XmpTag::TagTypeReal));
 
+    xapAreaPrefix = regionPrefix + "Area/" + xapAreaPrefix;
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaH_xap,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Area/stArea_xap:h",
+			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "h",
 					XmpTag::TagTypeReal));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaW_xap,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Area/stArea_xap:w",
+			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "w",
 					XmpTag::TagTypeReal));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaX_xap,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Area/stArea_xap:x",
+			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "x",
 					XmpTag::TagTypeReal));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaY_xap,
-			   XmpRegionTag(regionSchema, baseTag, "]/mwg-rs:Area/stArea_xap:y",
+			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "y",
 					XmpTag::TagTypeReal));
 
 }
