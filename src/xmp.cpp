@@ -735,7 +735,11 @@ void Xmp::initTags()
     const char regionSchema[] = "http://www.metadataworkinggroup.com/schemas/regions/";
 
     XmpStringPtr registeredPrefix = xmp_string_new();
-    xmp_register_namespace(regionSchema, "mwg-rs", registeredPrefix);
+    bool bOk = xmp_register_namespace(regionSchema, "mwg-rs:", registeredPrefix);
+    if (bOk)
+	qDebug() << "Registered prefix:" << processXmpString(registeredPrefix);
+    else
+	qDebug() << "Namespace registration failed";
 
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Regions,
