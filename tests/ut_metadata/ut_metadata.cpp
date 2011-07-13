@@ -696,7 +696,7 @@ void ut_metadata::testOrientationTagSpeedup()
 
 
 // Rounds to FUZZYACC precision, then asserts that difference is <= FUZZYACC
-#define FUZZYACC 1
+#define FUZZYACC 1.0
 #define MYQCOMPARE(x, y) do {\
 QVERIFY2(abs(((int)(x/FUZZYACC+.5)) -\
 	     ((int)(y/FUZZYACC+.5))) <= 1,\

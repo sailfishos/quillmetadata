@@ -6,10 +6,10 @@
 
 /*** QuillMeatadataRegion ***/
 
-const QLatin1String QuillMetadataRegion::RegionType_Face("Face");
-const QLatin1String QuillMetadataRegion::RegionType_Pet("Pet");
-const QLatin1String QuillMetadataRegion::RegionType_Focus("Focus");
-const QLatin1String QuillMetadataRegion::RegionType_BarCode("BarCode");
+const QLatin1String QuillMetadataRegion::RegionType_Face    ("Face");
+const QLatin1String QuillMetadataRegion::RegionType_Pet	    ("Pet");
+const QLatin1String QuillMetadataRegion::RegionType_Focus   ("Focus");
+const QLatin1String QuillMetadataRegion::RegionType_BarCode ("BarCode");
 
 QuillMetadataRegion::QuillMetadataRegion()
 {

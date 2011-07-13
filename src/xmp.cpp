@@ -84,7 +84,9 @@ QString XmpRegionTag::getIndexedTag(int zeroBasedIndex)
 
 Xmp::Xmp()
 {
+    xmp_init();
     m_xmpPtr = xmp_new_empty();
+    initTags();
 }
 
 Xmp::Xmp(const QString &fileName)
@@ -277,8 +279,7 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 			xmpIterPtr, schema, propName,
 			propValue, &options);
 
-		XmpTag xmpTag = m_xmpTags.value(QuillMetadata::Tag_Regions);
-		while (bSuccess && (processXmpString(schema) == xmpTag.schema))
+		while (bSuccess)
 		{
 		    QString qPropValue	= processXmpString(propValue);
 		    QString qPropName	= processXmpString(propName);
@@ -732,6 +733,11 @@ void Xmp::initTags()
 
 
     const char regionSchema[] = "http://www.metadataworkinggroup.com/schemas/regions/";
+
+    XmpStringPtr registeredPrefix = xmp_string_new();
+    xmp_register_namespace(regionSchema, "mwg-rs", registeredPrefix);
+
+
     m_xmpTags.insertMulti(QuillMetadata::Tag_Regions,
 			  XmpTag(regionSchema,
 				 "mwg-rs:Regions", XmpTag::TagTypeStruct));
