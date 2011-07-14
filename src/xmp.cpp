@@ -507,70 +507,57 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 	    for (nRegion = 0; nRegion < regions.count(); nRegion++) {
 
-#if 1
 		if (!hasEntry(Xmp::Tag_RegionListItem, nRegion)) {
-		    setXmpEntry(Xmp::Tag_RegionListItem, "", nRegion);
+		    setXmpEntry(Xmp::Tag_RegionListItem, nRegion, "");
 		}
-#endif
+		if (!hasEntry(Xmp::Tag_RegionArea, nRegion)) {
+		    setXmpEntry(Xmp::Tag_RegionArea, nRegion, "");
+		}
 
 		regions.updateRelativeCoordinates();
 
 		QuillMetadataRegion region = regions[nRegion];
-
-
-#if 1
-		if (!hasEntry(Xmp::Tag_RegionArea, nRegion)) {
-		    setXmpEntry(Xmp::Tag_RegionArea, "", nRegion);
-		}
-#endif
 
 		// TODO: these (_xap) are required for compatibility with ExifTool 8.60, and should be removed
 		// when 8.61 is released and test data is updated.
 		if (hasEntry(Xmp::Tag_RegionAreaY_xap)) {
 
 		    // RegionAreaY
-		    setXmpEntry(Xmp::Tag_RegionAreaY_xap,
-				region.areaF().center().y(), nRegion);
-
+		    setXmpEntry(Xmp::Tag_RegionAreaY_xap, nRegion,
+				region.areaF().center().y());
 		    // RegionAreaX,
-		    setXmpEntry(Xmp::Tag_RegionAreaX_xap,
-				region.areaF().center().x(), nRegion);
-
+		    setXmpEntry(Xmp::Tag_RegionAreaX_xap, nRegion,
+				region.areaF().center().x());
 		    // RegionAreaH
-		    setXmpEntry(Xmp::Tag_RegionAreaH_xap,
-				region.areaF().height(), nRegion);
-
+		    setXmpEntry(Xmp::Tag_RegionAreaH_xap, nRegion,
+				region.areaF().height());
 		    // RegionAreaW
-		    setXmpEntry(Xmp::Tag_RegionAreaW_xap,
-				region.areaF().width(), nRegion);
+		    setXmpEntry(Xmp::Tag_RegionAreaW_xap, nRegion,
+				region.areaF().width());
 
 		} else {
 
 		    // RegionAreaX,
-		    setXmpEntry(Xmp::Tag_RegionAreaX,
-				region.areaF().center().x(), nRegion);
-
+		    setXmpEntry(Xmp::Tag_RegionAreaX, nRegion,
+				region.areaF().center().x());
 		    // RegionAreaY
-		    setXmpEntry(Xmp::Tag_RegionAreaY,
-				region.areaF().center().y(), nRegion);
-
+		    setXmpEntry(Xmp::Tag_RegionAreaY, nRegion,
+				region.areaF().center().y());
 		    // RegionAreaH
-		    setXmpEntry(Xmp::Tag_RegionAreaH,
-				region.areaF().height(), nRegion);
-
+		    setXmpEntry(Xmp::Tag_RegionAreaH, nRegion,
+				region.areaF().height());
 		    // RegionAreaW
-		    setXmpEntry(Xmp::Tag_RegionAreaW,
-				region.areaF().width(), nRegion);
+		    setXmpEntry(Xmp::Tag_RegionAreaW, nRegion,
+				region.areaF().width());
 
 		}
 
 		// Region name
-		setXmpEntry(Xmp::Tag_RegionName,
-			    region.name(), nRegion);
-
+		setXmpEntry(Xmp::Tag_RegionName, nRegion,
+			    region.name());
 		// Region type
-		setXmpEntry(Xmp::Tag_RegionType,
-			    region.regionType(), nRegion);
+		setXmpEntry(Xmp::Tag_RegionType, nRegion,
+			    region.regionType());
 
 		// Region extension
 		// before we set extensions, we clear all extensions
@@ -578,8 +565,8 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 		//we check if there is really some content for traker contact extension
 		if(!region.extension().isEmpty()){
-		    setXmpEntry(Xmp::Tag_RegionExtensionTrackerContact,
-				region.extension(), nRegion);
+		    setXmpEntry(Xmp::Tag_RegionExtensionTrackerContact, nRegion,
+				region.extension());
 		}
 	    }
 
@@ -605,7 +592,12 @@ void Xmp::setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry)
     }
 }
 
-void Xmp::setXmpEntry(Xmp::Tag tag, const QVariant &entry, int zeroBasedIndex /* = 0 */)
+void Xmp::setXmpEntry(Xmp::Tag tag, const QVariant &entry)
+{
+    setXmpEntry(tag, 0, entry);
+}
+
+void Xmp::setXmpEntry(Xmp::Tag tag, int zeroBasedIndex, const QVariant &entry)
 {
     XmpRegionTag xmpTag = m_regionXmpTags.value(tag);
     setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(zeroBasedIndex), xmpTag.tagType), entry);

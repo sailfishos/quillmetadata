@@ -144,7 +144,9 @@ class Xmp : public MetadataRepresentation
 
     void setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry);
 
-    void setXmpEntry(Xmp::Tag tag, const QVariant &entry, int zeroBasedIndex = 0);
+    void setXmpEntry(Xmp::Tag tag, int zeroBasedIndex, const QVariant &entry);
+
+    void setXmpEntry(Xmp::Tag tag, const QVariant &entry);
 
     void setXmpEntry(XmpTag xmpTag, const QVariant &entry);
 
