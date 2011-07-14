@@ -52,10 +52,10 @@ public:
         TagTypeString,
         TagTypeStringList,
         TagTypeAltLang,
-	TagTypeReal,
-	TagTypeArray,
-	TagTypeStruct,
-	TagTypeInteger
+        TagTypeReal,
+        TagTypeArray,
+        TagTypeStruct,
+        TagTypeInteger
     };
 
     XmpTag();
@@ -110,8 +110,6 @@ class Xmp : public MetadataRepresentation
        Tag_RegionName,
        // Region type
        Tag_RegionType,
-       // RegionArea
-       Tag_RegionArea,
        // RegionAreaH
        Tag_RegionAreaH,
        // RegionAreaW
@@ -120,15 +118,10 @@ class Xmp : public MetadataRepresentation
        Tag_RegionAreaX,
        // RegionAreaY
        Tag_RegionAreaY,
-       // RegionAreaH
-       Tag_RegionAreaH_xap,
-       // RegionAreaW
-       Tag_RegionAreaW_xap,
-       // RegionAreaX,
-       Tag_RegionAreaX_xap,
-       // RegionAreaY
-       Tag_RegionAreaY_xap
-
+       // Extension
+       Tag_RegionExtension,
+       // TrackerContact
+       Tag_RegionExtensionTrackerContact
    };
     void initTags();
 

@@ -746,6 +746,7 @@ void ut_metadata::testEditRegions()
 
     bag[0].setName(QString("This is foo name"));
     bag[0].setRegionType(QString("Pet"));
+    bag[0].setExtension(QString("trackerContact"));
     QRect area;
     area.setWidth(1);
     area.setHeight(2);
@@ -771,6 +772,7 @@ void ut_metadata::testEditRegions()
     QCOMPARE(bag1.count(), 2);
     QCOMPARE(bag1[0].name(), QString("This is foo name"));
     QCOMPARE(bag1[0].regionType(), QString("Pet"));
+    QCOMPARE(bag1[0].extension(), QString("trackerContact"));
     {
 	QRect area = bag1[0].area();
 	QCOMPARE(area.width(),	    1);
@@ -799,6 +801,11 @@ void ut_metadata::testRegion()
     region.setArea(rect);
     QRect rect1 = region.area();
     QCOMPARE(rect,rect1);
+
+    QString extension("trackContact");
+    region.setExtension(extension);
+    QString extension1 = region.extension();
+    QCOMPARE(extension,extension1);
 }
 
 void ut_metadata::testRegionBag()
