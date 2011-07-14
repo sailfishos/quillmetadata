@@ -502,8 +502,8 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 			    regions.fullImageSize().width());
 	    }
 
-	    XmpRegionTag xmpTag;
 	    int nRegion;
+	    regions.updateRelativeCoordinates();
 
 	    for (nRegion = 0; nRegion < regions.count(); nRegion++) {
 
@@ -513,8 +513,6 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 		if (!hasEntry(Xmp::Tag_RegionArea, nRegion)) {
 		    setXmpEntry(Xmp::Tag_RegionArea, nRegion, "");
 		}
-
-		regions.updateRelativeCoordinates();
 
 		QuillMetadataRegion region = regions[nRegion];
 
