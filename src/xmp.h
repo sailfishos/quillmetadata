@@ -110,6 +110,8 @@ class Xmp : public MetadataRepresentation
        Tag_RegionName,
        // Region type
        Tag_RegionType,
+       // RegionArea
+       Tag_RegionArea,
        // RegionAreaH
        Tag_RegionAreaH,
        // RegionAreaW
@@ -117,7 +119,16 @@ class Xmp : public MetadataRepresentation
        // RegionAreaX,
        Tag_RegionAreaX,
        // RegionAreaY
-       Tag_RegionAreaY
+       Tag_RegionAreaY,
+       // RegionAreaH
+       Tag_RegionAreaH_xap,
+       // RegionAreaW
+       Tag_RegionAreaW_xap,
+       // RegionAreaX,
+       Tag_RegionAreaX_xap,
+       // RegionAreaY
+       Tag_RegionAreaY_xap
+
    };
     void initTags();
 

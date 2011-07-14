@@ -3,12 +3,12 @@
 #include <QDebug>
 #include <QtCore/qmath.h>
 
-/*** QuillMeatadataRegion Definitions ***/
+/*** QuillMeatadataRegion ***/
 
-const QLatin1String QuillMetadataRegion::RegionType_Face("Face");
-const QLatin1String QuillMetadataRegion::RegionType_Pet("Pet");
-const QLatin1String QuillMetadataRegion::RegionType_Focus("Focus");
-const QLatin1String QuillMetadataRegion::RegionType_BarCode("BarCode");
+const QLatin1String QuillMetadataRegion::RegionType_Face    ("Face");
+const QLatin1String QuillMetadataRegion::RegionType_Pet	    ("Pet");
+const QLatin1String QuillMetadataRegion::RegionType_Focus   ("Focus");
+const QLatin1String QuillMetadataRegion::RegionType_BarCode ("BarCode");
 
 QuillMetadataRegion::QuillMetadataRegion()
 {
@@ -64,23 +64,25 @@ QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &o
 	return *this;
 
     d->area  = other.d->area;
+    d->areaF = other.d->areaF;
     d->type  = other.d->type;
     d->name  = other.d->name;
 
     return *this;
 }
 
-void QuillMetadataRegionFloatingPoints::setAreaF(const QRectF & areaValue)
+void QuillMetadataRegion::setAreaF(const QRectF & areaValue)
 {
-    m_areaF = areaValue;
+    d->areaF = areaValue;
 }
 
-QRectF QuillMetadataRegionFloatingPoints::areaF() const
+QRectF QuillMetadataRegion::areaF() const
 {
-    return m_areaF;
+    return d->areaF;
 }
 
-/*** QuillMetadataRegionBag Definitions ***/
+
+/*** QuillMetadataRegionBag ***/
 
 QuillMetadataRegionBag::QuillMetadataRegionBag()
 {
@@ -109,43 +111,41 @@ QuillMetadataRegionBag& QuillMetadataRegionBag::operator=(const QuillMetadataReg
     return *this;
 }
 
-void QuillMetadataRegionBag::setFloatingPointRegion(
-	QuillMetadataRegionFloatingPoints & region,
-	int i)
+void QuillMetadataRegionBag::updatePixelCoordinates()
 {
-    QRect area = QRect(
-	    qFloor(region.areaF().left()  * fullImageSize().width()
-	    + .5),
-	    qFloor(region.areaF().top()   * fullImageSize().height()
-	    + .5),
-	    qFloor(region.areaF().width() * fullImageSize().width()
-	    + .5),
-	    qFloor(region.areaF().height()* fullImageSize().height()
-	    + .5));
-
-    (*this)[i].setArea(area);
-    (*this)[i].setName(region.name());
-    (*this)[i].setRegionType(region.regionType());
+    QList<QuillMetadataRegion>::iterator region;
+    for (region = begin(); region != end(); ++region) {
+	region->setArea(relativeToPixelCoordinates(region->areaF()));
+    }
 }
 
-QuillMetadataRegionFloatingPoints &
-	QuillMetadataRegionBag::getFloatingPointRegion(int i)
+void QuillMetadataRegionBag::updateRelativeCoordinates()
 {
-    QuillMetadataRegionFloatingPoints *regionF =
-	    new QuillMetadataRegionFloatingPoints();
+    QList<QuillMetadataRegion>::iterator region;
+    for (region = begin(); region != end(); ++region) {
+	QRectF relative = pixelToRelativeCoordinates(region->area());
+	if (region->area() != relativeToPixelCoordinates(region->areaF())) {
+	    // If new relative coords produce same pixel coords
+	    // as the old ones, don't update.
+	    region->setAreaF(relative);
+	}
+    }
+}
 
-    QuillMetadataRegion region = this->at(i);
+QRectF QuillMetadataRegionBag::pixelToRelativeCoordinates(const QRect &relative) const
+{
+    return QRectF(
+	    (float)(relative.left())   / fullImageSize().width(),
+	    (float)(relative.top())    / fullImageSize().height(),
+	    (float)(relative.width())  / fullImageSize().width(),
+	    (float)(relative.height()) / fullImageSize().height());
+}
 
-    QRectF areaF = QRectF(
-	    (float)(region.area().left())   / fullImageSize().width(),
-	    (float)(region.area().top())    / fullImageSize().height(),
-	    (float)(region.area().width())  / fullImageSize().width(),
-	    (float)(region.area().height()) / fullImageSize().height());
-
-    regionF->setAreaF(areaF);
-    regionF->setArea(region.area());
-    regionF->setName(region.name());
-    regionF->setRegionType(region.regionType());
-
-    return *regionF;
+QRect QuillMetadataRegionBag::relativeToPixelCoordinates(const QRectF &pixel) const
+{
+    return QRect(
+	    qFloor(pixel.left()	    * fullImageSize().width()   + .5),
+	    qFloor(pixel.top()	    * fullImageSize().height()  + .5),
+	    qFloor(pixel.width()    * fullImageSize().width()   + .5),
+	    qFloor(pixel.height()   * fullImageSize().height()  + .5));
 }

@@ -24,7 +24,7 @@ public:
 
 class QuillMetadataRegionBag : public QList<QuillMetadataRegion>
 {
-    friend class Xmp;
+    friend class Xmp; // Permission to use relative coordinates
 public:
     QuillMetadataRegionBag();
     void setFullImageSize(const QSize & dimension);
@@ -35,12 +35,10 @@ public:
 private:
     QSharedDataPointer<QuillMetadataRegionBagPrivate> d;
 
-    QuillMetadataRegionFloatingPoints &
-	    getFloatingPointRegion(int i);
-
-    void setFloatingPointRegion(
-	    QuillMetadataRegionFloatingPoints & region,
-	    int i);
+    void    updatePixelCoordinates();   // Call after reading relative coordinates (QRectF)
+    void    updateRelativeCoordinates();// Call before writing relative coordinates
+    QRectF  pixelToRelativeCoordinates(const QRect &relative) const;
+    QRect   relativeToPixelCoordinates(const QRectF &pixel) const;
 
 };
 
@@ -53,12 +51,13 @@ class QuillMetadataRegionPrivate: public QSharedData
 public:
     QuillMetadataRegionPrivate(){};
     QuillMetadataRegionPrivate(const QuillMetadataRegionPrivate& other)
-        :QSharedData(other),area(other.area),
+        :QSharedData(other),area(other.area),areaF(other.areaF)
          type(other.type),name(other.name),trackContact(other.trackContact)
         {};
 
     ~QuillMetadataRegionPrivate(){};
-    QRect  area;
+    QRect   area;
+    QRectF  areaF; // Used when reading and writing relative coordinates
     QString type;
     QString name;
     QString trackContact;
@@ -66,6 +65,9 @@ public:
 
 class QuillMetadataRegion
 {
+    // Permissions to relative coordinate usage
+    friend class QuillMetadataRegionBag;
+    friend class Xmp;
 public:
 
     QuillMetadataRegion();
@@ -77,7 +79,7 @@ public:
     void setName(const QString & name);
     QString name() const;
 
-    void setArea( const QRect & area);
+    void setArea(const QRect & area);
     QRect area() const;
 
     void setExtension(const QString& trackContact);
@@ -90,20 +92,13 @@ public:
     static const QLatin1String RegionType_Focus;
     static const QLatin1String RegionType_BarCode;
 
-protected:
-    QSharedDataPointer<QuillMetadataRegionPrivate> d;
-};
-
-
-
-class QuillMetadataRegionFloatingPoints : public QuillMetadataRegion
-{
-public:
-    void setAreaF( const QRectF & area);
-    QRectF areaF() const;
 private:
-    QRectF m_areaF;
+    QSharedDataPointer<QuillMetadataRegionPrivate> d;
+
+    void   setAreaF(const QRectF & area);
+    QRectF areaF() const;
 };
+
 
 Q_DECLARE_METATYPE(QuillMetadataRegion);
 Q_DECLARE_METATYPE(QuillMetadataRegionBag);

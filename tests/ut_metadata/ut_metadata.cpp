@@ -63,11 +63,13 @@ void ut_metadata::cleanupTestCase()
 void ut_metadata::init()
 {
     metadata	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
+#if 1
     xmp		= new QuillMetadata("/usr/share/libquillmetadata-tests/images/xmp.jpg");
     iptc	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/iptc.jpg");
     gps		= new QuillMetadata("/usr/share/libquillmetadata-tests/images/gps.jpg");
 
     region	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
+#endif
 }
 
 void ut_metadata::cleanup()
@@ -694,9 +696,13 @@ void ut_metadata::testOrientationTagSpeedup()
 }
 
 
-#define FUZZYACC 0.2
-#define FUZZYQCOMPARE(x, y) do { QCOMPARE((float)((int)(x*FUZZYACC+.5))/FUZZYACC, (float)((int)(y*FUZZYACC+.5))/FUZZYACC); } while (0)
 
+// Rounds to FUZZYACC precision, then asserts that difference is <= FUZZYACC
+#define FUZZYACC 1
+#define MYQCOMPARE(x, y) do {\
+QVERIFY2(abs(((int)(x/FUZZYACC+.5)) -\
+	     ((int)(y/FUZZYACC+.5))) <= 1,\
+	 (QString("%1 vs. %2").arg(x).arg(y)).toAscii());} while (0)
 
 void ut_metadata::testReadRegions()
 {
@@ -716,17 +722,17 @@ void ut_metadata::testReadRegions()
     // Area:
     {
 	QRectF area = regs[0].area();
-	FUZZYQCOMPARE(area.width(),	 0.15*4288);
-	FUZZYQCOMPARE(area.height(),	 0.17*2848);
-	FUZZYQCOMPARE(area.center().x(), 0.3*4288);
-	FUZZYQCOMPARE(area.center().y(), 0.4*2848);
+	MYQCOMPARE(area.width(),	0.15*4288);
+	MYQCOMPARE(area.height(),	0.17*2848);
+	MYQCOMPARE(area.center().x(),	0.3*4288);
+	MYQCOMPARE(area.center().y(),	0.4*2848);
     }
     {
 	QRectF area = regs[1].area();
-	FUZZYQCOMPARE(area.width(),	 0.17*4288);
-	FUZZYQCOMPARE(area.height(),	 0.15*2848);
-	FUZZYQCOMPARE(area.center().x(), 0.4*4288);
-	FUZZYQCOMPARE(area.center().y(), 0.3*2848);
+	MYQCOMPARE(area.width(),	0.17*4288);
+	MYQCOMPARE(area.height(),	0.15*2848);
+	MYQCOMPARE(area.center().x(),	0.4*4288);
+	MYQCOMPARE(area.center().y(),	0.3*2848);
     }
 }
 
@@ -750,6 +756,7 @@ void ut_metadata::testEditRegions()
     entry.setValue(bag);
     region->setEntry(QuillMetadata::Tag_Regions,entry);
 
+
     QTemporaryFile file;
     file.open();
     sourceImage.save(file.fileName(), "jpg");
@@ -766,35 +773,14 @@ void ut_metadata::testEditRegions()
     QCOMPARE(bag1[0].regionType(), QString("Pet"));
     {
 	QRect area = bag1[0].area();
-	QCOMPARE(area.width(),	 1);
-	QCOMPARE(area.height(),	 2);
+	QCOMPARE(area.width(),	    1);
+	QCOMPARE(area.height(),	    2);
 	QCOMPARE(area.center().x(), 3);
 	QCOMPARE(area.center().y(), 4);
     }
 
     delete region1;
 
-}
-
-void ut_metadata::testArea()
-{
-    QuillMetadataRegion region;
-    QRect rect(0,0,2,3);
-    region.setArea(rect);
-    QRect rect1 = region.area();
-    QCOMPARE(rect, rect1);
-}
-
-void ut_metadata::testDimensions()
-{
-    QuillMetadataRegionBag regionBag;
-    int width = 5;
-    int height = 6;
-    regionBag.setFullImageSize(QSize(width, height));
-    int width1 = regionBag.fullImageSize().width();
-    int height1 = regionBag.fullImageSize().height();
-    QCOMPARE(width, width1);
-    QCOMPARE(height,height1);
 }
 
 void ut_metadata::testRegion()
@@ -907,17 +893,17 @@ void ut_metadata::testRegionBagAppend()
     // Area:
     for (int i=0; i<3; i+=2){
 	QRect area = regs[i].area();
-	FUZZYQCOMPARE(area.width(),	 0.15*4288);
-	FUZZYQCOMPARE(area.height(),	 0.17*2848);
-	FUZZYQCOMPARE(area.center().x(), 0.3*4288);
-	FUZZYQCOMPARE(area.center().y(), 0.4*2848);
+	MYQCOMPARE(area.width(),	0.15*4288);
+	MYQCOMPARE(area.height(),	0.17*2848);
+	MYQCOMPARE(area.center().x(),	0.3*4288);
+	MYQCOMPARE(area.center().y(),	0.4*2848);
     }
     {
 	QRectF area = regs[1].area();
-	FUZZYQCOMPARE(area.width(),	 0.17*4288);
-	FUZZYQCOMPARE(area.height(),	 0.15*2848);
-	FUZZYQCOMPARE(area.center().x(), 0.4*4288);
-	FUZZYQCOMPARE(area.center().y(), 0.3*2848);
+	MYQCOMPARE(area.width(),	0.17*4288);
+	MYQCOMPARE(area.height(),	0.15*2848);
+	MYQCOMPARE(area.center().x(),	0.4*4288);
+	MYQCOMPARE(area.center().y(),	0.3*2848);
     }
 
 }
@@ -958,10 +944,10 @@ void ut_metadata::testRegionBagRemoveRegion()
 	    // Area:
 	    {
 		QRect area = regs1.last().area();
-		QVERIFY(abs(area.width() - 0.17*4288)	<= 1);
-		QVERIFY(abs(area.height()- 0.15*2848)	<= 1);
-		QVERIFY(abs(area.center().x() - 0.4*4288) <= 1);
-		QVERIFY(abs(area.center().y() - 0.3*2848) <= 1);
+		MYQCOMPARE(area.width(),	0.17*4288);
+		MYQCOMPARE(area.height(),	0.15*2848);
+		MYQCOMPARE(area.center().x(),	0.4*4288);
+		MYQCOMPARE(area.center().y(),	0.3*2848);
 	    }
 	}
     }
@@ -980,8 +966,8 @@ void ut_metadata::testCreateRegionBag()
     QRect rect(10,20,30,40);
     region.setArea(rect);
 
-    int width = 500;
-    int height = 600;
+    int width = 50;
+    int height = 60;
     QSize dimension = QSize(width, height);
     regionBag.setFullImageSize(dimension);
 
@@ -995,6 +981,7 @@ void ut_metadata::testCreateRegionBag()
     entry.setValue(regionBag);
     metadata->setEntry(QuillMetadata::Tag_Regions,entry);
     QVariant data1 = metadata->entry(QuillMetadata::Tag_Regions);
+
 
     QTemporaryFile file;
     file.open();
@@ -1011,13 +998,12 @@ void ut_metadata::testCreateRegionBag()
     QCOMPARE(regs1[0].regionType(), QString("face"));
     {
 	QRect area = regs1[0].area();
-	QVERIFY(abs((area.x() -10)	<= 1));
-	QVERIFY(abs((area.y() -20)	<= 1));
-	QVERIFY(abs((area.width() -30)	<= 1));
-	QVERIFY(abs((area.height()-40)	<= 1));
+	MYQCOMPARE(area.x(),	    10);
+	MYQCOMPARE(area.y(),	    20);
+	MYQCOMPARE(area.width(),    30);
+	MYQCOMPARE(area.height(),   40);
     }
 }
-
 
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );
