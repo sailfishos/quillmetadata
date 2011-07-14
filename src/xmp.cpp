@@ -535,6 +535,9 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 		if (hasEntry(Xmp::Tag_RegionAreaY_xap)) {
 
+		    // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
+		    // when 8.61 is released and test data is updated.
+
 		    // RegionAreaY
 		    xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaY_xap);
 		    setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
@@ -755,6 +758,8 @@ void Xmp::initTags()
 	    qDebug() << "Namespace registration failed";
     }
 
+    // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
+    // when 8.61 is released and test data is updated.
     QString xapAreaPrefix("stArea_xap:");
     {
 	const char areaNamespace[] = "http://ns.adobe.com/xap/1.0/sType/Area#";
@@ -881,6 +886,8 @@ void Xmp::initTags()
 			   XmpRegionTag(regionSchema, baseTag, xmpAreaPrefix + "y",
 					XmpTag::TagTypeReal));
 
+    // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
+    // when 8.61 is released and test data is updated.
     xapAreaPrefix = regionPrefix + "Area/" + xapAreaPrefix;
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaH_xap,
 			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "h",

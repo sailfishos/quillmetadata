@@ -60,10 +60,13 @@ void ut_metadata::cleanupTestCase()
 {
 }
 
+// To test namespace registration, define NAMESPACE_REGISTRATION_TEST and run "testCreateRegionBag"
+//#define NAMESPACE_REGISTRATION_TEST
+
 void ut_metadata::init()
 {
     metadata	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
-#if 1
+#ifndef NAMESPACE_REGISTRATION_TEST
     xmp		= new QuillMetadata("/usr/share/libquillmetadata-tests/images/xmp.jpg");
     iptc	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/iptc.jpg");
     gps		= new QuillMetadata("/usr/share/libquillmetadata-tests/images/gps.jpg");
@@ -75,11 +78,13 @@ void ut_metadata::init()
 void ut_metadata::cleanup()
 {
     delete metadata;
+#ifndef NAMESPACE_REGISTRATION_TEST
     delete xmp;
     delete iptc;
     delete gps;
 
     delete region;
+#endif
 }
 
 void ut_metadata::testCameraMake()

@@ -120,6 +120,9 @@ class Xmp : public MetadataRepresentation
        Tag_RegionAreaX,
        // RegionAreaY
        Tag_RegionAreaY,
+
+       // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
+       // when 8.61 is released and test data is updated.
        // RegionAreaH
        Tag_RegionAreaH_xap,
        // RegionAreaW
