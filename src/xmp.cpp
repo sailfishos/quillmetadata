@@ -183,6 +183,9 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 
 	    QRectF area = region.areaF();
 
+	    // TODO: these (_xap) are required for compatibility with ExifTool 8.60, and should be removed
+	    // when 8.61 is released and test data is updated.
+
 	    if (qPropName.contains("stArea:h") || qPropName.contains("stArea_xap:h")) {
 		QPointF center = area.center();
 		area.setHeight(qPropValue.toFloat());
@@ -211,7 +214,8 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 
 	} else if (qPropName.contains("mwg-rs:Extensions")) {
 
-	    ;
+	    if(qPropName.contains("mwg-rs:TrackerContact"))
+		region.setExtension(qPropValue);
 
 	}
     }
@@ -304,8 +308,8 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		    }
 
 		    bSuccess = xmp_iterator_next(
-					    xmpIterPtr, schema, propName,
-					    propValue, &options);
+			    xmpIterPtr, schema, propName,
+			    propValue, &options);
 		} // while (bSuccess)
 
 		xmp_string_free(schema);
@@ -323,8 +327,8 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                 if (!string.isEmpty()) {
                     xmp_string_free(xmpStringPtr);
                     switch (tag) {
-                        case QuillMetadata::Tag_GPSLatitude:
-                        case QuillMetadata::Tag_GPSLongitude: {
+		    case QuillMetadata::Tag_GPSLatitude:
+		    case QuillMetadata::Tag_GPSLongitude: {
                             // Degrees and minutes are separated with a ','
                             QStringList elements = string.split(",");
                             QLocale c(QLocale::C);
@@ -340,15 +344,15 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                             return QVariant(value);
                         }
 
-                        case QuillMetadata::Tag_GPSLatitudeRef:
-                        case QuillMetadata::Tag_GPSLongitudeRef: {
+		    case QuillMetadata::Tag_GPSLatitudeRef:
+		    case QuillMetadata::Tag_GPSLongitudeRef: {
                             // The 'W', 'E', 'N' or 'S' character is the rightmost character
                             // in the field
                             return QVariant(string.right(1));
                         }
 
-                        case QuillMetadata::Tag_GPSImgDirection:
-                        case QuillMetadata::Tag_GPSAltitude: {
+		    case QuillMetadata::Tag_GPSImgDirection:
+		    case QuillMetadata::Tag_GPSAltitude: {
                             const int separator = string.indexOf("/");
                             const int len = string.length();
                             QLocale c(QLocale::C);
@@ -364,9 +368,9 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
                             }
                         }
 
-                        default:
-                            return QVariant(string);
-                    }
+		    default:
+			return QVariant(string);
+		    }
                 }
             }
 	}
@@ -386,7 +390,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
     }
 
     switch (tag) {
-        case QuillMetadata::Tag_GPSAltitude: {
+    case QuillMetadata::Tag_GPSAltitude: {
             QString altitude = entry.toString();
 
             // Check the existence of a slash. If there's not one, append it
@@ -406,8 +410,8 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
             break;
         }
-        case QuillMetadata::Tag_GPSLatitude:
-        case QuillMetadata::Tag_GPSLongitude: {
+    case QuillMetadata::Tag_GPSLatitude:
+    case QuillMetadata::Tag_GPSLongitude: {
             QString value = entry.toString();
             const QString refPositive(tag == QuillMetadata::Tag_GPSLatitude ? "N" : "E");
             const QString refNegative(tag == QuillMetadata::Tag_GPSLatitude ? "S" : "W");
@@ -443,7 +447,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
             break;
         }
-        case QuillMetadata::Tag_GPSImgDirection: {
+    case QuillMetadata::Tag_GPSImgDirection: {
             QString direction;
             const int slash = entry.toString().indexOf("/");
             double value;
@@ -470,7 +474,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
             setXmpEntry(tag, QVariant(direction));
             break;
         }
-	case QuillMetadata::Tag_Regions: {
+    case QuillMetadata::Tag_Regions: {
 	    QuillMetadataRegionBag regions = entry.value<QuillMetadataRegionBag>();
 
 	    {
@@ -533,10 +537,9 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 		}
 #endif
 
+		// TODO: these (_xap) are required for compatibility with ExifTool 8.60, and should be removed
+		// when 8.61 is released and test data is updated.
 		if (hasEntry(Xmp::Tag_RegionAreaY_xap)) {
-
-		    // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
-		    // when 8.61 is released and test data is updated.
 
 		    // RegionAreaY
 		    xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionAreaY_xap);
@@ -581,6 +584,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 				region.areaF().width());
 
 		}
+
 		// Region name
 		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionName);
 		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
@@ -591,7 +595,20 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 		setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
 			    region.regionType());
 
+		// Region extension
+		// before we set extensions, we clear all extensions
+		xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionExtension);
+		xmp_delete_property(m_xmpPtr, xmpTag.schema.toAscii().constData(),
+				    xmpTag.getIndexedTag(nRegion).toAscii().constData());
+		//we check if there is really some content for traker contact extension
+
+		if(!region.extension().isEmpty()){
+		    xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionExtensionTrackerContact);
+		    setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(nRegion), xmpTag.tagType),
+				region.extension());
+		}
 	    }
+
 	    // Delete regions that aren't valid anymore
 	    xmpTag = m_regionXmpTags.value(Xmp::Tag_RegionListItem);
 	    while (hasEntry(Xmp::Tag_RegionListItem, nRegion)) {
@@ -603,8 +620,8 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 	    break;
 	}
     default:
-        setXmpEntry(tag, entry);
-        break;
+	setXmpEntry(tag, entry);
+	break;
     }
 }
 
@@ -679,17 +696,17 @@ void Xmp::setXmpEntry(XmpTag xmpTag, const QVariant &entry)
 void Xmp::removeEntry(QuillMetadata::Tag tag)
 {
     if (!supportsEntry(tag))
-        return;
+	return;
 
     if (!m_xmpPtr)
-        return;
+	return;
 
     QList<XmpTag> xmpTags = m_xmpTags.values(tag);
 
     foreach (XmpTag xmpTag, xmpTags) {
-        xmp_delete_property(m_xmpPtr,
-                            xmpTag.schema.toAscii().constData(),
-                            xmpTag.tag.toAscii().constData());
+	xmp_delete_property(m_xmpPtr,
+			    xmpTag.schema.toAscii().constData(),
+			    xmpTag.tag.toAscii().constData());
     }
 }
 
@@ -699,25 +716,25 @@ bool Xmp::write(const QString &fileName) const
     XmpPtr ptr = m_xmpPtr;
 
     if (!ptr)
-        ptr = xmp_new_empty();
+	ptr = xmp_new_empty();
 
     XmpFilePtr xmpFilePtr = xmp_files_open_new(fileName.toAscii().constData(),
-                                               XMP_OPEN_FORUPDATE);
+					       XMP_OPEN_FORUPDATE);
     bool result;
 
     if (xmp_files_can_put_xmp(xmpFilePtr, ptr))
-        result = xmp_files_put_xmp(xmpFilePtr, ptr);
+	result = xmp_files_put_xmp(xmpFilePtr, ptr);
     else
-        result = false;
+	result = false;
 
     // Crash safety can be ignored here by selecting Nooption since
     // QuillFile already has crash safety measures.
     if (result)
-        result = xmp_files_close(xmpFilePtr, XMP_CLOSE_NOOPTION);
+	result = xmp_files_close(xmpFilePtr, XMP_CLOSE_NOOPTION);
     xmp_files_free(xmpFilePtr);
 
     if (!m_xmpPtr)
-        xmp_free(ptr);
+	xmp_free(ptr);
 
     return result;
 }
@@ -725,7 +742,7 @@ bool Xmp::write(const QString &fileName) const
 void Xmp::initTags()
 {
     if (m_initialized)
-        return;
+	return;
 
     m_initialized = true;
 
@@ -776,53 +793,53 @@ void Xmp::initTags()
 
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
-                          XmpTag(NS_DC, "creator", XmpTag::TagTypeString));
+			  XmpTag(NS_DC, "creator", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Subject,
-                          XmpTag(NS_DC, "subject", XmpTag::TagTypeStringList));
+			  XmpTag(NS_DC, "subject", XmpTag::TagTypeStringList));
     m_xmpTags.insertMulti(QuillMetadata::Tag_City,
-                          XmpTag(NS_PHOTOSHOP, "City", XmpTag::TagTypeString));
+			  XmpTag(NS_PHOTOSHOP, "City", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Country,
-                          XmpTag(NS_PHOTOSHOP, "Country", XmpTag::TagTypeString));
+			  XmpTag(NS_PHOTOSHOP, "Country", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_City,
-                          XmpTag(NS_IPTC4XMP, "LocationShownCity", XmpTag::TagTypeString));
+			  XmpTag(NS_IPTC4XMP, "LocationShownCity", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Country,
-                          XmpTag(NS_IPTC4XMP, "LocationShownCountry", XmpTag::TagTypeString));
+			  XmpTag(NS_IPTC4XMP, "LocationShownCountry", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Location,
-                          XmpTag(NS_IPTC4XMP, "LocationShownSublocation", XmpTag::TagTypeString));
+			  XmpTag(NS_IPTC4XMP, "LocationShownSublocation", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Rating,
-                          XmpTag(NS_XAP, "Rating", XmpTag::TagTypeString));
+			  XmpTag(NS_XAP, "Rating", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Timestamp,
-                          XmpTag(NS_XAP, "MetadataDate", XmpTag::TagTypeString));
+			  XmpTag(NS_XAP, "MetadataDate", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Description,
-                          XmpTag(NS_DC, "description", XmpTag::TagTypeAltLang));
+			  XmpTag(NS_DC, "description", XmpTag::TagTypeAltLang));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Orientation,
-                          XmpTag(NS_EXIF, "Orientation", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "Orientation", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Orientation,
-                          XmpTag(NS_TIFF, "Orientation", XmpTag::TagTypeString));
+			  XmpTag(NS_TIFF, "Orientation", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Title,
-                          XmpTag(NS_DC, "title", XmpTag::TagTypeAltLang));
+			  XmpTag(NS_DC, "title", XmpTag::TagTypeAltLang));
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLatitude,
-                          XmpTag(NS_EXIF, "GPSLatitude", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "GPSLatitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLongitude,
-                          XmpTag(NS_EXIF, "GPSLongitude", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "GPSLongitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSAltitude,
-                          XmpTag(NS_EXIF, "GPSAltitude", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "GPSAltitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSAltitudeRef,
-                          XmpTag(NS_EXIF, "GPSAltitudeRef", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "GPSAltitudeRef", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSImgDirection,
-                          XmpTag(NS_EXIF, "GPSImgDirection", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "GPSImgDirection", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSImgDirectionRef,
-                          XmpTag(NS_EXIF, "GPSImgDirectionRef", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "GPSImgDirectionRef", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSVersionID,
-                          XmpTag(NS_EXIF, "GPSVersionID", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "GPSVersionID", XmpTag::TagTypeString));
 
     // Workaround for missing reference tags: we'll extract them from the
     // Latitude and Longitude tags
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLatitudeRef,
-                              XmpTag(NS_EXIF, "GPSLatitude", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "GPSLatitude", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_GPSLongitudeRef,
-                              XmpTag(NS_EXIF, "GPSLongitude", XmpTag::TagTypeString));
+			  XmpTag(NS_EXIF, "GPSLongitude", XmpTag::TagTypeString));
 
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Regions,
@@ -851,12 +868,24 @@ void Xmp::initTags()
 					"", "mwg-rs:Regions/mwg-rs:RegionList",
 					XmpTag::TagTypeArray));
 
-    QString baseTag(regionPrefix + "Regions/" + regionPrefix + "RegionList[");
+    QString baseTag(regionPrefix + "Regions/" + regionPrefix + "RegionList["); //e.g. "mwg-rs:Regions/mwg-rs:RegionList["
     m_regionXmpTags.insert(Xmp::Tag_RegionListItem,
 			   XmpRegionTag(regionSchema, baseTag, "]",
 					XmpTag::TagTypeStruct));
 
+
+    m_regionXmpTags.insert(Xmp::Tag_RegionExtensionTrackerContact,
+			   XmpRegionTag(regionSchema,
+					baseTag, QString("]/") + regionPrefix +
+					"Extensions/" + regionPrefix + "TrackerContact",
+					XmpTag::TagTypeString));
+
     regionPrefix = QString("]/") + regionPrefix;
+    m_regionXmpTags.insert(Xmp::Tag_RegionExtension,
+			   XmpRegionTag(regionSchema,
+					baseTag, "]/mwg-rs:Extensions",
+					XmpTag::TagTypeString));
+
     m_regionXmpTags.insert(Xmp::Tag_RegionName,
 			   XmpRegionTag(regionSchema, baseTag, regionPrefix + "Name",
 					XmpTag::TagTypeString));
@@ -868,6 +897,7 @@ void Xmp::initTags()
     m_regionXmpTags.insert(Xmp::Tag_RegionArea,
 			   XmpRegionTag(regionSchema, baseTag, regionPrefix + "Area",
 					XmpTag::TagTypeStruct));
+
 
     xmpAreaPrefix = regionPrefix + "Area/" + xmpAreaPrefix;
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaH,
@@ -885,6 +915,7 @@ void Xmp::initTags()
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaY,
 			   XmpRegionTag(regionSchema, baseTag, xmpAreaPrefix + "y",
 					XmpTag::TagTypeReal));
+
 
     // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
     // when 8.61 is released and test data is updated.
@@ -904,5 +935,6 @@ void Xmp::initTags()
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaY_xap,
 			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "y",
 					XmpTag::TagTypeReal));
+
 
 }

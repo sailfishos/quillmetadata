@@ -11,7 +11,6 @@
 
 /*** QuillMetadataRegionBag ***/
 class QuillMetadataRegion;
-class QuillMetadataRegionFloatingPoints;
 
 class QuillMetadataRegionBagPrivate: public QSharedData
 {
@@ -42,7 +41,6 @@ private:
 
 };
 
-
 /*** QuillMetadataRegion ***/
 
 class QuillMetadataRegionPrivate: public QSharedData
@@ -52,13 +50,15 @@ public:
     QuillMetadataRegionPrivate(){};
     QuillMetadataRegionPrivate(const QuillMetadataRegionPrivate& other)
 	:QSharedData(other),area(other.area),areaF(other.areaF),
-	 type(other.type),name(other.name)
-	{};
+         type(other.type),name(other.name),trackerContact(other.trackerContact)
+        {};
+
     ~QuillMetadataRegionPrivate(){};
-    QRect   area;
+    QRect  area;
     QRectF  areaF; // Used when reading and writing relative coordinates
     QString type;
     QString name;
+    QString trackerContact;
 };
 
 class QuillMetadataRegion
@@ -80,6 +80,9 @@ public:
     void setArea(const QRect & area);
     QRect area() const;
 
+    void setExtension(const QString& trackContact);
+    QString extension() const;
+
     QuillMetadataRegion & operator=(const QuillMetadataRegion &other);
 
     static const QLatin1String RegionType_Face;
@@ -93,6 +96,7 @@ private:
     void   setAreaF(const QRectF & area);
     QRectF areaF() const;
 };
+
 
 
 Q_DECLARE_METATYPE(QuillMetadataRegion);
