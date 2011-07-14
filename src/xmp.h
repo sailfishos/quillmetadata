@@ -144,13 +144,15 @@ class Xmp : public MetadataRepresentation
 
     void setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry);
 
-    void setXmpEntry(Xmp::Tag tag, const QVariant &entry);
+    void setXmpEntry(Xmp::Tag tag, const QVariant &entry, int zeroBasedIndex = 0);
 
     void setXmpEntry(XmpTag xmpTag, const QVariant &entry);
 
     bool hasEntry(Xmp::Tag tag, int zeroBasedIndex = 0) const;
 
     bool hasEntry(QuillMetadata::Tag tag) const;
+
+    void removeEntry(Xmp::Tag tag, int zeroBasedIndex);
 
     void readRegionListItem(const QString & qPropValue,
 			    const QString & qPropName,
