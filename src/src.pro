@@ -36,16 +36,18 @@ HEADERS += quillmetadata.h \
            xmp.h \
            exif.h \
            exifwriteback.h \
-    quillmetadataregions.h
+           quillmetadataregions.h
 
 SOURCES += quillmetadata.cpp \
            xmp.cpp \
            exif.cpp \
            exifwriteback.cpp \
-    quillmetadataregions.cpp
+           quillmetadataregions.cpp
 
 INSTALL_HEADERS = QuillMetadata \
                   quillmetadata.h \
+                  QuillMetadataRegion \
+                  quillmetadataregions.h
 
 # --- install
 headers.files = $$INSTALL_HEADERS
