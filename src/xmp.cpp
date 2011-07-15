@@ -44,7 +44,7 @@
 #include <math.h>
 
 #include "xmp.h"
-#include "quillmetadataregions.h"
+#include "quillmetadataregionlist.h"
 
 #include <QDebug>
 
@@ -151,7 +151,7 @@ QString Xmp::processXmpString(XmpStringPtr xmpString)
 
 void Xmp::readRegionListItem(const QString & qPropValue,
 			     const QString & qPropName,
-			     QuillMetadataRegionBag & regions) const
+			     QuillMetadataRegionList & regions) const
 {
     QString searchString("mwg-rs:RegionList");
     QRegExp rx("(" + searchString + ".)(\\d+).");
@@ -208,7 +208,7 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 
 	} else if (qPropName.contains("mwg-rs:Type")) {
 
-	    region.setRegionType(qPropValue);
+	    region.setType(qPropValue);
 
 	} else if (qPropName.contains("mwg-rs:Extensions")) {
 
@@ -275,7 +275,7 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		XmpStringPtr propValue = xmp_string_new();
 
 		uint32_t options;
-		QuillMetadataRegionBag regions;
+		QuillMetadataRegionList regions;
 
 		bool bSuccess = xmp_iterator_next(
 			xmpIterPtr, schema, propName,
@@ -473,7 +473,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
             break;
         }
     case QuillMetadata::Tag_Regions: {
-	    QuillMetadataRegionBag regions = entry.value<QuillMetadataRegionBag>();
+	    QuillMetadataRegionList regions = entry.value<QuillMetadataRegionList>();
 
 	    {
 		XmpTag xmpTag = m_xmpTags.value(QuillMetadata::Tag_Regions);
@@ -555,7 +555,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 			    region.name());
 		// Region type
 		setXmpEntry(Xmp::Tag_RegionType, nRegion,
-			    region.regionType());
+			    region.type());
 
 		// Region extension
 		// before we set extensions, we clear all extensions

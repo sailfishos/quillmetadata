@@ -7,6 +7,7 @@ INCLUDEPATH += .
 CONFIG += ordered
 
 SUBDIRS += ut_metadata \
+	    ut_regions
 
 
 # --- install

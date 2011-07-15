@@ -158,7 +158,7 @@ class Xmp : public MetadataRepresentation
 
     void readRegionListItem(const QString & qPropValue,
 			    const QString & qPropName,
-			    QuillMetadataRegionBag & regions) const;
+			    QuillMetadataRegionList & regions) const;
 
     static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
     static QHash<Xmp::Tag,XmpRegionTag> m_regionXmpTags;

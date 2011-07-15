@@ -42,7 +42,7 @@
 
 #include <QString>
 #include <QVariant>
-#include "quillmetadataregions.h"
+#include "quillmetadataregionlist.h"
 
 class QuillMetadataPrivate;
 

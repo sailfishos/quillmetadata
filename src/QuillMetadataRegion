@@ -1,1 +1,2 @@
-#include "quillmetadataregions.h"
+#include "quillmetadataregion.h"
+#include "quillmetadataregionlist.h"
