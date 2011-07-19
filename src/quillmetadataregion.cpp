@@ -1,10 +1,7 @@
 #include "quillmetadataregion.h"
+#include <QVariant>
 #include <QDebug>
 #include <QtCore/qmath.h>
-
-
-/*** QuillMeatadataRegion ***/
-
 
 class QuillMetadataRegionPrivate: public QSharedData
 
@@ -13,7 +10,7 @@ public:
     QuillMetadataRegionPrivate(){};
     QuillMetadataRegionPrivate(const QuillMetadataRegionPrivate& other)
 	:QSharedData(other),area(other.area),areaF(other.areaF),
-	type(other.type),name(other.name),trackerContact(other.trackerContact)
+	type(other.type),name(other.name),extensions(other.extensions)
     {};
 
     ~QuillMetadataRegionPrivate(){};
@@ -21,7 +18,7 @@ public:
     QRectF  areaF; // Used when reading and writing relative coordinates
     QString type;
     QString name;
-    QString trackerContact;
+    QMap<QString, QVariant> extensions;
 };
 
 const QLatin1String QuillMetadataRegion::RegionType_Face    ("Face");
@@ -72,14 +69,30 @@ QString QuillMetadataRegion::name() const
     return d->name;
 }
 
-void QuillMetadataRegion::setExtension(const QString& extensionValue)
+void QuillMetadataRegion::setExtension(const QString& value)
 {
-    d->trackerContact = extensionValue;
+    Q_UNUSED(value);
 }
 
 QString QuillMetadataRegion::extension() const
 {
-    return d->trackerContact;
+    return QString();
+}
+
+void QuillMetadataRegion::setExtension(const QString& tag,
+                                       const QVariant &value)
+{
+    d->extensions.insert(tag, value);
+}
+
+QVariant QuillMetadataRegion::extension(const QString& tag) const
+{
+    return d->extensions.value(tag);
+}
+
+QList<QString> QuillMetadataRegion::listExtensionTags() const
+{
+    return d->extensions.keys();
 }
 
 QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &other)

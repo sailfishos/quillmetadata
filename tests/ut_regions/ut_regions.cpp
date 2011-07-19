@@ -74,7 +74,7 @@ void ut_regions::init()
 
 void ut_regions::cleanup()
 {
-    delete metadata;
+    //    delete metadata;
 #ifndef NAMESPACE_REGISTRATION_TEST
 
     delete region;
@@ -131,7 +131,7 @@ void ut_regions::testEditRegions()
 
     bag[0].setName(QString("This is foo name"));
     bag[0].setType(QString("Pet"));
-    bag[0].setExtension(QString("trackerContact"));
+    bag[0].setExtension("dc:Creator", "Donald Duck");
     QRect area;
     area.setWidth(1);
     area.setHeight(2);
@@ -157,7 +157,7 @@ void ut_regions::testEditRegions()
     QCOMPARE(bag1.count(), 2);
     QCOMPARE(bag1[0].name(), QString("This is foo name"));
     QCOMPARE(bag1[0].type(), QString("Pet"));
-    QCOMPARE(bag1[0].extension(), QString("trackerContact"));
+    QCOMPARE(bag1[0].extension("dc:Creator"), QVariant("Donald Duck"));
     {
 	QRect area = bag1[0].area();
 	QCOMPARE(area.width(),	    1);
@@ -187,9 +187,9 @@ void ut_regions::testRegion()
     QRect rect1 = region.area();
     QCOMPARE(rect,rect1);
 
-    QString extension("trackContact");
-    region.setExtension(extension);
-    QString extension1 = region.extension();
+    QString extension("Donald Duck");
+    region.setExtension("dc:Creator", extension);
+    QString extension1 = region.extension("dc:Creator").toString();
     QCOMPARE(extension,extension1);
 }
 
@@ -395,6 +395,16 @@ void ut_regions::testCreateRegionBag()
 	MYQCOMPARE(area.width(),    30);
 	MYQCOMPARE(area.height(),   40);
     }
+}
+
+void ut_regions::testReadExtension()
+{
+    QVariant data = region->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data.canConvert<QuillMetadataRegionList>());
+    QuillMetadataRegionList regs = data.value<QuillMetadataRegionList>();
+    QCOMPARE(regs.count(), 2);
+    QCOMPARE(regs[0].extension("xmpRights:UsageTerms"),
+             QVariant("copyright Phil Harvey"));
 }
 
 int main ( int argc, char *argv[] ){

@@ -50,7 +50,8 @@ INSTALL_HEADERS = QuillMetadata \
                   quillmetadata.h \
                   QuillMetadataRegion \
 		  quillmetadataregion.h \
-		  quillmetadataregionList.h
+                  QuillMetadataRegionList \
+		  quillmetadataregionlist.h
 
 # --- install
 headers.files = $$INSTALL_HEADERS

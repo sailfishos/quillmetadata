@@ -30,8 +30,11 @@ public:
     void setArea(const QRect & area);
     QRect area() const;
 
-    void setExtension(const QString& trackContact);
+    void setExtension(const QString &value);
     QString extension() const;
+
+    void setExtension(const QString &xmpTag, const QVariant &value);
+    QVariant extension(const QString &xmpTag) const;
 
     QuillMetadataRegion & operator=(const QuillMetadataRegion &other);
 
@@ -45,6 +48,8 @@ private:
 
     void   setAreaF(const QRectF & area);
     QRectF areaF() const;
+
+    QList<QString> listExtensionTags() const;
 };
 
 

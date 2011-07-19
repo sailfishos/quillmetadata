@@ -66,6 +66,7 @@ private slots:
     void testRegionAssignment();
     void testRegionBagAssignment();
     void testRegionBagRemoveRegion();
+    void testReadExtension();
 
 private:
     QImage sourceImage;

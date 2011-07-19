@@ -46,8 +46,6 @@
 #include "xmp.h"
 #include "quillmetadataregionlist.h"
 
-#include <QDebug>
-
 QHash<QuillMetadata::Tag,XmpTag> Xmp::m_xmpTags;
 QHash<Xmp::Tag,XmpRegionTag> Xmp::m_regionXmpTags;
 
@@ -212,9 +210,15 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 
 	} else if (qPropName.contains("mwg-rs:Extensions")) {
 
-	    if(qPropName.contains("mwg-rs:TrackerContact"))
-		region.setExtension(qPropValue);
+            if (!qPropValue.isEmpty()) {
+                QString tag = qPropName.mid(qPropName.indexOf("mwg-rs:Extensions") + 18);
+                if (!tag.isNull())
+                    tag = tag.split("[").first();
 
+                if (!tag.isEmpty()) {
+                    region.setExtension(tag, qPropValue);
+                }
+            }
 	}
     }
     regions[nRegionNumber-1] = region;
@@ -285,7 +289,6 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		{
 		    QString qPropValue	= processXmpString(propValue);
 		    QString qPropName	= processXmpString(propName);
-		    //qDebug() << qPropName << qPropValue;
 
 		    if (qPropName.contains("mwg-rs:AppliedToDimensions")) {
 
@@ -508,10 +511,10 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 	    for (nRegion = 0; nRegion < regions.count(); nRegion++) {
 
 		if (!hasEntry(Xmp::Tag_RegionListItem, nRegion)) {
-		    setXmpEntry(Xmp::Tag_RegionListItem, nRegion, "");
+		    setXmpEntry(Xmp::Tag_RegionListItem, nRegion, "", "");
 		}
 		if (!hasEntry(Xmp::Tag_RegionArea, nRegion)) {
-		    setXmpEntry(Xmp::Tag_RegionArea, nRegion, "");
+		    setXmpEntry(Xmp::Tag_RegionArea, nRegion, "", "");
 		}
 
 		QuillMetadataRegion region = regions[nRegion];
@@ -521,50 +524,50 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 		if (hasEntry(Xmp::Tag_RegionAreaY_xap)) {
 
 		    // RegionAreaY
-		    setXmpEntry(Xmp::Tag_RegionAreaY_xap, nRegion,
+		    setXmpEntry(Xmp::Tag_RegionAreaY_xap, nRegion, "",
 				region.areaF().center().y());
 		    // RegionAreaX,
-		    setXmpEntry(Xmp::Tag_RegionAreaX_xap, nRegion,
+		    setXmpEntry(Xmp::Tag_RegionAreaX_xap, nRegion, "",
 				region.areaF().center().x());
 		    // RegionAreaH
-		    setXmpEntry(Xmp::Tag_RegionAreaH_xap, nRegion,
+		    setXmpEntry(Xmp::Tag_RegionAreaH_xap, nRegion, "",
 				region.areaF().height());
 		    // RegionAreaW
-		    setXmpEntry(Xmp::Tag_RegionAreaW_xap, nRegion,
+		    setXmpEntry(Xmp::Tag_RegionAreaW_xap, nRegion, "",
 				region.areaF().width());
 
 		} else {
 
 		    // RegionAreaX,
-		    setXmpEntry(Xmp::Tag_RegionAreaX, nRegion,
+		    setXmpEntry(Xmp::Tag_RegionAreaX, nRegion, "",
 				region.areaF().center().x());
 		    // RegionAreaY
-		    setXmpEntry(Xmp::Tag_RegionAreaY, nRegion,
+		    setXmpEntry(Xmp::Tag_RegionAreaY, nRegion, "",
 				region.areaF().center().y());
 		    // RegionAreaH
-		    setXmpEntry(Xmp::Tag_RegionAreaH, nRegion,
+		    setXmpEntry(Xmp::Tag_RegionAreaH, nRegion, "",
 				region.areaF().height());
 		    // RegionAreaW
-		    setXmpEntry(Xmp::Tag_RegionAreaW, nRegion,
+		    setXmpEntry(Xmp::Tag_RegionAreaW, nRegion, "",
 				region.areaF().width());
 
 		}
 
 		// Region name
-		setXmpEntry(Xmp::Tag_RegionName, nRegion,
+		setXmpEntry(Xmp::Tag_RegionName, nRegion, "",
 			    region.name());
 		// Region type
-		setXmpEntry(Xmp::Tag_RegionType, nRegion,
+		setXmpEntry(Xmp::Tag_RegionType, nRegion, "",
 			    region.type());
 
 		// Region extension
 		// before we set extensions, we clear all extensions
-		this->removeEntry(Xmp::Tag_RegionExtension, nRegion);
+		// this->removeEntry(Xmp::Tag_RegionExtension, nRegion);
 
-		//we check if there is really some content for traker contact extension
-		if(!region.extension().isEmpty()){
-		    setXmpEntry(Xmp::Tag_RegionExtensionTrackerContact, nRegion,
-				region.extension());
+                foreach(QString tag, region.listExtensionTags())
+                    if(!region.extension(tag).isNull()) {
+                        setXmpEntry(Xmp::Tag_RegionExtension, nRegion,
+                                    tag, region.extension(tag));
 		}
 	    }
 
@@ -592,13 +595,17 @@ void Xmp::setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 void Xmp::setXmpEntry(Xmp::Tag tag, const QVariant &entry)
 {
-    setXmpEntry(tag, 0, entry);
+    setXmpEntry(tag, 0, "", entry);
 }
 
-void Xmp::setXmpEntry(Xmp::Tag tag, int zeroBasedIndex, const QVariant &entry)
+void Xmp::setXmpEntry(Xmp::Tag tag, int zeroBasedIndex,
+                      const QString &suffix, const QVariant &entry)
 {
     XmpRegionTag xmpTag = m_regionXmpTags.value(tag);
-    setXmpEntry(XmpTag(xmpTag.schema, xmpTag.getIndexedTag(zeroBasedIndex), xmpTag.tagType), entry);
+    QString fullTag = xmpTag.getIndexedTag(zeroBasedIndex);
+    if (!suffix.isEmpty())
+        fullTag += "/" + suffix;
+    setXmpEntry(XmpTag(xmpTag.schema, fullTag, xmpTag.tagType), entry);
 }
 
 void Xmp::setXmpEntry(XmpTag xmpTag, const QVariant &entry)
@@ -762,7 +769,6 @@ void Xmp::initTags()
 	} else
 	    qDebug() << "Namespace registration failed";
     }
-
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
 			  XmpTag(NS_DC, "creator", XmpTag::TagTypeString));
