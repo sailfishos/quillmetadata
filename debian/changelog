@@ -1,3 +1,9 @@
+libquillmetadata (1.110722.0) unstable; urgency=low
+
+  * Updated copyright years and contact person.
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Fri, 22 Jul 2011 13:33:30 +0300
+
 libquillmetadata (1.110630.0) unstable; urgency=low
 
   * Fixes: NB#224813 - Source packages still generating -docs packages for arm targets
