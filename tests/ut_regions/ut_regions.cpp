@@ -1,10 +1,9 @@
-
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Alexander Bokovoy <alexander.bokovoy@nokia.com>
+** Copyright (C) 2009-11 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Pekka Marjola <pekka.marjola@nokia.com>
 **
-** This file is part of the Quill package.
+** This file is part of the Quill Metadata package.
 **
 ** Commercial Usage
 ** Licensees holding valid Qt Commercial licenses may use this file in
@@ -405,6 +404,15 @@ void ut_regions::testReadExtension()
     QCOMPARE(regs.count(), 2);
     QCOMPARE(regs[0].extension("xmpRights:UsageTerms"),
              QVariant("copyright Phil Harvey"));
+}
+
+void ut_regions::testImplicitSharing()
+{
+    QuillMetadataRegion region;
+    region.setName("Title");
+    QuillMetadataRegion region2 = region;
+    region2.setName("Title 2");
+    QCOMPARE(region.name(), QString("Title"));
 }
 
 int main ( int argc, char *argv[] ){

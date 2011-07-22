@@ -40,6 +40,7 @@
 #include <QStringList>
 #include <QLocale>
 #include <QTextStream>
+#include <QDebug>
 #include <exempi-2.0/exempi/xmpconsts.h>
 #include <math.h>
 

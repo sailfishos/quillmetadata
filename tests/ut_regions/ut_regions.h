@@ -1,12 +1,9 @@
-#ifndef UT_REGIONS_H
-#define UT_REGIONS_H
-
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
-** Contact: Alexander Bokovoy <alexander.bokovoy@nokia.com>
+** Copyright (C) 2009-11 Nokia Corporation and/or its subsidiary(-ies).
+** Contact: Pekka Marjola <pekka.marjola@nokia.com>
 **
-** This file is part of the Quill package.
+** This file is part of the Quill Metadata package.
 **
 ** Commercial Usage
 ** Licensees holding valid Qt Commercial licenses may use this file in
@@ -40,6 +37,9 @@
 **
 ****************************************************************************/
 
+#ifndef UT_REGIONS_H
+#define UT_REGIONS_H
+
 #include <QObject>
 #include <QImage>
 
@@ -67,6 +67,7 @@ private slots:
     void testRegionBagAssignment();
     void testRegionBagRemoveRegion();
     void testReadExtension();
+    void testImplicitSharing();
 
 private:
     QImage sourceImage;
