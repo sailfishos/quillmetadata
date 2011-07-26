@@ -90,7 +90,6 @@ QVERIFY2(abs(((int)(x/FUZZYACC+.5)) -\
 
 void ut_regions::testReadRegions()
 {
-
     QVariant data = region->entry(QuillMetadata::Tag_Regions);
     QVERIFY(data.canConvert<QuillMetadataRegionList>());
     QuillMetadataRegionList regs = data.value<QuillMetadataRegionList>();
@@ -122,7 +121,6 @@ void ut_regions::testReadRegions()
 
 void ut_regions::testEditRegions()
 {
-
     QVERIFY(region->isValid());
     QVariant data = region->entry(QuillMetadata::Tag_Regions);
     QVERIFY(data.canConvert<QuillMetadataRegionList>());
@@ -141,13 +139,11 @@ void ut_regions::testEditRegions()
     entry.setValue(bag);
     region->setEntry(QuillMetadata::Tag_Regions,entry);
 
-
     QTemporaryFile file;
     file.open();
     sourceImage.save(file.fileName(), "jpg");
 
     region->write(file.fileName());
-
 
     QuillMetadata *region1 = new QuillMetadata(file.fileName());
     QVariant data1 = region1->entry(QuillMetadata::Tag_Regions);
@@ -166,7 +162,6 @@ void ut_regions::testEditRegions()
     }
 
     delete region1;
-
 }
 
 void ut_regions::testRegion()
@@ -414,6 +409,36 @@ void ut_regions::testImplicitSharing()
     region2.setName("Title 2");
     QCOMPARE(region.name(), QString("Title"));
 }
+
+void ut_regions::testNcoRegions()
+{
+    QVERIFY(region->isValid());
+    QVariant data = region->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data.canConvert<QuillMetadataRegionList>());
+    QuillMetadataRegionList bag = data.value<QuillMetadataRegionList>();
+
+    bag[0].setExtension("nco:PersonContact", "Donald Duck");
+
+    QVariant entry;
+    entry.setValue(bag);
+    region->setEntry(QuillMetadata::Tag_Regions,entry);
+
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+
+    region->write(file.fileName());
+
+    QuillMetadata *region1 = new QuillMetadata(file.fileName());
+    QVariant data1 = region1->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data1.canConvert<QuillMetadataRegionList>());
+    QuillMetadataRegionList bag1 = data1.value<QuillMetadataRegionList>();
+    QCOMPARE(bag1.count(), 2);
+    QCOMPARE(bag1[0].extension("nco:PersonContact"), QVariant("Donald Duck"));
+
+    delete region1;
+}
+
 
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );

@@ -68,6 +68,7 @@ private slots:
     void testRegionBagRemoveRegion();
     void testReadExtension();
     void testImplicitSharing();
+    void testNcoRegions();
 
 private:
     QImage sourceImage;

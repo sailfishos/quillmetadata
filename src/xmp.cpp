@@ -755,6 +755,20 @@ void Xmp::initTags()
 	    qDebug() << "Namespace registration failed";
     }
 
+    QString ncoPrefix("nco:");
+    {
+	const char ncoNamespace[] = "http://www.semanticdesktop.org/ontologies/2007/03/22/nco#";
+	XmpStringPtr registeredPrefix = xmp_string_new();
+	bool bOk = xmp_register_namespace(ncoNamespace,
+					  ncoPrefix.toAscii().constData(),
+					  registeredPrefix);
+	if (bOk) {
+	    ncoPrefix = processXmpString(registeredPrefix);
+	    qDebug() << "Registered prefix:" << ncoPrefix;
+	} else
+	    qDebug() << "Namespace registration failed";
+    }
+
     // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
     // when 8.61 is released and test data is updated.
     QString xapAreaPrefix("stArea_xap:");
