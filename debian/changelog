@@ -1,3 +1,9 @@
+libquillmetadata (1.110727.0) unstable; urgency=low
+
+  * Removed double entry from fixes in 1.110630.0.
+
+  -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Wed, 27 Jul 2011 12:53:30 +0300
+
 libquillmetadata (1.110722.0) unstable; urgency=low
 
   * Updated copyright years and contact person.
@@ -5,8 +11,6 @@ libquillmetadata (1.110722.0) unstable; urgency=low
  -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Fri, 22 Jul 2011 13:33:30 +0300
 
 libquillmetadata (1.110630.0) unstable; urgency=low
-
-  * Fixes: NB#224813 - Source packages still generating -docs packages for arm targets
 
  -- Wenpeng Zhou <ext-Wenpeng.2.Zhou@nokia.com>  Thu, 30 Jun 2011 11:00:00 +0200
 
