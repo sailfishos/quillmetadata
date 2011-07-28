@@ -90,7 +90,7 @@ Xmp::Xmp()
 Xmp::Xmp(const QString &fileName)
 {
     xmp_init();
-    XmpFilePtr xmpFilePtr = xmp_files_open_new(fileName.toAscii().constData(),
+    XmpFilePtr xmpFilePtr = xmp_files_open_new(fileName.toLocal8Bit().constData(),
                                                XMP_OPEN_READ);
     m_xmpPtr = xmp_files_get_new_xmp(xmpFilePtr);
     xmp_files_close(xmpFilePtr, XMP_CLOSE_NOOPTION);
@@ -699,8 +699,8 @@ bool Xmp::write(const QString &fileName) const
     if (!ptr)
 	ptr = xmp_new_empty();
 
-    XmpFilePtr xmpFilePtr = xmp_files_open_new(fileName.toAscii().constData(),
-					       XMP_OPEN_FORUPDATE);
+    XmpFilePtr xmpFilePtr = xmp_files_open_new(fileName.toLocal8Bit().constData(),
+                                               XMP_OPEN_FORUPDATE);
     bool result;
 
     if (xmp_files_can_put_xmp(xmpFilePtr, ptr))

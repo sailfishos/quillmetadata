@@ -125,7 +125,7 @@ Exif::Exif(const QString &fileName, QuillMetadata::Tag tagToRead)
     initTags();
 
     ExifLoader *loader = exif_loader_new();
-    exif_loader_write_file(loader, fileName.toAscii().constData());
+    exif_loader_write_file(loader, fileName.toLocal8Bit().constData());
 
     const unsigned char *buf = 0;
     unsigned int bufSize = 0;
