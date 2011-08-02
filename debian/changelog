@@ -1,8 +1,14 @@
+libquillmetadata (1.110802.0) unstable; urgency=low
+
+  * Removed extra space in debian/changelog which was making build tools fail.
+
+ -- Adrian Perez <aperez@igalia.com>  Tue, 02 Aug 2011 16:03:01 +0300
+
 libquillmetadata (1.110727.0) unstable; urgency=low
 
   * Removed double entry from fixes in 1.110630.0.
 
-  -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Wed, 27 Jul 2011 12:53:30 +0300
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Wed, 27 Jul 2011 12:53:30 +0300
 
 libquillmetadata (1.110722.0) unstable; urgency=low
 
