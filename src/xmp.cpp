@@ -736,6 +736,7 @@ void Xmp::initTags()
 					 regionPrefix.toAscii().constData(),
 					 registeredPrefix);
 	regionPrefix = processXmpString(registeredPrefix);
+	xmp_string_free(registeredPrefix);
     }
 
     QString xmpAreaPrefix("stArea:");
@@ -746,6 +747,7 @@ void Xmp::initTags()
 					  xmpAreaPrefix.toAscii().constData(),
 					  registeredPrefix);
 	xmpAreaPrefix = processXmpString(registeredPrefix);
+	xmp_string_free(registeredPrefix);
     }
 
     QString ncoPrefix("nco:");
@@ -756,6 +758,7 @@ void Xmp::initTags()
 					  ncoPrefix.toAscii().constData(),
 					  registeredPrefix);
 	ncoPrefix = processXmpString(registeredPrefix);
+	xmp_string_free(registeredPrefix);
     }
 
     // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
@@ -771,6 +774,7 @@ void Xmp::initTags()
 			       xapAreaPrefix.toAscii().constData(),
 			       registeredPrefix);
 	xapAreaPrefix = processXmpString(registeredPrefix);
+	xmp_string_free(registeredPrefix);
     }
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
