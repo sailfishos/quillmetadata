@@ -61,7 +61,7 @@ void ut_regions::cleanupTestCase()
 }
 
 // To test namespace registration, define NAMESPACE_REGISTRATION_TEST and run "testCreateRegionBag"
-//#define NAMESPACE_REGISTRATION_TEST
+ //#define NAMESPACE_REGISTRATION_TEST
 
 void ut_regions::init()
 {
@@ -73,7 +73,7 @@ void ut_regions::init()
 
 void ut_regions::cleanup()
 {
-    //    delete metadata;
+    // delete metadata;
 #ifndef NAMESPACE_REGISTRATION_TEST
 
     delete region;
@@ -248,7 +248,6 @@ void ut_regions::testRegionBagAppend()
     regs.append(regs[0]);
     regs[2].setName("appended region");
 
-
     QVariant entry;
     entry.setValue(regs);
     region->setEntry(QuillMetadata::Tag_Regions,entry);
@@ -262,7 +261,6 @@ void ut_regions::testRegionBagAppend()
     QVERIFY(data1.canConvert<QuillMetadataRegionList>());
 
     QuillMetadataRegionList regs1 = data1.value<QuillMetadataRegionList>();
-
 
     QCOMPARE(regs1.count(), 3);
     QCOMPARE(regs.fullImageSize().width(),  4288);

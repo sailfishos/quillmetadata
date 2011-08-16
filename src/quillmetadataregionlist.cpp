@@ -39,7 +39,6 @@
 ****************************************************************************/
 
 #include "quillmetadataregionlist.h"
-#include <QDebug>
 #include <QtCore/qmath.h>
 
 class QuillMetadataRegionListPrivate: public QSharedData

@@ -40,10 +40,8 @@
 #include <QStringList>
 #include <QLocale>
 #include <QTextStream>
-#include <QDebug>
 #include <exempi-2.0/exempi/xmpconsts.h>
 #include <math.h>
-
 #include "xmp.h"
 #include "quillmetadataregionlist.h"
 
@@ -81,8 +79,6 @@ QString XmpRegionTag::getIndexedTag(int zeroBasedIndex)
     else
 	return baseTag + QString("%1").arg(zeroBasedIndex+1) + tag;
 }
-
-
 
 Xmp::Xmp()
 {
@@ -152,7 +148,7 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 			     const QString & qPropName,
 			     QuillMetadataRegionList & regions) const
 {
-    QString searchString("mwg-rs:RegionList");
+    QString searchString(m_regionXmpTags.value(Tag_RegionList).tag);
     QRegExp rx("(" + searchString + ".)(\\d+).");
     rx.indexIn(qPropName);
 
@@ -176,43 +172,48 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 
     QuillMetadataRegion region = regions[nRegionNumber-1];
     {
-	if (qPropName.contains("mwg-rs:Area")) {
+	if (qPropName.contains(m_regionXmpTags.value(Tag_RegionArea).tag)) {
 
 	    QRectF area = region.areaF();
 
 	    // TODO: these (_xap) are required for compatibility with ExifTool 8.60, and should be removed
 	    // when 8.61 is released and test data is updated.
 
-	    if (qPropName.contains("stArea:h") || qPropName.contains("stArea_xap:h")) {
+	    if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaH).tag) ||
+		qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaH_xap).tag)) {
 		QPointF center = area.center();
 		area.setHeight(qPropValue.toFloat());
 		area.moveCenter(center);
-	    } else if (qPropName.contains("stArea:w") || qPropName.contains("stArea_xap:w")) {
+	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaW).tag) ||
+		       qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaW_xap).tag)) {
 		QPointF center = area.center();
 		area.setWidth(qPropValue.toFloat());
 		area.moveCenter(center);
-	    } else if (qPropName.contains("stArea:x") || qPropName.contains("stArea_xap:x")) {
+	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaX).tag) ||
+		       qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaX_xap).tag)) {
 		area.moveCenter(
 			QPointF(qPropValue.toFloat(), area.center().y()));
-	    } else if (qPropName.contains("stArea:y") || qPropName.contains("stArea_xap:y")) {
+	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaY).tag) ||
+		       qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaY_xap).tag)) {
 		area.moveCenter(
 			QPointF(area.center().x(), qPropValue.toFloat()));
 	    }
 
 	    region.setAreaF(area);
 
-	} else if (qPropName.contains("mwg-rs:Name")) {
+	} else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionName).tag)) {
 
 	    region.setName(qPropValue);
 
-	} else if (qPropName.contains("mwg-rs:Type")) {
+	} else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionType).tag)) {
 
 	    region.setType(qPropValue);
 
-	} else if (qPropName.contains("mwg-rs:Extensions")) {
+	} else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionExtension).tag)) {
 
             if (!qPropValue.isEmpty()) {
-                QString tag = qPropName.mid(qPropName.indexOf("mwg-rs:Extensions") + 18);
+		QString tagName = m_regionXmpTags.value(Tag_RegionExtension).tag;
+		QString tag = qPropName.mid(qPropName.indexOf(tagName) + tagName.length() + 1);
                 if (!tag.isNull())
                     tag = tag.split("[").first();
 
@@ -291,19 +292,19 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 		    QString qPropValue	= processXmpString(propValue);
 		    QString qPropName	= processXmpString(propName);
 
-		    if (qPropName.contains("mwg-rs:AppliedToDimensions")) {
+		    if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAppliedToDimensions).tag)) {
 
-			if (qPropName.contains("stDim:h")) {
+			if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAppliedToDimensionsH).tag)) {
 			    regions.setFullImageSize(
 				    QSize(regions.fullImageSize().width(), qPropValue.toInt()));
-			} else if (qPropName.contains("stDim:w")) {
+			} else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAppliedToDimensionsW).tag)) {
 			    regions.setFullImageSize(
 				    QSize(qPropValue.toInt(), regions.fullImageSize().height()));
 			}
 
 		    }
 
-		    else if (qPropName.contains("mwg-rs:RegionList")) {
+		    else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionList).tag)) {
 
 			this->readRegionListItem(qPropValue, qPropName, regions);
 
@@ -731,58 +732,45 @@ void Xmp::initTags()
     {
 
 	XmpStringPtr registeredPrefix = xmp_string_new();
-	bool bOk = xmp_register_namespace(regionSchema,
-					  regionPrefix.toAscii().constData(),
-					  registeredPrefix);
-	if (bOk) {
-	    regionPrefix = processXmpString(registeredPrefix);
-	    qDebug() << "Registered prefix:" << regionPrefix;
-	} else
-	    qDebug() << "Namespace registration failed";
+	xmp_register_namespace(regionSchema,
+					 regionPrefix.toAscii().constData(),
+					 registeredPrefix);
+	regionPrefix = processXmpString(registeredPrefix);
     }
 
     QString xmpAreaPrefix("stArea:");
     {
 	const char areaNamespace[] = "http://ns.adobe.com/xmp/sType/Area#";
 	XmpStringPtr registeredPrefix = xmp_string_new();
-	bool bOk = xmp_register_namespace(areaNamespace,
+	xmp_register_namespace(areaNamespace,
 					  xmpAreaPrefix.toAscii().constData(),
 					  registeredPrefix);
-	if (bOk) {
-	    xmpAreaPrefix = processXmpString(registeredPrefix);
-	    qDebug() << "Registered prefix:" << xmpAreaPrefix;
-	} else
-	    qDebug() << "Namespace registration failed";
+	xmpAreaPrefix = processXmpString(registeredPrefix);
     }
 
     QString ncoPrefix("nco:");
     {
 	const char ncoNamespace[] = "http://www.semanticdesktop.org/ontologies/2007/03/22/nco#";
 	XmpStringPtr registeredPrefix = xmp_string_new();
-	bool bOk = xmp_register_namespace(ncoNamespace,
+	xmp_register_namespace(ncoNamespace,
 					  ncoPrefix.toAscii().constData(),
 					  registeredPrefix);
-	if (bOk) {
-	    ncoPrefix = processXmpString(registeredPrefix);
-	    qDebug() << "Registered prefix:" << ncoPrefix;
-	} else
-	    qDebug() << "Namespace registration failed";
+	ncoPrefix = processXmpString(registeredPrefix);
     }
 
     // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
     // when 8.61 is released and test data is updated.
-    QString xapAreaPrefix("stArea_xap:");
+    QString xapAreaPrefix("stArea:");
+    // xmp library will automatically replace this with with
+    // "stArea_1_:", as stArea is already registered.
+
     {
 	const char areaNamespace[] = "http://ns.adobe.com/xap/1.0/sType/Area#";
 	XmpStringPtr registeredPrefix = xmp_string_new();
-	bool bOk = xmp_register_namespace(areaNamespace,
-					  xapAreaPrefix.toAscii().constData(),
-					  registeredPrefix);
-	if (bOk) {
-	    xapAreaPrefix = processXmpString(registeredPrefix);
-	    qDebug() << "Registered prefix:" << xapAreaPrefix;
-	} else
-	    qDebug() << "Namespace registration failed";
+	xmp_register_namespace(areaNamespace,
+			       xapAreaPrefix.toAscii().constData(),
+			       registeredPrefix);
+	xapAreaPrefix = processXmpString(registeredPrefix);
     }
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
@@ -837,31 +825,32 @@ void Xmp::initTags()
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Regions,
 			  XmpTag(regionSchema,
-				 "mwg-rs:Regions", XmpTag::TagTypeStruct));
+				 regionPrefix + "Regions", XmpTag::TagTypeStruct));
 
     /***/
 
+    QString regionsBaseTag(regionPrefix + "Regions/" + regionPrefix); //e.g. "mwg-rs:Regions/mwg-rs:
     m_regionXmpTags.insert(Xmp::Tag_RegionAppliedToDimensions,
 			   XmpRegionTag(regionSchema,
-					"", "mwg-rs:Regions/mwg-rs:AppliedToDimensions",
+					"", regionsBaseTag + "AppliedToDimensions",
 					XmpTag::TagTypeStruct));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionAppliedToDimensionsH,
 			   XmpRegionTag(regionSchema,
-					"", "mwg-rs:Regions/mwg-rs:AppliedToDimensions/stDim:h",
+					"", regionsBaseTag + "AppliedToDimensions/stDim:h",
 					XmpTag::TagTypeInteger));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionAppliedToDimensionsW,
 			   XmpRegionTag(regionSchema,
-					"", "mwg-rs:Regions/mwg-rs:AppliedToDimensions/stDim:w",
+					"", regionsBaseTag + "AppliedToDimensions/stDim:w",
 					XmpTag::TagTypeInteger));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionList,
 			   XmpRegionTag(regionSchema,
-					"", "mwg-rs:Regions/mwg-rs:RegionList",
+					"", regionsBaseTag + "RegionList",
 					XmpTag::TagTypeArray));
 
-    QString baseTag(regionPrefix + "Regions/" + regionPrefix + "RegionList["); //e.g. "mwg-rs:Regions/mwg-rs:RegionList["
+    QString baseTag(regionsBaseTag + "RegionList["); //e.g. "mwg-rs:Regions/mwg-rs:RegionList["
     m_regionXmpTags.insert(Xmp::Tag_RegionListItem,
 			   XmpRegionTag(regionSchema, baseTag, "]",
 					XmpTag::TagTypeStruct));
@@ -873,10 +862,10 @@ void Xmp::initTags()
 					"Extensions/" + regionPrefix + "TrackerContact",
 					XmpTag::TagTypeString));
 
-    regionPrefix = QString("]/") + regionPrefix;
+    regionPrefix = QString("]/") + regionPrefix; // e.g. ]/mwg-rs:
     m_regionXmpTags.insert(Xmp::Tag_RegionExtension,
 			   XmpRegionTag(regionSchema,
-					baseTag, "]/mwg-rs:Extensions",
+					baseTag, regionPrefix + "Extensions",
 					XmpTag::TagTypeString));
 
     m_regionXmpTags.insert(Xmp::Tag_RegionName,

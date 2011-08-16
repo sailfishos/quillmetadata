@@ -61,7 +61,7 @@ void ut_metadata::cleanupTestCase()
 }
 
 // To test namespace registration, define NAMESPACE_REGISTRATION_TEST and run "testCreateRegionBag"
-//#define NAMESPACE_REGISTRATION_TEST
+// #define NAMESPACE_REGISTRATION_TEST
 
 void ut_metadata::init()
 {
