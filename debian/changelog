@@ -1,3 +1,9 @@
+libquillmetadata (1.110817.0) unstable; urgency=low
+
+  * support for reading, writing and removing regions of interest
+
+ -- Martti Kesaniemi <martti.kesaniemi@nokia.com>  Wed, 17 Aug 2011 10:15:00 +0300
+
 libquillmetadata (1.110802.0) unstable; urgency=low
 
   * Removed extra space in debian/changelog which was making build tools fail.
