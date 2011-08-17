@@ -51,15 +51,30 @@ public:
     enum TagType {
         TagTypeString,
         TagTypeStringList,
-        TagTypeAltLang
+        TagTypeAltLang,
+        TagTypeReal,
+        TagTypeArray,
+        TagTypeStruct,
+        TagTypeInteger
     };
 
+    XmpTag();
     XmpTag(const QString &schema, const QString &tag, TagType tagType);
 
     QString schema;
     QString tag;
     TagType tagType;
 };
+
+class XmpRegionTag : public XmpTag {
+public:
+    XmpRegionTag();
+    XmpRegionTag(const QString &schema, const QString &baseTag, const QString &tag, TagType tagType);
+    QString getIndexedTag(int arrayIndex);
+    QString baseTag;
+};
+
+
 
 class Xmp : public MetadataRepresentation
 {
@@ -72,7 +87,6 @@ class Xmp : public MetadataRepresentation
     bool isValid() const;
 
     bool supportsEntry(QuillMetadata::Tag tag) const;
-    bool hasEntry(QuillMetadata::Tag tag) const;
     QVariant entry(QuillMetadata::Tag tag) const;
     void setEntry(QuillMetadata::Tag tag, const QVariant &entry);
     void removeEntry(QuillMetadata::Tag tag);
@@ -80,14 +94,75 @@ class Xmp : public MetadataRepresentation
     bool write(const QString &fileName) const;
 
  private:
+
+   enum Tag {
+       // RegionAppliedToDimensions
+       Tag_RegionAppliedToDimensions,
+       // RegionAppliedToDimensionsH
+       Tag_RegionAppliedToDimensionsH,
+       // RegionAppliedToDimensionsW
+       Tag_RegionAppliedToDimensionsW,
+       // Bag of regions
+       Tag_RegionList,
+       // One region
+       Tag_RegionListItem,
+       // Region name
+       Tag_RegionName,
+       // Region type
+       Tag_RegionType,
+       // RegionArea
+       Tag_RegionArea,
+       // RegionAreaH
+       Tag_RegionAreaH,
+       // RegionAreaW
+       Tag_RegionAreaW,
+       // RegionAreaX,
+       Tag_RegionAreaX,
+       // RegionAreaY
+       Tag_RegionAreaY,
+
+       // Extension
+       Tag_RegionExtension,
+       // TrackerContact
+       Tag_RegionExtensionTrackerContact,
+
+       // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
+       // when 8.61 is released and test data is updated.
+       // RegionAreaH
+       Tag_RegionAreaH_xap,
+       // RegionAreaW
+       Tag_RegionAreaW_xap,
+       // RegionAreaX,
+       Tag_RegionAreaX_xap,
+       // RegionAreaY
+       Tag_RegionAreaY_xap
+
+   };
     void initTags();
 
     static QString processXmpString(XmpStringPtr xmpString);
 
     void setXmpEntry(QuillMetadata::Tag tag, const QVariant &entry);
 
- private:
+    void setXmpEntry(Xmp::Tag tag, int zeroBasedIndex,
+                     const QString &suffix, const QVariant &entry);
+
+    void setXmpEntry(Xmp::Tag tag, const QVariant &entry);
+
+    void setXmpEntry(XmpTag xmpTag, const QVariant &entry);
+
+    bool hasEntry(Xmp::Tag tag, int zeroBasedIndex = 0) const;
+
+    bool hasEntry(QuillMetadata::Tag tag) const;
+
+    void removeEntry(Xmp::Tag tag, int zeroBasedIndex);
+
+    void readRegionListItem(const QString & qPropValue,
+			    const QString & qPropName,
+			    QuillMetadataRegionList & regions) const;
+
     static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
+    static QHash<Xmp::Tag,XmpRegionTag> m_regionXmpTags;
 
     XmpPtr m_xmpPtr;
 

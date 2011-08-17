@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010-11 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009-11 Nokia Corporation and/or its subsidiary(-ies).
 ** Contact: Pekka Marjola <pekka.marjola@nokia.com>
 **
 ** This file is part of the Quill Metadata package.
@@ -37,91 +37,46 @@
 **
 ****************************************************************************/
 
+#ifndef UT_REGIONS_H
+#define UT_REGIONS_H
+
 #include <QObject>
 #include <QImage>
 
-#ifndef TEST_LIBQUILL_METADATA_H
-#define TEST_LIBQUILL_METADATA_H
-
 class QuillMetadata;
 
-class ut_metadata : public QObject {
+class ut_regions : public QObject {
 Q_OBJECT
 public:
-    ut_metadata();
+    ut_regions();
 
 private slots:
     void init();
     void cleanup();
     void initTestCase();
     void cleanupTestCase();
-    void testCameraMake();
-    void testCameraModel();
-    void testImageWidth();
-    void testImageHeight();
-    void testFocalLength();
-    void testExposureTime();
-    void testTimestampOriginal();
-    void testSubject();
-    void testCity();
-    void testCountry();
-    void testRating();
-    void testCreator();
-    void testCityIptc();
-    void testCountryIptc();
-    void testDescription();
-    void testTitle();
-    void testOrientation();
 
-    // Unit tests for metadata writing
-
-    void testWriteSubject();
-    void testWriteCity();
-    void testWriteCameraMake();
-    void testWriteDescription();
-
-    // Unit tests for metadata editing
-
-    void testEditCameraMake();
-    void testEditOrientation();
-    void testOrientationTagSpeedup();
-    void testEditCity();
-    void testEditKeywords();
-    void testDoubleEditKeywords();
-    void testEditDescription();
-    void testEditTitle();
-
-    void testCrossEdit();
-    void testCrossEdit2();
-
-    // GPS metadata unittests
-
-    void testGps();
-    void testGps_XmpExif();
-    void testEditGps_latitude();
-    void testEditGps_longitude();
-    void testEditGps_altitude();
-    void testEditGps_direction();
-    void testWriteGps();
-    void testClearGps();
-
-    // Unit tests for orientation preservation
-
-    void testCopyOrientation();
-    // Unit tests for format detection
-
-    void testCanRead();
-    void testSetOrientationTag();
+    // Unit tests for metadata reading & writing
+    void testCreateRegionBag();
+    void testRegionBagAppend();
+    void testEditRegions();
+    void testReadRegions();
+    void testRegion();
+    void testRegionBag();
+    void testRegionAssignment();
+    void testRegionBagAssignment();
+    void testRegionBagRemoveRegion();
+    void testReadExtension();
+    void testImplicitSharing();
+    void testNcoRegions();
 
 private:
     QImage sourceImage;
 
     QuillMetadata *metadata;
-    QuillMetadata *xmp;
-    QuillMetadata *iptc;
-    QuillMetadata *gps;
 
     QuillMetadata *region;
 };
 
-#endif  // TEST_LIBQUILL_METADATA_H
+
+#endif // UT_REGIONS_H

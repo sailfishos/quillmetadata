@@ -7,6 +7,7 @@ INCLUDEPATH += .
 CONFIG += ordered
 
 SUBDIRS += ut_metadata \
+	    ut_regions
 
 
 # --- install
@@ -17,6 +18,7 @@ tatamimages.files += images/exif.jpg
 tatamimages.files += images/xmp.jpg
 tatamimages.files += images/iptc.jpg
 tatamimages.files += images/gps.jpg
+tatamimages.files += images/mnaa.jpg
 
 tatamimages.path  = $$(DESTDIR)/usr/share/libquillmetadata-tests/images/
 

@@ -42,8 +42,10 @@
 
 #include <QString>
 #include <QVariant>
+#include "quillmetadataregionlist.h"
 
 class QuillMetadataPrivate;
+
 
 class QuillMetadata
 {
@@ -106,7 +108,10 @@ class QuillMetadata
         Tag_GPSImgDirection,
         //! GPS image direction reference (EXIF)
         Tag_GPSImgDirectionRef,
-        //! Undefined tag
+        //! Region list of type QList<RegionInfo>
+        Tag_Regions,
+
+	//! Undefined tag
         Tag_Undefined,
     };
 

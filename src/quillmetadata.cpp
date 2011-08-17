@@ -68,7 +68,6 @@ QuillMetadata::QuillMetadata()
     priv->isXmpNeeded = false;
 }
 
-
 QuillMetadata::QuillMetadata(const QString &fileName,
                              MetadataFormatFlags formats)
 {
@@ -84,7 +83,6 @@ QuillMetadata::QuillMetadata(const QString &fileName,
     }
     priv->exif = new Exif(fileName);
 }
-
 
 QuillMetadata::QuillMetadata(const QString &fileName,
                              MetadataFormatFlags formats,
