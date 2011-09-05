@@ -288,8 +288,9 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 
     switch(entry->format) {
     case EXIF_FORMAT_ASCII:
-        entry->data = (unsigned char*)
-            malloc(value.toByteArray().size() * sizeof(unsigned char));
+        if(entryIsNew)
+            entry->data = (unsigned char*)
+                malloc(value.toByteArray().size() * sizeof(unsigned char));
         memcpy((char*)entry->data, value.toByteArray().constData(),value.toByteArray().size());
         entry->size = value.toByteArray().size();
         entry->components = entry->size;
@@ -298,13 +299,15 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
     case EXIF_FORMAT_BYTE:
         entry->components = 1;
         entry->size = exif_format_get_size(EXIF_FORMAT_BYTE) * entry->components;
-        entry->data = (unsigned char*) malloc(entry->size);
+        if(entryIsNew)
+            entry->data = (unsigned char*) malloc(entry->size);
         memcpy((char*)entry->data, value.toByteArray().constData(), value.toByteArray().size());
         break;
 
     case EXIF_FORMAT_SHORT:
-        entry->data = (unsigned char*)
-            malloc(exif_format_get_size(EXIF_FORMAT_SHORT));
+        if(entryIsNew)
+            entry->data = (unsigned char*)
+                malloc(exif_format_get_size(EXIF_FORMAT_SHORT));
         exif_set_short(entry->data, m_exifByteOrder, value.toInt());
         entry->size = exif_format_get_size(EXIF_FORMAT_SHORT);
         entry->components = 1;
@@ -320,8 +323,8 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 
             entry->components = 3;
             entry->size = exif_format_get_size(EXIF_FORMAT_RATIONAL) * entry->components;
-            entry->data = (unsigned char *) malloc(entry->size);
-
+            if(entryIsNew)
+                entry->data = (unsigned char *) malloc(entry->size);
             double val = value.toDouble();
             updateReferenceTag(entry->tag, val >= 0);
             val = fabs(val);
@@ -358,7 +361,8 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 
             entry->components = 1;
             entry->size = exif_format_get_size(EXIF_FORMAT_RATIONAL) * entry->components;
-            entry->data = (unsigned char *) malloc(entry->size);
+            if(entryIsNew)
+                entry->data = (unsigned char *) malloc(entry->size);
 
             rat.numerator = round(val * DECIMAL_PRECISION);
             rat.denominator = DECIMAL_PRECISION;
