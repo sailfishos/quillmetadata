@@ -1,8 +1,14 @@
+libquillmetadata (1.110905.1) unstable; urgency=low
+
+  * Updated the changelog entry that blocks the integration
+
+ -- Wenpeng Zhou <ext-wenpeng.2.zhou@nokia.com>  Mon, 05 Sep 2011 10:30:00 +0300
+
 libquillmetadata (1.110905.0) unstable; urgency=low
 
   * Fixes: NB#271382 - <memleak> Memory leak reported in quill while running valgrind
 
- -- Wenpeng Zhou<ext-wenpeng.2.zhou@nokia.com>  Mon, 05 Sep 2011 09:45:00 +0300
+ -- Wenpeng Zhou <ext-wenpeng.2.zhou@nokia.com>  Mon, 05 Sep 2011 09:45:00 +0300
 
 libquillmetadata (1.110818.0) unstable; urgency=low
 
