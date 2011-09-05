@@ -1,3 +1,9 @@
+libquillmetadata (1.110905.2) unstable; urgency=low
+
+  * Fixes: NB#266792 Quillmetadata missing API documentation mainpage
+
+ -- Jussi Rautio <ext-jussi.2.rautio@nokia.com>  Mon, 05 Sep 2011 10:30:30 +0300
+
 libquillmetadata (1.110905.1) unstable; urgency=low
 
   * Updated the changelog entry that blocks the integration
