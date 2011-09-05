@@ -1,3 +1,9 @@
+libquillmetadata (1.110905.0) unstable; urgency=low
+
+  * Fixes: NB#271382 - <memleak> Memory leak reported in quill while running valgrind
+
+ -- Wenpeng Zhou<ext-wenpeng.2.zhou@nokia.com>  Mon, 05 Sep 2011 09:45:00 +0300
+
 libquillmetadata (1.110818.0) unstable; urgency=low
 
   * Fixes: NB#278049 - Respect local encoding on file name usage
