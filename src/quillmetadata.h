@@ -37,6 +37,37 @@
 **
 ****************************************************************************/
 
+/*!
+  \mainpage Quill Metadata Reference Documentation
+
+  \section intro_sec Introduction
+
+Quill Metadata is a library to extract and edit EXIF and XMP metadata
+from JPEG image files. Its aim is to provide a single interface which
+would allow to unify tags from both types of metadata into QVariant
+entries that could easily be manipulated using the Qt style interface.
+
+The current implementation is mostly a Qt wrapper library for the
+existing libexif and libexempi libraries. Only selected tags are
+supported.
+
+  \section overview_sec Overview
+
+An instance of the main class of the library, QuillMetadata,
+represents all the metadata in a file. Operations on the QuillMetadata
+class allow the extraction, manipulation and saving the metadata into
+different files. Manipulations into QuillMetadata will not result in
+any changes on a file unless explicitly saved; similarly, requesting
+to save a QuillMetadata object into a file will result in all existing
+metadata already in the file being removed or overwritten by the new data.
+
+  \section overview_tags Supported tags
+
+QuillMetadata currently supports basic information on camera, camera
+settings, author, location, GPS location and regions of interest. See
+QuillMetadata::Tag for a complete list of supported tags.
+*/
+
 #ifndef QUILL_METADATA_H
 #define QUILL_METADATA_H
 
