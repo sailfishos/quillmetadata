@@ -437,6 +437,24 @@ void ut_regions::testNcoRegions()
     delete region1;
 }
 
+void ut_regions::testRemoveAllRegionData()
+{
+    QuillMetadata *region = new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
+    region->removeEntry(QuillMetadata::Tag_Regions);
+
+    QTemporaryFile file;
+    file.open();
+    sourceImage.save(file.fileName(), "jpg");
+
+    region->write(file.fileName());
+
+    QuillMetadata *region1 = new QuillMetadata(file.fileName());
+    QVariant data1 = region1->entry(QuillMetadata::Tag_Regions);
+    QVERIFY(data1.isNull());
+
+    delete region;
+    delete region1;
+}
 
 int main ( int argc, char *argv[] ){
     QCoreApplication app( argc, argv );
