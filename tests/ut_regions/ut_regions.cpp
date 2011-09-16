@@ -67,7 +67,7 @@ void ut_regions::init()
 {
     metadata	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
 #ifndef NAMESPACE_REGISTRATION_TEST
-    region	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa2.jpg");
+    region	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
 #endif
 }
 

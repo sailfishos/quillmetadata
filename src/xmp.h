@@ -126,19 +126,6 @@ class Xmp : public MetadataRepresentation
        // TrackerContact
        Tag_RegionExtensionTrackerContact,
 
-#if 0
-       // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
-       // when 8.61 is released and test data is updated.
-       // RegionAreaH
-       Tag_RegionAreaH_xap,
-       // RegionAreaW
-       Tag_RegionAreaW_xap,
-       // RegionAreaX,
-       Tag_RegionAreaX_xap,
-       // RegionAreaY
-       Tag_RegionAreaY_xap
-#endif
-
    };
     void initTags();
 

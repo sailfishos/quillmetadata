@@ -178,30 +178,6 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 
 	    QRectF area = region.areaF();
 
-	    // TODO: these (_xap) are required for compatibility with ExifTool 8.60, and should be removed
-	    // when 8.61 is released and test data is updated.
-
-#if 0
-	    if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaH).tag) ||
-		qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaH_xap).tag)) {
-		QPointF center = area.center();
-		area.setHeight(qPropValue.toFloat());
-		area.moveCenter(center);
-	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaW).tag) ||
-		       qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaW_xap).tag)) {
-		QPointF center = area.center();
-		area.setWidth(qPropValue.toFloat());
-		area.moveCenter(center);
-	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaX).tag) ||
-		       qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaX_xap).tag)) {
-		area.moveCenter(
-			QPointF(qPropValue.toFloat(), area.center().y()));
-	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaY).tag)  ||
-		       qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaY_xap).tag)) {
-		area.moveCenter(
-			QPointF(area.center().x(), qPropValue.toFloat()));
-	    }
-#else
 	    if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaH).tag)) {
 		QPointF center = area.center();
 		area.setHeight(qPropValue.toFloat());
@@ -217,7 +193,7 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 		area.moveCenter(
 			QPointF(area.center().x(), qPropValue.toFloat()));
 	    }
-#endif
+
 	    region.setAreaF(area);
 
 	} else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionName).tag)) {
@@ -542,27 +518,6 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 		QuillMetadataRegion region = regions[nRegion];
 
-#if 0
-		// TODO: these (_xap) are required for compatibility with ExifTool 8.60, and should be removed
-		// when 8.61 is released and test data is updated.
-		if (hasEntry(Xmp::Tag_RegionAreaY_xap)) {
-
-		    // RegionAreaY
-		    setXmpEntry(Xmp::Tag_RegionAreaY_xap, nRegion, "",
-				region.areaF().center().y());
-		    // RegionAreaX,
-		    setXmpEntry(Xmp::Tag_RegionAreaX_xap, nRegion, "",
-				region.areaF().center().x());
-		    // RegionAreaH
-		    setXmpEntry(Xmp::Tag_RegionAreaH_xap, nRegion, "",
-				region.areaF().height());
-		    // RegionAreaW
-		    setXmpEntry(Xmp::Tag_RegionAreaW_xap, nRegion, "",
-				region.areaF().width());
-
-		} else
-#endif
-
 		{
 
 		    // RegionAreaX,
@@ -786,24 +741,6 @@ void Xmp::initTags()
 	xmp_string_free(registeredPrefix);
     }
 
-#if 0
-    // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
-    // when 8.61 is released and test data is updated.
-    QString xapAreaPrefix("stArea:");
-    // xmp library will automatically replace this with with
-    // "stArea_1_:", as stArea is already registered.
-
-    {
-	const char areaNamespace[] = "http://ns.adobe.com/xap/1.0/sType/Area#";
-	XmpStringPtr registeredPrefix = xmp_string_new();
-	xmp_register_namespace(areaNamespace,
-			       xapAreaPrefix.toAscii().constData(),
-			       registeredPrefix);
-	xapAreaPrefix = processXmpString(registeredPrefix);
-	xmp_string_free(registeredPrefix);
-    }
-#endif
-
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
 			  XmpTag(NS_DC, "creator", XmpTag::TagTypeString));
     m_xmpTags.insertMulti(QuillMetadata::Tag_Subject,
@@ -928,27 +865,5 @@ void Xmp::initTags()
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaY,
 			   XmpRegionTag(regionSchema, baseTag, xmpAreaPrefix + "y",
 					XmpTag::TagTypeReal));
-
-#if 0
-    // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
-    // when 8.61 is released and test data is updated.
-    xapAreaPrefix = regionPrefix + "Area/" + xapAreaPrefix;
-    m_regionXmpTags.insert(Xmp::Tag_RegionAreaH_xap,
-			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "h",
-					XmpTag::TagTypeReal));
-
-    m_regionXmpTags.insert(Xmp::Tag_RegionAreaW_xap,
-			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "w",
-					XmpTag::TagTypeReal));
-
-    m_regionXmpTags.insert(Xmp::Tag_RegionAreaX_xap,
-			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "x",
-					XmpTag::TagTypeReal));
-
-    m_regionXmpTags.insert(Xmp::Tag_RegionAreaY_xap,
-			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "y",
-					XmpTag::TagTypeReal));
-#endif
-
 
 }
