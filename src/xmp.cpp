@@ -45,6 +45,8 @@
 #include "xmp.h"
 #include "quillmetadataregionlist.h"
 
+#include "QDebug"
+
 QHash<QuillMetadata::Tag,XmpTag> Xmp::m_xmpTags;
 QHash<Xmp::Tag,XmpRegionTag> Xmp::m_regionXmpTags;
 
@@ -179,6 +181,7 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 	    // TODO: these (_xap) are required for compatibility with ExifTool 8.60, and should be removed
 	    // when 8.61 is released and test data is updated.
 
+#if 0
 	    if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaH).tag) ||
 		qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaH_xap).tag)) {
 		QPointF center = area.center();
@@ -193,12 +196,28 @@ void Xmp::readRegionListItem(const QString & qPropValue,
 		       qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaX_xap).tag)) {
 		area.moveCenter(
 			QPointF(qPropValue.toFloat(), area.center().y()));
-	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaY).tag) ||
+	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaY).tag)  ||
 		       qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaY_xap).tag)) {
 		area.moveCenter(
 			QPointF(area.center().x(), qPropValue.toFloat()));
 	    }
-
+#else
+	    if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaH).tag)) {
+		QPointF center = area.center();
+		area.setHeight(qPropValue.toFloat());
+		area.moveCenter(center);
+	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaW).tag)) {
+		QPointF center = area.center();
+		area.setWidth(qPropValue.toFloat());
+		area.moveCenter(center);
+	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaX).tag)) {
+		area.moveCenter(
+			QPointF(qPropValue.toFloat(), area.center().y()));
+	    } else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionAreaY).tag)) {
+		area.moveCenter(
+			QPointF(area.center().x(), qPropValue.toFloat()));
+	    }
+#endif
 	    region.setAreaF(area);
 
 	} else if (qPropName.contains(m_regionXmpTags.value(Tag_RegionName).tag)) {
@@ -309,6 +328,8 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 			this->readRegionListItem(qPropValue, qPropName, regions);
 
 		    }
+
+		    qDebug() << qPropName << qPropValue;
 
 		    bSuccess = xmp_iterator_next(
 			    xmpIterPtr, schema, propName,
@@ -521,6 +542,7 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 
 		QuillMetadataRegion region = regions[nRegion];
 
+#if 0
 		// TODO: these (_xap) are required for compatibility with ExifTool 8.60, and should be removed
 		// when 8.61 is released and test data is updated.
 		if (hasEntry(Xmp::Tag_RegionAreaY_xap)) {
@@ -538,7 +560,10 @@ void Xmp::setEntry(QuillMetadata::Tag tag, const QVariant &entry)
 		    setXmpEntry(Xmp::Tag_RegionAreaW_xap, nRegion, "",
 				region.areaF().width());
 
-		} else {
+		} else
+#endif
+
+		{
 
 		    // RegionAreaX,
 		    setXmpEntry(Xmp::Tag_RegionAreaX, nRegion, "",
@@ -761,6 +786,7 @@ void Xmp::initTags()
 	xmp_string_free(registeredPrefix);
     }
 
+#if 0
     // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
     // when 8.61 is released and test data is updated.
     QString xapAreaPrefix("stArea:");
@@ -776,6 +802,7 @@ void Xmp::initTags()
 	xapAreaPrefix = processXmpString(registeredPrefix);
 	xmp_string_free(registeredPrefix);
     }
+#endif
 
     m_xmpTags.insertMulti(QuillMetadata::Tag_Creator,
 			  XmpTag(NS_DC, "creator", XmpTag::TagTypeString));
@@ -902,7 +929,7 @@ void Xmp::initTags()
 			   XmpRegionTag(regionSchema, baseTag, xmpAreaPrefix + "y",
 					XmpTag::TagTypeReal));
 
-
+#if 0
     // TODO: these are required for compatibility with ExifTool 8.60, and should be removed
     // when 8.61 is released and test data is updated.
     xapAreaPrefix = regionPrefix + "Area/" + xapAreaPrefix;
@@ -921,6 +948,7 @@ void Xmp::initTags()
     m_regionXmpTags.insert(Xmp::Tag_RegionAreaY_xap,
 			   XmpRegionTag(regionSchema, baseTag, xapAreaPrefix + "y",
 					XmpTag::TagTypeReal));
+#endif
 
 
 }

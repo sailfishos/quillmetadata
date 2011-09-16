@@ -61,13 +61,13 @@ void ut_regions::cleanupTestCase()
 }
 
 // To test namespace registration, define NAMESPACE_REGISTRATION_TEST and run "testCreateRegionBag"
- //#define NAMESPACE_REGISTRATION_TEST
+// #define NAMESPACE_REGISTRATION_TEST
 
 void ut_regions::init()
 {
     metadata	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/exif.jpg");
 #ifndef NAMESPACE_REGISTRATION_TEST
-    region	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa.jpg");
+    region	= new QuillMetadata("/usr/share/libquillmetadata-tests/images/mnaa2.jpg");
 #endif
 }
 
