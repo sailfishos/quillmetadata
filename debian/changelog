@@ -1,3 +1,9 @@
+libquillmetadata (1.110916.0) unstable; urgency=low
+
+  * Removed workaround code that used to be needed with Exiftool 8.60
+
+ -- Martti Kesaniemi <martti.kesaniemi@nokia.com>  Fri, 16 Sep 2011 16:45:00 +0300
+
 libquillmetadata (1.110914.0) unstable; urgency=low
 
   * Added automatic test for removal of all region metadata
