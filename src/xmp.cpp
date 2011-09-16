@@ -45,8 +45,6 @@
 #include "xmp.h"
 #include "quillmetadataregionlist.h"
 
-#include "QDebug"
-
 QHash<QuillMetadata::Tag,XmpTag> Xmp::m_xmpTags;
 QHash<Xmp::Tag,XmpRegionTag> Xmp::m_regionXmpTags;
 
@@ -304,8 +302,6 @@ QVariant Xmp::entry(QuillMetadata::Tag tag) const
 			this->readRegionListItem(qPropValue, qPropName, regions);
 
 		    }
-
-		    qDebug() << qPropName << qPropValue;
 
 		    bSuccess = xmp_iterator_next(
 			    xmpIterPtr, schema, propName,
