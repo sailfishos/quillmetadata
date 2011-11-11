@@ -73,7 +73,7 @@ void ut_regions::init()
 
 void ut_regions::cleanup()
 {
-    // delete metadata;
+    delete metadata;
 #ifndef NAMESPACE_REGISTRATION_TEST
 
     delete region;
@@ -289,7 +289,7 @@ void ut_regions::testRegionBagAppend()
 	MYQCOMPARE(area.center().x(),	0.4*4288);
 	MYQCOMPARE(area.center().y(),	0.3*2848);
     }
-
+    delete region1;
 }
 
 void ut_regions::testRegionBagRemoveRegion()
@@ -300,40 +300,41 @@ void ut_regions::testRegionBagRemoveRegion()
 
     while (regs.count()>0) // Remove, until no regions left.
     {
-	regs.removeFirst();
+        regs.removeFirst();
 
-	QVariant entry;
-	entry.setValue(regs);
-	region->setEntry(QuillMetadata::Tag_Regions,entry);
+        QVariant entry;
+        entry.setValue(regs);
+        region->setEntry(QuillMetadata::Tag_Regions,entry);
 
-	QTemporaryFile file;
-	file.open();
-	sourceImage.save(file.fileName(), "jpg");
-	region->write(file.fileName());
+        QTemporaryFile file;
+        file.open();
+        sourceImage.save(file.fileName(), "jpg");
+        region->write(file.fileName());
 
-	QuillMetadata *region1 = new QuillMetadata(file.fileName());
-	QVariant data1 = region1->entry(QuillMetadata::Tag_Regions);
-	if (!data1.isNull())
-	{
-	    QVERIFY(data1.canConvert<QuillMetadataRegionList>());
-	    QuillMetadataRegionList regs1 = data1.value<QuillMetadataRegionList>();
-	    QCOMPARE(regs1.count(), regs.count());
+        QuillMetadata *region1 = new QuillMetadata(file.fileName());
+        QVariant data1 = region1->entry(QuillMetadata::Tag_Regions);
+        if (!data1.isNull())
+        {
+            QVERIFY(data1.canConvert<QuillMetadataRegionList>());
+            QuillMetadataRegionList regs1 = data1.value<QuillMetadataRegionList>();
+            QCOMPARE(regs1.count(), regs.count());
 
-	    QCOMPARE(regs1.fullImageSize().width(),  4288);
-	    QCOMPARE(regs1.fullImageSize().height(), 2848);
-	    // Name:
-	    QCOMPARE(regs1.last().name(), QString("Dilbert"));
-	    // Type:
-	    QCOMPARE(regs1.last().type(), QString("Face"));
-	    // Area:
-	    {
-		QRect area = regs1.last().area();
-		MYQCOMPARE(area.width(),	0.17*4288);
-		MYQCOMPARE(area.height(),	0.15*2848);
-		MYQCOMPARE(area.center().x(),	0.4*4288);
-		MYQCOMPARE(area.center().y(),	0.3*2848);
-	    }
-	}
+            QCOMPARE(regs1.fullImageSize().width(),  4288);
+            QCOMPARE(regs1.fullImageSize().height(), 2848);
+            // Name:
+            QCOMPARE(regs1.last().name(), QString("Dilbert"));
+            // Type:
+            QCOMPARE(regs1.last().type(), QString("Face"));
+            // Area:
+            {
+                QRect area = regs1.last().area();
+                MYQCOMPARE(area.width(),	0.17*4288);
+                MYQCOMPARE(area.height(),	0.15*2848);
+                MYQCOMPARE(area.center().x(),	0.4*4288);
+                MYQCOMPARE(area.center().y(),	0.3*2848);
+            }
+        }
+        delete region1;
     }
 }
 
@@ -387,6 +388,7 @@ void ut_regions::testCreateRegionBag()
 	MYQCOMPARE(area.width(),    30);
 	MYQCOMPARE(area.height(),   40);
     }
+    delete region1;
 }
 
 void ut_regions::testReadExtension()
