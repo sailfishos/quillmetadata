@@ -1,3 +1,9 @@
+libquillmetadata (1.111111.0) unstable; urgency=low
+
+  * Fixes: NB#288300 -<MemLeak> definitely lost memory leak reported in exif.cpp when running valgrind on libquillmetadata-tests
+
+ -- Wenpeng Zhou <ext-wenpeng.2.zhou@nokia.com>  Fri, 11 Nov 2011 10:30:00 +0300
+
 libquillmetadata (1.110916.0) unstable; urgency=low
 
   * Removed workaround code that used to be needed with Exiftool 8.60
