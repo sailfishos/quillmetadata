@@ -113,6 +113,5 @@ rm -rf %{buildroot}
 %{_libdir}/libquillmetadata-qt5.so
 %{_libdir}/pkgconfig/*.pc
 %{_libdir}/*.pc
-%{_datadir}/qt5/mkspecs/features/quillmetadata.prf
 # >> files devel
 # << files devel
