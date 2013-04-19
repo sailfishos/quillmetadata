@@ -24,7 +24,7 @@ PkgConfigBR:
 Requires:
     - qt5-plugin-imageformat-jpeg
 Configure: none
-Builder: qmake
+Builder: qmake5
 RunFdupes:
     - "%{_libdir}/"
 Files:
