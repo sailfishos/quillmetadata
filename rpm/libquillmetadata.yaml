@@ -6,7 +6,7 @@ Group: System/Libraries
 License: LGPLv2
 URL: https://github.com/nemomobile/quillmetadata
 Sources:
-    - "meego-image-editor-quillmetadata-%{version}.tar.gz"
+    - "%{name}-%{version}.tar.bz2"
 Description: |
     A Qt based library which can access and edit Exif, XMP and IPTC
     metadata for still images (currently only JPEG format), offering
