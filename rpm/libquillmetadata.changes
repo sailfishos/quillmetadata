@@ -1,0 +1,22 @@
+* Fri Mar 01 2013 Marko Mattila <marko.mattila@jollamobile.com> - 1.2.0
+- Fixed Location metadata removal.
+
+* Wed Dec 21 2011 Marko Saukko <marko.saukko@cybercom.com> - 1.111111.0
+- Changed to Harmattan upstream.
+- Added .yaml for spectacle.
+
+* Tue Oct 04 2011 Marko Saukko <marko.saukko@cybercom.com> - 3.9.0
+- Removed documentation.
+
+* Mon Jan 10 2011 Teemu Hukkanen <ext-teemu.hukkanen@nokia.com> - 3.9.0
+- update libquillmetadata to 3.9.0 (BMC#12597)
+- Fix broken packaging.
+- Remove duplicate library package libquillmetadata-libquillmetadata1
+- Update build dependency for the test binary package.
+- Fold the long description.
+- Re-organise the sub-packages to coherent sections (same content,
+  different order)
+
+* Tue Oct 15 2010 Maitrey Mishra <ext-maitrey.mishra@nokia.com> - 3.8.0  
+- Initial first version 
+
