@@ -67,6 +67,7 @@ class Exif : public MetadataRepresentation
     ~Exif();
 
     bool isValid() const;
+    bool hasData() const;
 
     bool supportsEntry(QuillMetadata::Tag tag) const;
     bool hasEntry(QuillMetadata::Tag tag) const;
@@ -94,7 +95,7 @@ class Exif : public MetadataRepresentation
 
     ExifData *m_exifData;
     ExifByteOrder m_exifByteOrder;
-
+    bool m_containsData;
     static bool m_initialized;
 };
 

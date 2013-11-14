@@ -119,6 +119,16 @@ bool QuillMetadata::isValid() const
     return (priv->exif->isValid() || priv->xmp->isValid());
 }
 
+bool QuillMetadata::hasExif() const
+{
+    return priv->exif && priv->exif->hasData();
+}
+
+bool QuillMetadata::hasXmp() const
+{
+    return priv->xmp && priv->xmp->hasData();
+}
+
 QVariant QuillMetadata::entry(Tag tag) const
 {
     // Prioritize EXIF over XMP as required by metadata working group

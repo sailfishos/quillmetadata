@@ -219,6 +219,16 @@ class QuillMetadata
     bool isValid() const;
 
     /*!
+      Returns true if image has Exif metadata. Otherwise false is returned.
+     */
+    bool hasExif() const;
+
+    /*!
+      Return true if image has XMP metadata. Otherwise false is returned.
+     */
+    bool hasXmp() const;
+
+    /*!
       Returns the value of the metadata entry for a given tag.
       Currently, only some tags are supported.
      */

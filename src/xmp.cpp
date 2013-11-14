@@ -95,8 +95,20 @@ Xmp::Xmp(const QString &fileName)
     m_xmpPtr = xmp_files_get_new_xmp(xmpFilePtr);
     xmp_files_close(xmpFilePtr, XMP_CLOSE_NOOPTION);
     xmp_files_free(xmpFilePtr);
-
     initTags();
+
+    // Check if there are any XMP tags in place
+    QList<XmpTag> xmpTags = m_xmpTags.values();
+    m_containsData = false;
+    if (!xmpTags.isEmpty()) {
+        foreach (XmpTag tag, xmpTags) {
+            if (xmp_has_property(m_xmpPtr, tag.schema.toLatin1().constData(),
+                                 tag.tag.toLatin1().constData())) {
+                m_containsData = true; // This is enough to know that there is data
+                break;
+            }
+        }
+    }
 }
 
 Xmp::~Xmp()
@@ -106,7 +118,12 @@ Xmp::~Xmp()
 
 bool Xmp::isValid() const
 {
-    return (m_xmpPtr != 0);
+    return m_xmpPtr != 0;
+}
+
+bool Xmp::hasData() const
+{
+    return m_containsData;
 }
 
 bool Xmp::supportsEntry(QuillMetadata::Tag tag) const

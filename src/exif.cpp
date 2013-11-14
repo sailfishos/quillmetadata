@@ -67,6 +67,7 @@ Exif::Exif()
 {
     m_exifData = exif_data_new();
     m_exifByteOrder = exif_data_get_byte_order(m_exifData);
+    m_containsData = false;
     initTags();
 }
 
@@ -138,8 +139,8 @@ Exif::Exif(const QString &fileName, QuillMetadata::Tag tagToRead)
     {
         exif_data_load_data(m_exifData, buf, bufSize);
         exif_loader_unref(loader);
-
         m_exifByteOrder = exif_data_get_byte_order(m_exifData);
+        m_containsData = bufSize > 0;
         return;
     }
 
@@ -149,6 +150,7 @@ Exif::Exif(const QString &fileName, QuillMetadata::Tag tagToRead)
     bool success =
         readShortTagAndByteOrder(tagToRead, buf, bufSize, tagValue, byteOrder);
 
+    m_containsData = bufSize > 0;
     exif_loader_unref(loader);
 
     if (success) {
@@ -166,7 +168,12 @@ Exif::~Exif()
 
 bool Exif::isValid() const
 {
-    return (m_exifData != 0);
+    return m_exifData != 0;
+}
+
+bool Exif::hasData() const
+{
+    return m_containsData;
 }
 
 bool Exif::supportsEntry(QuillMetadata::Tag tag) const
