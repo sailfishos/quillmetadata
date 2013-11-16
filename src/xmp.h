@@ -85,6 +85,7 @@ class Xmp : public MetadataRepresentation
     ~Xmp();
 
     bool isValid() const;
+    bool hasData() const;
 
     bool supportsEntry(QuillMetadata::Tag tag) const;
     QVariant entry(QuillMetadata::Tag tag) const;
@@ -154,7 +155,7 @@ class Xmp : public MetadataRepresentation
     static QHash<Xmp::Tag,XmpRegionTag> m_regionXmpTags;
 
     XmpPtr m_xmpPtr;
-
+    bool m_containsData;
     static bool m_initialized;
 };
 
