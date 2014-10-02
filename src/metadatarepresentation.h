@@ -53,6 +53,10 @@ class MetadataRepresentation
     virtual void removeEntry(QuillMetadata::Tag tag) = 0;
 
     bool write(const QString &fileName) const;
+
+public:
+    virtual ~MetadataRepresentation() {}
+
 };
 
 #endif
