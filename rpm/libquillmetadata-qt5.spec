@@ -55,10 +55,8 @@ This package includes the development headers.
 %setup -q -n %{name}-%{version}
 
 %build
-
-%qmake5 
-
-make %{?jobs:-j%jobs}
+%qmake5 "VERSION=%{version}"
+make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
