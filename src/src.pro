@@ -3,8 +3,7 @@
 ##########
 
 TEMPLATE = lib
-equals(QT_MAJOR_VERSION, 4): TARGET = quillmetadata
-equals(QT_MAJOR_VERSION, 5): TARGET = quillmetadata-qt5
+TARGET = quillmetadata-qt5
 
 MOC_DIR = .moc
 
@@ -13,8 +12,7 @@ LIBS += -lexif -lexempi -ljpeg
 # Note that we HAVE TO also create prl config as QMake implementation
 # mixes both of them together.
 CONFIG += create_pc create_prl no_install_prl
-equals(QT_MAJOR_VERSION, 4): QMAKE_PKGCONFIG_REQUIRES = QtGui
-equals(QT_MAJOR_VERSION, 5): QMAKE_PKGCONFIG_REQUIRES = Qt5Gui
+QMAKE_PKGCONFIG_REQUIRES = Qt5Gui
 QMAKE_PKGCONFIG_INCDIR = $$[QT_INSTALL_HEADERS]/$$TARGET
 QMAKE_PKGCONFIG_LIBDIR = $$[QT_INSTALL_LIBS]
 QMAKE_PKGCONFIG_VERSION = $$VERSION
@@ -60,14 +58,8 @@ INSTALL_HEADERS = QuillMetadata \
 headers.files = $$INSTALL_HEADERS
 headers.path = $$[QT_INSTALL_HEADERS]/$$TARGET
 target.path = $$[QT_INSTALL_LIBS]
-equals(QT_MAJOR_VERSION, 4): pkgconfig.files = quillmetadata.pc
-equals(QT_MAJOR_VERSION, 5): pkgconfig.files = quillmetadata-qt5.pc
+pkgconfig.files = quillmetadata-qt5.pc
 pkgconfig.path = $$[QT_INSTALL_LIBS]/pkgconfig
-equals(QT_MAJOR_VERSION, 4) {
-    prf.files = quillmetadata.prf
-    prf.path = $$[QMAKE_MKSPECS]/features
-    INSTALLS += prf
-}
 INSTALLS += target headers pkgconfig
 
 
