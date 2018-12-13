@@ -1,5 +1,4 @@
-equals(QT_MAJOR_VERSION, 4): PACKAGENAME = libquillmetadata
-equals(QT_MAJOR_VERSION, 5): PACKAGENAME = libquillmetadata-qt5
+PACKAGENAME = libquillmetadata-qt5
 
 TEMPLATE = subdirs
 
