@@ -63,8 +63,8 @@ bool ExifWriteback::writeback(const QString &fileName,
     struct jpeg_decompress_struct dinfo;
     struct jpeg_compress_struct cinfo;
     struct my_error_mgr derror, cerror;
-    bool cinfo_inited = false;
-    bool hasError = false;
+    volatile bool cinfo_inited = false;
+    volatile bool hasError = false;
 
     jpeg_create_decompress(&dinfo);
 
