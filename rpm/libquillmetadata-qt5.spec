@@ -2,8 +2,7 @@ Name:       libquillmetadata-qt5
 Summary:    Qt based library for still image metadata manipulation
 Version:    1.111111.0
 Release:    0
-Group:      System/Libraries
-License:    LGPLv2.1 or GPLv3 or Qt Commercial or LGPLv2.1 with Nokia Qt LGPL Exception v1.1
+License:    LGPLv2 or GPLv3 or Qt Commercial or LGPLv2 with Nokia Qt LGPL Exception v1.1
 URL:        https://git.merproject.org/mer-core/quillmetadata
 Source0:    %{name}-%{version}.tar.bz2
 Requires:   qt5-plugin-imageformat-jpeg
@@ -26,7 +25,6 @@ transparent reconciliation between different metadata representations.
 
 %package tests
 Summary:    Qt based library for still image metadata manipulation - unit tests
-Group:      System/Libraries
 Requires:   %{name} = %{version}-%{release}
 Requires:   testrunner-lite
 
@@ -40,7 +38,6 @@ This package includes the unit tests.
 
 %package devel
 Summary:    Qt based library for still image metadata manipulation - development headers
-Group:      System/Libraries
 Requires:   %{name} = %{version}-%{release}
 
 %description devel
@@ -70,6 +67,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
+%license LICENSE.LGPLv21
 %{_libdir}/libquillmetadata-qt5.so.*
 
 %files tests
