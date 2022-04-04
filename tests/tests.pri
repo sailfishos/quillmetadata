@@ -22,7 +22,7 @@ LIBS += -lquillmetadata-qt5
 QT += testlib
 
 # --- install
-target.path = $$[QT_INSTALL_LIBS]/libquillmetadata-qt5-tests/
+target.path = /opt/tests/libquillmetadata-qt5/
 INSTALLS += target
 
 # --- clean

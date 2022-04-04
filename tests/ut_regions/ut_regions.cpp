@@ -48,11 +48,7 @@
 
 ut_regions::ut_regions()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    imagePath = "/usr/share/libquillmetadata-qt5-tests/images/";
-#else
-    imagePath = "/usr/share/libquillmetadata-tests/images/";
-#endif
+    imagePath = "/opt/tests/libquillmetadata-qt5/images/";
 }
 
 void ut_regions::initTestCase()

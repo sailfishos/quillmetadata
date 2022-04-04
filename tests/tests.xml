@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <testdefinition version="0.1">
-  <suite name="@PACKAGENAME@-tests" domain="application-domain">
+  <suite name="libquillmetadata-qt5" domain="application-domain">
     <description>Automated test cases for libquill</description>
 
-    <set name="@PACKAGENAME@-test0" feature="metadata">
+    <set name="libquillmetadata-qt5" feature="libquillmetadata">
       <description>quill metadata test</description>
       <case name="ut_metadata" type="Functional" level="Component">
-	<step>/usr/lib/@PACKAGENAME@-tests/ut_metadata </step>
+        <step>/opt/tests/libquillmetadata-qt5/ut_metadata </step>
       </case>
     </set>
   </suite>

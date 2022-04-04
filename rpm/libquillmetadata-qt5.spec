@@ -72,8 +72,7 @@ rm -rf %{buildroot}
 
 %files tests
 %defattr(-,root,root,-)
-%{_datadir}/libquillmetadata-qt5-tests/*
-%{_libdir}/libquillmetadata-qt5-tests/*
+/opt/tests/libquillmetadata-qt5/
 
 %files devel
 %defattr(-,root,root,-)
