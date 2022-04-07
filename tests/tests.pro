@@ -1,5 +1,3 @@
-PACKAGENAME = libquillmetadata-qt5
-
 TEMPLATE = subdirs
 
 DEPENDPATH += .
@@ -10,27 +8,15 @@ CONFIG += ordered
 SUBDIRS += ut_metadata \
 	    ut_regions
 
-# --- generate tests.xml
-tests_xml.target = tests.xml
-tests_xml.depends = $$PWD/tests.xml.in
-tests_xml.commands = sed -e "s:@PACKAGENAME@:$${PACKAGENAME}:g" $< > $@
+tests_xml.files = tests.xml
+tests_xml.path  = $$(DESTDIR)/opt/tests/libquillmetadata-qt5/
 
-QMAKE_EXTRA_TARGETS = tests_xml
-QMAKE_CLEAN += $$tests_xml.target
-PRE_TARGETDEPS += $$tests_xml.target
+images.files += images/exif.jpg
+images.files += images/xmp.jpg
+images.files += images/iptc.jpg
+images.files += images/gps.jpg
+images.files += images/mnaa.jpg
 
-# --- install
-tatam.depends = tests_xml
-tatam.files = $$tests_xml.target
-tatam.path  = $$(DESTDIR)/usr/share/$${PACKAGENAME}-tests/
-tatam.CONFIG += no_check_exist
+images.path  = $${tests_xml.path}/images/
 
-tatamimages.files += images/exif.jpg
-tatamimages.files += images/xmp.jpg
-tatamimages.files += images/iptc.jpg
-tatamimages.files += images/gps.jpg
-tatamimages.files += images/mnaa.jpg
-
-tatamimages.path  = $${tatam.path}/images/
-
-INSTALLS = tatam tatamimages
+INSTALLS = tests_xml images

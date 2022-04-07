@@ -48,11 +48,7 @@
 
 ut_metadata::ut_metadata()
 {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
-    imagePath = "/usr/share/libquillmetadata-qt5-tests/images/";
-#else
-    imagePath = "/usr/share/libquillmetadata-tests/images/";
-#endif
+    imagePath = "/opt/tests/libquillmetadata-qt5/images/";
 }
 
 void ut_metadata::initTestCase()
@@ -449,11 +445,7 @@ void ut_metadata::testWriteGps()
 void ut_metadata::testGps_XmpExif()
 {
     // TODO: Stop skipping the test once that it becomes possible to only read XMP data
-#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
     QSKIP("Reading only XMP data is still unsupported");
-#else
-    QSKIP("Reading only XMP data is still unsupported", SkipSingle);
-#endif
 
     QTemporaryFile file;
     file.open();
