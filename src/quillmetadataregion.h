@@ -55,8 +55,8 @@ class QuillMetadataRegion
     // Permissions to relative coordinate usage
     friend class QuillMetadataRegionList;
     friend class Xmp;
-public:
 
+public:
     QuillMetadataRegion();
     ~QuillMetadataRegion();
     QuillMetadataRegion(const QuillMetadataRegion & other);
@@ -92,8 +92,6 @@ private:
     QList<QString> listExtensionTags() const;
 };
 
-
-
-Q_DECLARE_METATYPE(QuillMetadataRegion);
+Q_DECLARE_METATYPE(QuillMetadataRegion)
 
 #endif // QUILLMETADATAREGION_H

@@ -71,9 +71,8 @@ private:
     void    updateRelativeCoordinates();// Call before writing relative coordinates
     QRectF  pixelToRelativeCoordinates(const QRect &relative) const;
     QRect   relativeToPixelCoordinates(const QRectF &pixel) const;
-
 };
 
-Q_DECLARE_METATYPE(QuillMetadataRegionList);
+Q_DECLARE_METATYPE(QuillMetadataRegionList)
 
 #endif // QUILLMETADATAREGIONLIST_H

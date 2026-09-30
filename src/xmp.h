@@ -80,7 +80,7 @@ public:
 
 class Xmp : public MetadataRepresentation
 {
- public:
+public:
 
     Xmp();
     Xmp(const QString &fileName);
@@ -96,8 +96,7 @@ class Xmp : public MetadataRepresentation
 
     bool write(const QString &fileName) const;
 
- private:
-
+private:
    enum Tag {
        // RegionAppliedToDimensions
        Tag_RegionAppliedToDimensions,

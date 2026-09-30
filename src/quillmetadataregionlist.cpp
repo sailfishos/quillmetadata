@@ -44,12 +44,10 @@
 class QuillMetadataRegionListPrivate: public QSharedData
 {
 public:
-    QuillMetadataRegionListPrivate(){};
-    ~QuillMetadataRegionListPrivate(){};
+    QuillMetadataRegionListPrivate() {}
+    ~QuillMetadataRegionListPrivate() {}
     QSize fullImageSize;
 };
-
-
 
 QuillMetadataRegionList::QuillMetadataRegionList()
 {
@@ -57,7 +55,8 @@ QuillMetadataRegionList::QuillMetadataRegionList()
 }
 
 QuillMetadataRegionList::QuillMetadataRegionList(const QuillMetadataRegionList & other)
-    :QList<QuillMetadataRegion>( other ),  d(other.d)
+    : QList<QuillMetadataRegion>(other)
+    , d(other.d)
 {
 }
 
@@ -76,9 +75,9 @@ QSize QuillMetadataRegionList::fullImageSize() const
 }
 
 QuillMetadataRegionList& QuillMetadataRegionList::operator=(const QuillMetadataRegionList &other)
-							 {
+{
     if (this == &other)
-	return *this;
+        return *this;
 
     d = other.d;
     QList<QuillMetadataRegion>::operator =(other);
@@ -90,7 +89,7 @@ void QuillMetadataRegionList::updatePixelCoordinates()
 {
     QList<QuillMetadataRegion>::iterator region;
     for (region = begin(); region != end(); ++region) {
-	region->setArea(relativeToPixelCoordinates(region->areaF()));
+        region->setArea(relativeToPixelCoordinates(region->areaF()));
     }
 }
 
@@ -98,12 +97,12 @@ void QuillMetadataRegionList::updateRelativeCoordinates()
 {
     QList<QuillMetadataRegion>::iterator region;
     for (region = begin(); region != end(); ++region) {
-	QRectF relative = pixelToRelativeCoordinates(region->area());
-	if (region->area() != relativeToPixelCoordinates(region->areaF())) {
-	    // If new relative coords produce same pixel coords
-	    // as the old ones, don't update.
-	    region->setAreaF(relative);
-	}
+        QRectF relative = pixelToRelativeCoordinates(region->area());
+        if (region->area() != relativeToPixelCoordinates(region->areaF())) {
+            // If new relative coords produce same pixel coords
+            // as the old ones, don't update.
+            region->setAreaF(relative);
+        }
     }
 }
 
@@ -124,4 +123,3 @@ QRect QuillMetadataRegionList::relativeToPixelCoordinates(const QRectF &pixel) c
 	    qFloor(pixel.width()    * fullImageSize().width()   + .5),
 	    qFloor(pixel.height()   * fullImageSize().height()  + .5));
 }
-

@@ -195,7 +195,7 @@ class QuillMetadata
       @param tagToRead Which tags to read; if undefined, reads all tags
      */
 
-    explicit QuillMetadata(const QString &fileName,
+    QuillMetadata(const QString &fileName,
                   MetadataFormatFlags formats,
                   Tag tagToRead);
 
