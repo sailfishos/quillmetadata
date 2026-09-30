@@ -41,6 +41,8 @@
 #define XMP_H
 
 #include <exempi-2.0/exempi/xmp.h>
+
+#include <QMultiHash>
 #include <QHash>
 
 #include "metadatarepresentation.h"
@@ -151,7 +153,7 @@ class Xmp : public MetadataRepresentation
 			    const QString & qPropName,
 			    QuillMetadataRegionList & regions) const;
 
-    static QHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
+    static QMultiHash<QuillMetadata::Tag,XmpTag> m_xmpTags;
     static QHash<Xmp::Tag,XmpRegionTag> m_regionXmpTags;
 
     XmpPtr m_xmpPtr;
