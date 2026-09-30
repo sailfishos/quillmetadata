@@ -53,10 +53,9 @@ This package includes the development headers.
 
 %build
 %qmake5 "VERSION=%{version}"
-make %{?_smp_mflags}
+%make_build
 
 %install
-rm -rf %{buildroot}
 %qmake_install
 
 %fdupes  %{buildroot}/%{_libdir}/
@@ -66,16 +65,13 @@ rm -rf %{buildroot}
 %postun -p /sbin/ldconfig
 
 %files
-%defattr(-,root,root,-)
 %license LICENSE.LGPLv21
 %{_libdir}/libquillmetadata-qt5.so.*
 
 %files tests
-%defattr(-,root,root,-)
 /opt/tests/libquillmetadata-qt5/
 
 %files devel
-%defattr(-,root,root,-)
 %{_includedir}/qt5/quillmetadata-qt5/*
 %{_libdir}/libquillmetadata-qt5.so
 %{_libdir}/pkgconfig/*.pc
