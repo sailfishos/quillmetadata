@@ -97,7 +97,6 @@ bool ExifWriteback::writeback(const QString &fileName,
         cerror.error_exit = my_error_exit;
 
         if (!setjmp(cerror.setjmp_buffer)) {
-
             jpeg_copy_critical_parameters(&dinfo, &cinfo);
             jpeg_stdio_dest(&cinfo, fileOut);
 
@@ -109,15 +108,15 @@ bool ExifWriteback::writeback(const QString &fileName,
                                   exifSegment.size());
 
             jpeg_finish_compress(&cinfo);
-        }
-        else
+        } else {
             hasError = true;
+        }
 
         fclose(fileOut);
         jpeg_finish_decompress(&dinfo);
-    }
-    else
+    } else {
         hasError = true;
+    }
 
     fclose(fileIn);
     jpeg_destroy_decompress(&dinfo);

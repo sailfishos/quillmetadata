@@ -9,10 +9,9 @@ CONFIG += ordered
 SUBDIRS = src \
           tests
 
-contains( doc, no ) {
+contains(doc, no) {
     message( "Not building the documentation ..." )
 }
 else {
     include(doc/doc.pri)
-    }
-
+}

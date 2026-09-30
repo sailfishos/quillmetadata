@@ -46,13 +46,18 @@ class QuillMetadataRegionPrivate: public QSharedData
 
 {
 public:
-    QuillMetadataRegionPrivate(){};
-    QuillMetadataRegionPrivate(const QuillMetadataRegionPrivate& other)
-	:QSharedData(other),area(other.area),areaF(other.areaF),
-	type(other.type),name(other.name),extensions(other.extensions)
-    {};
+    QuillMetadataRegionPrivate() {}
+    QuillMetadataRegionPrivate(const QuillMetadataRegionPrivate &other)
+        : QSharedData(other)
+        , area(other.area)
+        , areaF(other.areaF)
+        , type(other.type)
+        , name(other.name)
+        , extensions(other.extensions)
+    {}
 
-    ~QuillMetadataRegionPrivate(){};
+    ~QuillMetadataRegionPrivate() {}
+
     QRect  area;
     QRectF  areaF; // Used when reading and writing relative coordinates
     QString type;
@@ -70,8 +75,8 @@ QuillMetadataRegion::QuillMetadataRegion()
     d = new QuillMetadataRegionPrivate;
 }
 
-QuillMetadataRegion::QuillMetadataRegion(const QuillMetadataRegion & other)
-    :d(other.d)
+QuillMetadataRegion::QuillMetadataRegion(const QuillMetadataRegion &other)
+    : d(other.d)
 {
 }
 
@@ -83,6 +88,7 @@ void QuillMetadataRegion::setArea(const QRect & areaValue)
 {
     d->area = areaValue;
 }
+
 QRect QuillMetadataRegion::area() const
 {
     return d->area;
@@ -137,7 +143,7 @@ QList<QString> QuillMetadataRegion::listExtensionTags() const
 QuillMetadataRegion& QuillMetadataRegion::operator=(const QuillMetadataRegion &other)
 {
     if (this == &other)
-	return *this;
+        return *this;
 
     d = other.d;
 
@@ -153,4 +159,3 @@ QRectF QuillMetadataRegion::areaF() const
 {
     return d->areaF;
 }
-

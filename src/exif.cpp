@@ -45,22 +45,25 @@
 
 #define DECIMAL_PRECISION 10000
 
-ExifTypedTag::ExifTypedTag():tag(),ifd(),format(),count()
+ExifTypedTag::ExifTypedTag()
+    : tag()
+    , ifd()
+    , format()
+    , count()
 {
 }
 
-ExifTypedTag::ExifTypedTag(ExifTag tag, ExifIfd ifd, ExifFormat format) :
-    tag(tag), ifd(ifd), format(format), count(1)
+ExifTypedTag::ExifTypedTag(ExifTag tag, ExifIfd ifd, ExifFormat format)
+    : tag(tag), ifd(ifd), format(format), count(1)
 {
 }
 
-ExifTypedTag::ExifTypedTag(ExifTag tag, ExifIfd ifd, ExifFormat format,
-                           int count) :
-    tag(tag), ifd(ifd), format(format), count(count)
+ExifTypedTag::ExifTypedTag(ExifTag tag, ExifIfd ifd, ExifFormat format, int count)
+    : tag(tag), ifd(ifd), format(format), count(count)
 {
 }
 
-QHash<QuillMetadata::Tag,ExifTypedTag> Exif::m_exifTags;
+QHash<QuillMetadata::Tag, ExifTypedTag> Exif::m_exifTags;
 bool Exif::m_initialized = false;
 
 Exif::Exif()
@@ -161,8 +164,8 @@ Exif::Exif(const QString &fileName, QuillMetadata::Tag tagToRead)
 
 Exif::~Exif()
 {
-    //the entry, content will be freed recursively, we do not unref content and entry explicitly.
-    //otherwise, there is a crashing
+    // the entry, content will be freed recursively, we do not unref content and entry explicitly.
+    // otherwise, there is a crashing
     exif_data_unref(m_exifData);
 }
 
@@ -203,7 +206,7 @@ QVariant Exif::entry(QuillMetadata::Tag tag) const
 
     QVariant result;
 
-    switch(entry->format) {
+    switch (entry->format) {
     case EXIF_FORMAT_BYTE:
     case EXIF_FORMAT_ASCII:
         result = QVariant(QByteArray((const char*)entry->data,entry->size));
@@ -222,7 +225,7 @@ QVariant Exif::entry(QuillMetadata::Tag tag) const
         double val = 0.0;
         int power = 1;
 
-        switch(tag) {
+        switch (tag) {
         case QuillMetadata::Tag_GPSLatitude:
         case QuillMetadata::Tag_GPSLongitude:
             for (int i = 0; i < 3; i ++) {
@@ -293,9 +296,9 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
     entry->tag = tag.tag;
     entry->format = tag.format;
 
-    switch(entry->format) {
+    switch (entry->format) {
     case EXIF_FORMAT_ASCII:
-        if(entryIsNew)
+        if (entryIsNew)
             entry->data = (unsigned char*)
                 malloc(value.toByteArray().size() * sizeof(unsigned char));
         memcpy((char*)entry->data, value.toByteArray().constData(),value.toByteArray().size());
@@ -306,13 +309,13 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
     case EXIF_FORMAT_BYTE:
         entry->components = 1;
         entry->size = exif_format_get_size(EXIF_FORMAT_BYTE) * entry->components;
-        if(entryIsNew)
+        if (entryIsNew)
             entry->data = (unsigned char*) malloc(entry->size);
         memcpy((char*)entry->data, value.toByteArray().constData(), value.toByteArray().size());
         break;
 
     case EXIF_FORMAT_SHORT:
-        if(entryIsNew)
+        if (entryIsNew)
             entry->data = (unsigned char*)
                 malloc(exif_format_get_size(EXIF_FORMAT_SHORT));
         exif_set_short(entry->data, m_exifByteOrder, value.toInt());
@@ -330,7 +333,7 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 
             entry->components = 3;
             entry->size = exif_format_get_size(EXIF_FORMAT_RATIONAL) * entry->components;
-            if(entryIsNew)
+            if (entryIsNew)
                 entry->data = (unsigned char *) malloc(entry->size);
             double val = value.toDouble();
             updateReferenceTag(entry->tag, val >= 0);
@@ -368,7 +371,7 @@ void Exif::setExifEntry(ExifData *data, ExifTypedTag tag, const QVariant &value)
 
             entry->components = 1;
             entry->size = exif_format_get_size(EXIF_FORMAT_RATIONAL) * entry->components;
-            if(entryIsNew)
+            if (entryIsNew)
                 entry->data = (unsigned char *) malloc(entry->size);
 
             rat.numerator = round(val * DECIMAL_PRECISION);
@@ -395,18 +398,18 @@ void Exif::updateReferenceTag(ExifTag tag, bool positive)
 {
     // GPS tags are not members of the ExifTag enum so we need the int cast
     switch (static_cast<int>(tag)) {
-        case EXIF_TAG_GPS_LATITUDE:
-            setEntry(QuillMetadata::Tag_GPSLatitudeRef, QVariant(positive ? "N" : "S"));
-            break;
-        case EXIF_TAG_GPS_LONGITUDE:
-            setEntry(QuillMetadata::Tag_GPSLongitudeRef, QVariant(positive ? "E" : "W"));
-            break;
-        case EXIF_TAG_GPS_ALTITUDE:
-            setEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(positive ? 0 : 1));
-            break;
-        default:
-            // Unsupported tags
-            return;
+    case EXIF_TAG_GPS_LATITUDE:
+        setEntry(QuillMetadata::Tag_GPSLatitudeRef, QVariant(positive ? "N" : "S"));
+        break;
+    case EXIF_TAG_GPS_LONGITUDE:
+        setEntry(QuillMetadata::Tag_GPSLongitudeRef, QVariant(positive ? "E" : "W"));
+        break;
+    case EXIF_TAG_GPS_ALTITUDE:
+        setEntry(QuillMetadata::Tag_GPSAltitudeRef, QVariant(positive ? 0 : 1));
+        break;
+    default:
+        // Unsupported tags
+        return;
     }
 }
 

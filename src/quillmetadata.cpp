@@ -76,8 +76,7 @@ QuillMetadata::QuillMetadata(const QString &fileName,
     if (formats == ExifFormat) {
         priv->xmp = new Xmp();
         priv->isXmpNeeded = false;
-    }
-    else {
+    } else {
         priv->xmp = new Xmp(fileName);
         priv->isXmpNeeded = true;
     }
@@ -93,8 +92,7 @@ QuillMetadata::QuillMetadata(const QString &fileName,
     if (formats == ExifFormat) {
         priv->xmp = new Xmp();
         priv->isXmpNeeded = false;
-    }
-    else {
+    } else {
         priv->xmp = new Xmp(fileName);
         priv->isXmpNeeded = true;
     }

@@ -17,7 +17,6 @@ QMAKE_PKGCONFIG_INCDIR = $$[QT_INSTALL_HEADERS]/$$TARGET
 QMAKE_PKGCONFIG_LIBDIR = $$[QT_INSTALL_LIBS]
 QMAKE_PKGCONFIG_VERSION = $$VERSION
 
-QMAKE_CXXFLAGS += -Werror
 QMAKE_LFLAGS += -Wl,--as-needed
 
 # this is for adding coverage information while doing qmake as "qmake COV_OPTION=on"

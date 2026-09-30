@@ -4,6 +4,7 @@ DOXYGEN_BIN=doxygen
 
 QMAKE_EXTRA_TARGETS += doc
 doc.target = doc
+
 isEmpty(DOXYGEN_BIN) {
     doc.commands = @echo "Unable to detect doxygen in PATH"
 } else {
@@ -22,8 +23,8 @@ isEmpty(DOXYGEN_BIN) {
     docmaps.files = ./doc/html/*.map
     docmaps.path = $$INSTALLDIR/quillmetadata-doc
     docmaps.CONFIG += no_check_exist
-
-    INSTALLS += htmldocs docimages docmaps
-
+    # TODO: install only if these were built
+    #INSTALLS += htmldocs docimages docmaps
 }
+
 doc.depends = FORCE
