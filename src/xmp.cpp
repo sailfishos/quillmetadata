@@ -40,6 +40,8 @@
 #include <QStringList>
 #include <QLocale>
 #include <QTextStream>
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 
 #include <exempi-2.0/exempi/xmpconsts.h>
 #include <math.h>
@@ -167,20 +169,20 @@ void Xmp::readRegionListItem(const QString & qPropValue,
                  QuillMetadataRegionList & regions) const
 {
     QString searchString(m_regionXmpTags.value(Tag_RegionList).tag);
-    QRegExp rx("(" + searchString + ".)(\\d+).");
-    rx.indexIn(qPropName);
+    QRegularExpression rx("(" + searchString + ".)(\\d+).");
+    QRegularExpressionMatch match = rx.match(qPropName);
 
     bool isOk = false;
-    int nRegionNumber = rx.cap(2).toInt(&isOk);
+    int nRegionNumber = match.captured(2).toInt(&isOk);
     // TODO: Sanity check for number of regions
 
-    if (!isOk)  //RegionList.%d. wasn't found
+    if (!isOk) // RegionList.%d. wasn't found
         return;
 
     searchString.append(
         "[" + QString::number(nRegionNumber) + "]");
 
-    if (!qPropName.contains(searchString)) //RegionList[nRegionNumber] wasn't found
+    if (!qPropName.contains(searchString)) // RegionList[nRegionNumber] wasn't found
         return;
 
     while (regions.size() < nRegionNumber) {
